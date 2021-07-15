@@ -1,0 +1,11 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:HallexCosta/be-a-savior-server.git",
+  "author": "HallexCosta <hallex.costa@hotmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start:development:watch": "tsnd --transpile-only src/server.ts"
+  }
+}
