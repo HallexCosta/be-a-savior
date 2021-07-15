@@ -7,5 +7,11 @@
   "license": "MIT",
   "scripts": {
     "start:development:watch": "tsnd --transpile-only src/server.ts"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13"
   }
 }
