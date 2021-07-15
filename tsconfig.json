@@ -1,0 +1,29 @@
+{
+  "ts-node": {
+    "transpileOnly": true
+  },
+  "compilerOptions": {
+    "target": "es2017",
+    "lib": ["ES6", "es2017"],
+    "outDir": "dist",
+    "rootDirs": ["./src", "./__tests__"],
+    "removeComments": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "forceConsistentCasingInFileNames": true,
+    "strictPropertyInitialization": false,
+    "baseUrl": ".",
+    "paths": {
+      "@middlewares": ["./src/middlewares/index.ts"],
+      "@entities": ["./src/entities/index.ts"],
+      "@repositories": ["./src/repositories/index.ts"],
+      "@controllers": ["./src/controllers/index.ts"],
+      "@services": ["./src/services/index.ts"],
+      "@providers": ["./src/providers/index.ts"],
+      "@routes": ["./src/routes/index.ts"],
+      "@common": ["./src/common/index.ts"]
+    }
+  },
+  "include": ["src/**/*", "__tests__/**/*"],
+  "exclude": ["node_modules/**/*"]
+}
