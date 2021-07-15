@@ -1,0 +1,5 @@
+.eslintrc.js
+pacakges/**/*.js
+pacakges/shared/**/*.js
+node_modules
+dist
