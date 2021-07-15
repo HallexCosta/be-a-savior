@@ -9,6 +9,9 @@
     "test": "mocha --config .mocharc.js",
     "test:ci": "mocha --config .mocharc-ci.js",
     "test:watch": "yarn test --watch",
+    "clean": "rimraf dist ",
+    "build": "yarn clean && sucrase ./src -d ./dist --transforms typescript,imports",
+    "start:development:production": "node dist/server.ts",
     "start:development:watch": "nodemon -L src/server.ts"
   },
   "dependencies": {
@@ -33,6 +36,8 @@
     "mocha": "^9.0.2",
     "nodemon": "^2.0.12",
     "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
+    "sucrase": "^3.20.0",
     "ts-node": "^10.1.0",
     "ts-node-dev": "^1.1.8",
     "tsconfig-paths": "^3.10.1",
