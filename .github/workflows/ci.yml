@@ -29,6 +29,9 @@ jobs:
       - name: Install dependencies...
         run: yarn install:ci
 
+      - name: Building...
+        run: yarn build
+
       - name: Testing server...
         run: yarn test:ci
         env:
