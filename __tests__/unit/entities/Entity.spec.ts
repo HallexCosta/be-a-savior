@@ -2,7 +2,7 @@ import { expect } from 'chai'
 
 import { Entity } from '@entities'
 
-describe('Incident Entity', () => {
+describe('Abstract Entity', () => {
   it('Should be able to create a new Entity without the values of id, created_at, updated_at', () => {
     class Teste extends Entity<Teste> {}
 
