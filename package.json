@@ -6,6 +6,7 @@
   "author": "HallexCosta <hallex.costa@hotmail.com>",
   "license": "MIT",
   "scripts": {
+    "install:ci": "yarn install --fronzen-lockfile",
     "test": "mocha --config .mocharc.js",
     "test:ci": "mocha --config .mocharc-ci.js",
     "test:watch": "yarn test --watch",
