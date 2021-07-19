@@ -11,7 +11,9 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "Node",
     "strictPropertyInitialization": false,
+    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
       "@middlewares": ["./src/middlewares/index.ts"],
