@@ -12,6 +12,7 @@
     "test:watch": "yarn test --watch",
     "clean": "rimraf dist ",
     "build": "yarn clean && sucrase ./src -d ./dist --transforms typescript,imports",
+    "typeorm": "ts-node ./node_modules/typeorm/cli.js",
     "start:development:production": "node dist/server.ts",
     "start:development:watch": "nodemon -L src/server.ts"
   },
