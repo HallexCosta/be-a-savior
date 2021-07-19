@@ -6,3 +6,13 @@ export const incident = {
   created_at: new Date('2020-05-02'),
   updated_at: new Date('2020-07-24')
 }
+
+export const user = {
+  id: '47a1fa8d-02d8-4766-a444-aca3a4a17593',
+  name: 'Hállex da Silva Costa',
+  email: 'hallex.costa@hotmail.com',
+  password: '12345',
+  phone: '(18) 99788-7240',
+  created_at: new Date('2020-05-02'),
+  updated_at: new Date('2020-07-24')
+}
