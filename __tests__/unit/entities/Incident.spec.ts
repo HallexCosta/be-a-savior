@@ -13,7 +13,7 @@ describe('Incident Entity', () => {
     })
 
     expect(expected).to.be.instanceOf(Entity)
-    expect(incident.id).to.be.lengthOf(36)
+    expect(expected.id).to.be.lengthOf(36)
   })
 
   it('Should be able to create a new Incident with the values of id, created_at, updated_at', () => {
