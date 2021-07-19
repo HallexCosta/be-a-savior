@@ -12,12 +12,16 @@
     "test:watch": "yarn test --watch",
     "clean": "rimraf dist ",
     "build": "yarn clean && sucrase ./src -d ./dist --transforms typescript,imports",
+    "typeorm": "yarn ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "start:development:production": "node dist/server.ts",
     "start:development:watch": "nodemon -L src/server.ts"
   },
   "dependencies": {
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "reflect-metadata": "^0.1.13",
+    "sqlite3": "^5.0.2",
+    "typeorm": "^0.2.34",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
