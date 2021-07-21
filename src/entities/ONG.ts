@@ -1,7 +1,6 @@
-import { PartialEntity, User } from '@entities'
+import { Entity } from 'typeorm'
 
-export class ONG extends User<ONG> {
-  public constructor(props: PartialEntity<ONG>) {
-    super(props)
-  }
-}
+import { User } from '@entities'
+
+@Entity('ongs')
+export class ONG extends User {}

@@ -1,7 +1,8 @@
-import { Entity } from '@entities'
 import { Column } from 'typeorm'
 
-export abstract class User extends Entity {
+import { BaseEntity } from '@entities'
+
+export abstract class User extends BaseEntity {
   @Column()
   public readonly name: string
 

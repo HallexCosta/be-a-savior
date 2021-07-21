@@ -1,7 +1,7 @@
 import { PrimaryColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 import { v4 as uuid } from 'uuid'
 
-export abstract class Entity {
+export abstract class BaseEntity {
   @PrimaryColumn()
   public readonly id: string
 
