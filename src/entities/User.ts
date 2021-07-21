@@ -1,12 +1,16 @@
-import { Entity, PartialEntity } from '@entities'
+import { Entity } from '@entities'
+import { Column } from 'typeorm'
 
-export abstract class User<UserType> extends Entity<User<UserType>> {
+export abstract class User extends Entity {
+  @Column()
   public readonly name: string
-  public readonly email: string
-  public readonly password: string
-  public readonly phone: string
 
-  public constructor(props: PartialEntity<User<UserType>>) {
-    super(props)
-  }
+  @Column()
+  public readonly email: string
+
+  @Column()
+  public readonly password: string
+
+  @Column()
+  public readonly phone: string
 }
