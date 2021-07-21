@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm'
 
-import { ONG } from '@entities'
+import { Ong } from '@entities'
 
-@EntityRepository(ONG)
-export class ONGsRepository extends Repository<ONG> {}
+@EntityRepository(Ong)
+export class OngsRepository extends Repository<Ong> {}

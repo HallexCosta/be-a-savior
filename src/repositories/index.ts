@@ -1,3 +1,3 @@
 export * from './DonorsRepository'
-export * from './ONGsRepository'
+export * from './OngsRepository'
 export * from './IncidentsRepository'
