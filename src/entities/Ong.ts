@@ -3,4 +3,4 @@ import { Entity } from 'typeorm'
 import { User } from '@entities'
 
 @Entity('ongs')
-export class ONG extends User {}
+export class Ong extends User {}
