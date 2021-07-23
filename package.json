@@ -13,7 +13,7 @@
     "clean": "rimraf dist",
     "build": "yarn clean && sucrase ./src -d ./dist --transforms typescript,imports",
     "typeorm": "yarn ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "start:production": "node dist/server.ts",
+    "start:production": "node dist/server.js",
     "start:development:watch": "nodemon -L"
   },
   "dependencies": {
