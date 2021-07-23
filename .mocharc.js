@@ -8,7 +8,7 @@ module.exports = {
   file: [],
   require: ['dotenv/config', 'ts-node/register', 'tsconfig-paths/register'],
   timeout: 0,
-  spec: ['__tests__/unit/**/*.spec.ts'],
+  spec: ['__tests__/unit/**/*.spec.ts', '__tests__/integration/**/*.spec.ts'],
   ui: 'bdd',
   watchFiles: ['__tests__']
 }
