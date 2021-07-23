@@ -7,8 +7,8 @@
   "license": "MIT",
   "scripts": {
     "install:ci": "yarn install --fronzen-lockfile",
-    "test": "mocha --config .mocharc.js",
-    "test:ci": "mocha --config .mocharc-ci.js",
+    "test": "DATABASE=test mocha --config .mocharc.js",
+    "test:ci": "DATABASE=test mocha --config .mocharc-ci.js",
     "test:watch": "yarn test --watch",
     "clean": "rimraf dist",
     "build": "yarn clean && sucrase ./src -d ./dist --transforms typescript,imports",
