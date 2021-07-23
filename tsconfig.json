@@ -26,12 +26,13 @@
       "@services": ["./src/services/index.ts"],
       "@providers": ["./src/providers/index.ts"],
       "@routes": ["./src/routes/index.ts"],
-      "@common": ["./src/common/index.ts"]
+      "@common": ["./src/common/index.ts"],
+      "@app": ["./src/app.ts"]
     },
     "typeRoots": [
       "node_modules/@types",
     ]
   },
-  "include": ["src/**/*", "__tests__/**/*"],
+  "include": ["src/**/*", "__tests__/**", "__tests__/**/*"],
   "exclude": ["node_modules/**/*"]
 }
