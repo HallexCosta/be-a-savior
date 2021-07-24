@@ -1,4 +1,5 @@
 import { getCustomRepository } from 'typeorm'
+import { hash } from 'bcryptjs'
 
 import { Donor } from '@entities'
 import { DonorsRepository, OngsRepository } from '@repositories'
@@ -54,16 +55,24 @@ export class CreateDonorService {
       ongs: ongsRepository
     })
 
+    const passwordHash = await this.encryptPassword(password)
+
     const donor = donorsRepository.create({
       name,
       email,
-      password,
+      password: passwordHash,
       phone
     })
 
     await donorsRepository.save(donor)
 
     return donor
+  }
+
+  private async encryptPassword(password: string) {
+    const passwordHash = await hash(password, 8)
+
+    return passwordHash
   }
 
   private checkForFieldIsFilled({
