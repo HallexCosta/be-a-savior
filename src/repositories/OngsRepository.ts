@@ -9,4 +9,10 @@ export class OngsRepository extends Repository<Ong> {
       email
     })
   }
+
+  async findById(id: string): Promise<Ong> {
+    return await this.findOne({
+      id
+    })
+  }
 }
