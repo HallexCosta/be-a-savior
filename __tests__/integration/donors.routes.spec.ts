@@ -45,4 +45,13 @@ describe('Donor Routes', () => {
     expect(expected).to.have.property('created_at')
     expect(expected).to.have.property('updated_at')
   })
+
+  it('Should be able list Donors GET (/donors)', async () => {
+    const response = await request(app).get('/donors')
+    const expected = response.body
+
+    expect(expected[0]).to.have.property('id')
+    expect(expected[0]).to.have.property('created_at')
+    expect(expected[0]).to.have.property('updated_at')
+  })
 })
