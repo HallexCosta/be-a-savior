@@ -33,6 +33,6 @@
       "node_modules/@types",
     ]
   },
-  "include": ["src/**/*", "__tests__/**", "__tests__/**/*"],
+  "include": ["src/**/*", "__tests__/**/*"],
   "exclude": ["node_modules/**/*"]
 }
