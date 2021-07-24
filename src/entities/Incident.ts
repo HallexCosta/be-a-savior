@@ -1,11 +1,7 @@
-import { Entity, PartialEntity } from '@entities'
+import { BaseEntity } from '@entities'
 
-export class Incident extends Entity<Incident> {
+export class Incident extends BaseEntity {
   public readonly name: string
   public readonly description: string
   public readonly coast: number
-
-  public constructor(props: PartialEntity<Incident>) {
-    super(props)
-  }
 }
