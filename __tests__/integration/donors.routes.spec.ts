@@ -1,15 +1,18 @@
+import dirty from 'dirty-chai'
 import request from 'supertest'
-import { expect } from 'chai'
+import { expect, use } from 'chai'
 import { unlink } from 'fs'
-import { Connection, createConnection } from 'typeorm'
+import { createConnection } from 'typeorm'
 
 import { app } from '@app'
 
+use(dirty)
+
 describe('Donor Routes', () => {
-  let connection: Connection
+  let id: string
 
   before(async () => {
-    connection = await createConnection({
+    const connection = await createConnection({
       name: 'App Test',
       type: 'sqlite',
       database: 'src/database/database-test.sqlite',
@@ -41,6 +44,9 @@ describe('Donor Routes', () => {
     const response = await request(app).post('/donors').send(body)
     const expected = response.body
 
+    id = expected.id
+
+    expect(expected).to.not.be.undefined()
     expect(expected).to.have.property('id')
     expect(expected).to.have.property('created_at')
     expect(expected).to.have.property('updated_at')
@@ -53,5 +59,15 @@ describe('Donor Routes', () => {
     expect(expected[0]).to.have.property('id')
     expect(expected[0]).to.have.property('created_at')
     expect(expected[0]).to.have.property('updated_at')
+  })
+
+  it('Should be able list one Donor by Id GET (/donors/:id)', async () => {
+    const response = await request(app).get(`/donors/${id}`)
+    const expected = response.body
+
+    expect(expected).to.have.property('id')
+    expect(expected.email).to.be.equal('some@hotmail.com')
+    expect(expected).to.have.property('created_at')
+    expect(expected).to.have.property('updated_at')
   })
 })
