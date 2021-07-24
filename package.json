@@ -17,6 +17,7 @@
     "start:development:watch": "nodemon -L"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
@@ -26,6 +27,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
     "@types/chai": "^4.2.21",
     "@types/dirty-chai": "^2.0.2",
     "@types/express": "^4.17.13",
