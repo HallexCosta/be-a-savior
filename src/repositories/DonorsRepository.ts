@@ -9,4 +9,10 @@ export class DonorsRepository extends Repository<Donor> {
       email
     })
   }
+
+  async findById(id: string): Promise<Donor> {
+    return await this.findOne({
+      id
+    })
+  }
 }
