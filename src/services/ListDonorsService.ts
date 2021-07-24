@@ -7,7 +7,7 @@ export class ListDonorsService {
   public async execute(): Promise<Donor[]> {
     const donorsRepository = getCustomRepository(DonorsRepository)
 
-    const donors = donorsRepository.find()
+    const donors = await donorsRepository.find()
 
     return donors
   }
