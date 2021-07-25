@@ -4,7 +4,7 @@ import { expect, use } from 'chai'
 
 import { app } from '@app'
 
-import { createTestingConnection } from './stubs'
+import { createTestingConnection } from './fakes/stubs'
 
 use(dirty)
 
