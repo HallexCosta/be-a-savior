@@ -40,4 +40,14 @@ describe('Ongs Routes', () => {
     expect(expected[0]).to.have.property('created_at')
     expect(expected[0]).to.have.property('updated_at')
   })
+
+  it('Should be able list one Ong by Id GET (/ongs/:id)', async () => {
+    const response = await request(app).get(`/ongs/${id}`)
+    const expected = response.body
+
+    expect(expected).to.have.property('id')
+    expect(expected.email).to.be.equal('asome@hotmail.com')
+    expect(expected).to.have.property('created_at')
+    expect(expected).to.have.property('updated_at')
+  })
 })
