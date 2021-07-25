@@ -1,38 +1,17 @@
 import dirty from 'dirty-chai'
 import request from 'supertest'
 import { expect, use } from 'chai'
-import { unlink } from 'fs'
-import { createConnection } from 'typeorm'
 
 import { app } from '@app'
+
+import { createTestingConnection } from './fakes/stubs'
 
 use(dirty)
 
 describe('Donor Routes', () => {
   let id: string
 
-  before(async () => {
-    const connection = await createConnection({
-      name: 'App Test',
-      type: 'sqlite',
-      database: 'src/database/database-test.sqlite',
-      migrations: ['src/database/migrations/*.ts'],
-      entities: ['src/entities/*.ts'],
-      cli: {
-        migrationsDir: 'src/database/migrations',
-        entitiesDir: 'src/entities'
-      }
-    })
-
-    await connection.runMigrations()
-    await connection.close()
-  })
-
-  after(() => {
-    unlink(`${__dirname}/../../src/database/database-test.sqlite`, err => {
-      if (err) console.log('Not possible delete database-test.sqlite')
-    })
-  })
+  before(async () => await createTestingConnection())
 
   it('Should be create new Donor POST (/donors)', async () => {
     const body = {
