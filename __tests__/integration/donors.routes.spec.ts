@@ -25,6 +25,7 @@ describe('Donor Routes', () => {
     })
 
     await connection.runMigrations()
+    await connection.close()
   })
 
   after(() => {
