@@ -15,6 +15,6 @@ export class CreateDonorController {
       phone
     })
 
-    return response.json(donor)
+    return response.status(201).json(donor)
   }
 }
