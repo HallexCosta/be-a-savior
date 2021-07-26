@@ -8,20 +8,20 @@ import { createTestingConnection } from './fakes/stubs'
 
 use(dirty)
 
-describe('Donor Routes', () => {
+describe('Ongs Routes', () => {
   let id: string
 
   before(async () => await createTestingConnection())
 
-  it('Should be create new Donor POST (/donors)', async () => {
+  it('Should be able to create new Ong POST (/ongs)', async () => {
     const body = {
       name: 'Some a name',
-      email: 'some@hotmail.com',
+      email: 'asome@hotmail.com',
       password: 'some123',
       phone: '(99) 99999-9999'
     }
 
-    const response = await request(app).post('/donors').send(body)
+    const response = await request(app).post('/ongs').send(body)
     const expected = response.body
 
     id = expected.id
@@ -32,8 +32,8 @@ describe('Donor Routes', () => {
     expect(expected).to.have.property('updated_at')
   })
 
-  it('Should be able list Donors GET (/donors)', async () => {
-    const response = await request(app).get('/donors')
+  it('Should be able list Ongs GET (/ongs)', async () => {
+    const response = await request(app).get('/ongs')
     const expected = response.body
 
     expect(expected[0]).to.have.property('id')
@@ -41,12 +41,12 @@ describe('Donor Routes', () => {
     expect(expected[0]).to.have.property('updated_at')
   })
 
-  it('Should be able list one Donor by Id GET (/donors/:id)', async () => {
-    const response = await request(app).get(`/donors/${id}`)
+  it('Should be able list one Ong by Id GET (/ongs/:id)', async () => {
+    const response = await request(app).get(`/ongs/${id}`)
     const expected = response.body
 
     expect(expected).to.have.property('id')
-    expect(expected.email).to.be.equal('some@hotmail.com')
+    expect(expected.email).to.be.equal('asome@hotmail.com')
     expect(expected).to.have.property('created_at')
     expect(expected).to.have.property('updated_at')
   })

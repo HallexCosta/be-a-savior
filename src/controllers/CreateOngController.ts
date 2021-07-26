@@ -1,20 +1,20 @@
 import { Request, Response } from 'express'
 
-import { CreateDonorService } from '@services'
+import { CreateOngService } from '@services'
 
-export class CreateDonorController {
+export class CreateOngController {
   public async handle(request: Request, response: Response): Promise<Response> {
     const { name, email, password, phone } = request.body
 
-    const service = new CreateDonorService()
+    const service = new CreateOngService()
 
-    const donor = await service.execute({
+    const user = await service.execute({
       name,
       email,
       password,
       phone
     })
 
-    return response.status(201).json(donor)
+    return response.status(201).json(user)
   }
 }
