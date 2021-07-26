@@ -7,3 +7,4 @@ export * from './ListDonorsController'
 export * from './ListDonorController'
 
 export * from './CreateIncidentController'
+export * from './ListIncidentsController'
