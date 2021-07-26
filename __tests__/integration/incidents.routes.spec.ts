@@ -47,4 +47,13 @@ describe('Incidents Routes', () => {
 
     expect(expected).to.have.property('error')
   })
+
+  it('Should be able list incidents GET (/incidents)', async () => {
+    const response = await request(app).get('/incidents')
+    const expected = response.body
+
+    expect(expected[0]).to.have.property('id')
+    expect(expected[0]).to.have.property('created_at')
+    expect(expected[0]).to.have.property('updated_at')
+  })
 })
