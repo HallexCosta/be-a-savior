@@ -6,13 +6,14 @@ import './database'
 
 import { handleErrors } from '@middlewares'
 
-import { donorsRoutes, ongsRoutes } from '@routes'
+import { donorsRoutes, ongsRoutes, incidentsRoutes } from '@routes'
 
 const app = express()
 
 app.use(express.json())
 app.use('/donors', donorsRoutes)
 app.use('/ongs', ongsRoutes)
+app.use('/incidents', incidentsRoutes)
 app.use(handleErrors)
 
 export { app }
