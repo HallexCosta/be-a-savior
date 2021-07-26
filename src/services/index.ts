@@ -7,3 +7,4 @@ export * from './ListDonorsService'
 export * from './ListDonorService'
 
 export * from './CreateIncidentService'
+export * from './ListIncidentsService'
