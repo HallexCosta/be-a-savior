@@ -8,3 +8,4 @@ export * from './ListDonorController'
 
 export * from './CreateIncidentController'
 export * from './ListIncidentsController'
+export * from './ListIncidentController'
