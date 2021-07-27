@@ -61,6 +61,15 @@ describe('Incidents Routes', () => {
     expect(expected[0]).to.have.property('updated_at')
   })
 
+  it('Should be able list incidents by ong id GET (/incidents?ong_id=)', async () => {
+    const response = await request(app).get(`/incidents?ong_id=${ong.id}`)
+    const expected = response.body
+
+    expect(expected[0]).to.have.property('id')
+    expect(expected[0]).to.have.property('created_at')
+    expect(expected[0]).to.have.property('updated_at')
+  })
+
   it('Should be able list one Incident by Id GET (/incidents/:id)', async () => {
     const response = await request(app).get(`/incidents/${incident_id}`)
     const expected = response.body
