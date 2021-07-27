@@ -4,13 +4,15 @@ import {
   CreateIncidentController,
   ListIncidentsController,
   ListIncidentController,
-  UpdateIncidentController
+  UpdateIncidentController,
+  DeleteIncidentController
 } from '@controllers'
 
 const createIncidentController = new CreateIncidentController()
 const listIncidentsController = new ListIncidentsController()
 const listIncidentController = new ListIncidentController()
 const updateIncidentController = new UpdateIncidentController()
+const deleteIncidentController = new DeleteIncidentController()
 
 const routes = Router()
 
@@ -18,5 +20,6 @@ routes.post('/', createIncidentController.handle)
 routes.get('/', listIncidentsController.handle)
 routes.get('/:id', listIncidentController.handle)
 routes.patch('/:id', updateIncidentController.handle)
+routes.delete('/:id', deleteIncidentController.handle)
 
 export { routes }
