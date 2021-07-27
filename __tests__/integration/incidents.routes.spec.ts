@@ -4,18 +4,22 @@ import { expect, use } from 'chai'
 
 import { app } from '@app'
 
+import { Ong } from '@entities'
+
 import { createFakeOng, createTestingConnection } from './fakes/stubs'
 
 use(dirty)
 
 describe('Incidents Routes', () => {
   let id: string
+  let ong: Ong
 
-  before(async () => await createTestingConnection())
+  before(async () => {
+    await createTestingConnection()
+    ong = await createFakeOng(request(app))
+  })
 
   it('Should be able to create new Incident POST (/incidents)', async () => {
-    const ong = await createFakeOng(request(app))
-
     const body = {
       name: 'Some a name',
       coast: 100.5,
@@ -55,5 +59,14 @@ describe('Incidents Routes', () => {
     expect(expected[0]).to.have.property('id')
     expect(expected[0]).to.have.property('created_at')
     expect(expected[0]).to.have.property('updated_at')
+  })
+
+  it('Should be able list one Incident by Id GET (/incidents/:id)', async () => {
+    const response = await request(app).get(`/incidents/${id}`)
+    const expected = response.body
+
+    expect(expected).to.have.property('id')
+    expect(expected).to.have.property('created_at')
+    expect(expected).to.have.property('updated_at')
   })
 })
