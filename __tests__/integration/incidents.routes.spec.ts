@@ -96,4 +96,13 @@ describe('Incidents Routes', () => {
     expect(expected.coast).to.be.equal(100)
     expect(expected.description).to.be.equal('This is a description updated')
   })
+
+  it('Should be able delete one Incident by Id DELETE (/incidents/:id)', async () => {
+    const response = await request(app).delete(`/incidents/${incident_id}`)
+    const expected = response.body
+
+    expect(expected).to.have.property('id')
+    expect(expected).to.have.property('created_at')
+    expect(expected).to.have.property('updated_at')
+  })
 })
