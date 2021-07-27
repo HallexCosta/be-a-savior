@@ -11,7 +11,7 @@ import { createFakeOng, createTestingConnection } from './fakes/stubs'
 use(dirty)
 
 describe('Incidents Routes', () => {
-  let id: string
+  let incident_id: string
   let ong: Ong
 
   before(async () => {
@@ -30,7 +30,7 @@ describe('Incidents Routes', () => {
     const response = await request(app).post('/incidents').send(body)
     const expected = response.body
 
-    id = expected.id
+    incident_id = expected.id
 
     expect(expected).to.not.be.undefined()
     expect(expected).to.have.property('id')
@@ -62,11 +62,29 @@ describe('Incidents Routes', () => {
   })
 
   it('Should be able list one Incident by Id GET (/incidents/:id)', async () => {
-    const response = await request(app).get(`/incidents/${id}`)
+    const response = await request(app).get(`/incidents/${incident_id}`)
     const expected = response.body
 
     expect(expected).to.have.property('id')
     expect(expected).to.have.property('created_at')
     expect(expected).to.have.property('updated_at')
+  })
+
+  it('Should be able update one Incident by Id PATCH (/incidents/:id)', async () => {
+    const body = {
+      name: 'Some a name updated',
+      coast: 100,
+      description: 'This is a description updated'
+    }
+
+    const response = await request(app)
+      .patch(`/incidents/${incident_id}`)
+      .send(body)
+
+    const expected = response.body
+
+    expect(expected.name).to.be.equal('Some a name updated')
+    expect(expected.coast).to.be.equal(100)
+    expect(expected.description).to.be.equal('This is a description updated')
   })
 })
