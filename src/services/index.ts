@@ -8,3 +8,4 @@ export * from './ListDonorService'
 
 export * from './CreateIncidentService'
 export * from './ListIncidentsService'
+export * from './ListIncidentService'
