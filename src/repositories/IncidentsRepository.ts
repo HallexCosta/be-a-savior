@@ -9,4 +9,10 @@ export class IncidentsRepository extends Repository<Incident> {
       id
     })
   }
+
+  async findByOngId(ong_id: string): Promise<Incident[]> {
+    return await this.find({
+      ong_id
+    })
+  }
 }
