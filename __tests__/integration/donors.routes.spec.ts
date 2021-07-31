@@ -32,6 +32,19 @@ describe('Donor Routes', () => {
     expect(expected).to.have.property('updated_at')
   })
 
+  it('Should be able authenticate ong POST (/donors/login)', async () => {
+    const body = {
+      email: 'some@hotmail.com',
+      password: 'some123'
+    }
+
+    const response = await request(app).post('/donors/login').send(body)
+    const expected = response.body
+
+    expect(expected).to.have.property('token')
+    expect(expected).to.not.be.undefined()
+  })
+
   it('Should be able list Donors GET (/donors)', async () => {
     const response = await request(app).get('/donors')
     const expected = response.body

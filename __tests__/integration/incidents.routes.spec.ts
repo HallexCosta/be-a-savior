@@ -1,22 +1,32 @@
 import dirty from 'dirty-chai'
-import request from 'supertest'
 import { expect, use } from 'chai'
 
 import { app } from '@app'
 
 import { Ong } from '@entities'
 
-import { createFakeOng, createTestingConnection } from './fakes/stubs'
+import {
+  createAgent,
+  createFakeOng,
+  createTestingConnection,
+  loginWithFakeOng
+} from './fakes/stubs'
+
+import { SuperTest, Test } from 'supertest'
 
 use(dirty)
 
 describe('Incidents Routes', () => {
   let incident_id: string
   let ong: Ong
+  let token: string
+  let agent: SuperTest<Test>
 
   before(async () => {
     await createTestingConnection()
-    ong = await createFakeOng(request(app))
+    agent = createAgent(app)
+    ong = await createFakeOng(agent)
+    token = await loginWithFakeOng(agent)
   })
 
   it('Should be able to create new Incident POST (/incidents)', async () => {
@@ -27,7 +37,11 @@ describe('Incidents Routes', () => {
       ong_id: ong.id
     }
 
-    const response = await request(app).post('/incidents').send(body)
+    const response = await agent
+      .post('/incidents')
+      .send(body)
+      .set('Authorization', `bearer ${token}`)
+
     const expected = response.body
 
     incident_id = expected.id
@@ -46,14 +60,21 @@ describe('Incidents Routes', () => {
       ong_id: 'this is fake ong id'
     }
 
-    const response = await request(app).post('/incidents').send(body)
+    const response = await agent
+      .post('/incidents')
+      .send(body)
+      .set('Authorization', `bearer ${token}`)
+
     const expected = response.body
 
     expect(expected).to.have.property('error')
   })
 
   it('Should be able list incidents GET (/incidents)', async () => {
-    const response = await request(app).get('/incidents')
+    const response = await agent
+      .get('/incidents')
+      .set('Authorization', `bearer ${token}`)
+
     const expected = response.body
 
     expect(expected[0]).to.have.property('id')
@@ -62,7 +83,10 @@ describe('Incidents Routes', () => {
   })
 
   it('Should be able list incidents by ong id GET (/incidents?ong_id=)', async () => {
-    const response = await request(app).get(`/incidents?ong_id=${ong.id}`)
+    const response = await agent
+      .get(`/incidents?ong_id=${ong.id}`)
+      .set('Authorization', `bearer ${token}`)
+
     const expected = response.body
 
     expect(expected[0]).to.have.property('id')
@@ -71,7 +95,10 @@ describe('Incidents Routes', () => {
   })
 
   it('Should be able list one Incident by Id GET (/incidents/:id)', async () => {
-    const response = await request(app).get(`/incidents/${incident_id}`)
+    const response = await agent
+      .get(`/incidents/${incident_id}`)
+      .set('Authorization', `bearer ${token}`)
+
     const expected = response.body
 
     expect(expected).to.have.property('id')
@@ -86,9 +113,10 @@ describe('Incidents Routes', () => {
       description: 'This is a description updated'
     }
 
-    const response = await request(app)
+    const response = await agent
       .patch(`/incidents/${incident_id}`)
       .send(body)
+      .set('Authorization', `bearer ${token}`)
 
     const expected = response.body
 
@@ -98,7 +126,10 @@ describe('Incidents Routes', () => {
   })
 
   it('Should be able delete one Incident by Id DELETE (/incidents/:id)', async () => {
-    const response = await request(app).delete(`/incidents/${incident_id}`)
+    const response = await agent
+      .delete(`/incidents/${incident_id}`)
+      .set('Authorization', `bearer ${token}`)
+
     const expected = response.body
 
     expect(expected).to.have.property('id')
