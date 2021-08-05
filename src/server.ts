@@ -1,5 +1,7 @@
 import { app } from './app'
 
-app.listen(process.env.LISTEN_APP_PORT, () =>
-  console.log(`Listening on port ${process.env.LISTEN_APP_PORT}`)
+import { configs } from '@common'
+
+app.listen(configs.express.LISTEN_APP_PORT, () =>
+  console.log(`Listening on port ${configs.express.LISTEN_APP_PORT}`)
 )
