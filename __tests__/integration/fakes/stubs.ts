@@ -3,7 +3,7 @@ import { Connection, createConnection } from 'typeorm'
 import request, { SuperTest, Test } from 'supertest'
 import { Application } from 'express'
 
-import { Ong } from '@entities'
+import { Incident, Ong } from '@entities'
 
 const body = {
   name: 'Some a name',
@@ -34,6 +34,14 @@ export async function createTestingConnection(): Promise<Connection> {
 
 export async function createFakeOng(agent: SuperTest<Test>): Promise<Ong> {
   const response = await agent.post('/ongs').send(body)
+
+  return response.body
+}
+
+export async function createFakeIncident(
+  agent: SuperTest<Test>
+): Promise<Incident> {
+  const response = await agent.post('/incidents').send(body)
 
   return response.body
 }
