@@ -29,9 +29,6 @@ jobs:
       - name: Install dependencies...
         run: yarn install:ci
 
-      - name: Building...
-        run: yarn build
-
       - name: Testing server...
         run: yarn test:ci
         env:
@@ -39,3 +36,6 @@ jobs:
           STRIPE_PUBLISH_API_KEY: ${{ secrets.STRIPE_PUBLISH_API_KEY }}
           STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY }}
           STRIPE_API_VERSION: ${{ secrets.STRIPE_API_VERSION }}
+
+      - name: Building...
+        run: yarn build
