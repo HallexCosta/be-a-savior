@@ -19,6 +19,10 @@ type CreateDonationDTO = {
 export class CreateDonationService {
   private readonly provider: StripeProvider
 
+  public constructor() {
+    this.provider = new StripeProvider()
+  }
+
   public async execute({
     incidentId,
     donorId,
