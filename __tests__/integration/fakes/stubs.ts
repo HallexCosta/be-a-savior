@@ -39,8 +39,16 @@ export async function createFakeOng(agent: SuperTest<Test>): Promise<Ong> {
 }
 
 export async function createFakeIncident(
-  agent: SuperTest<Test>
+  agent: SuperTest<Test>,
+  ong_id: string
 ): Promise<Incident> {
+  const body = {
+    name: 'Dog',
+    coast: 74.7,
+    description: 'Run over the Dog and it dead :(',
+    ong_id: ong_id
+  }
+
   const response = await agent.post('/incidents').send(body)
 
   return response.body
