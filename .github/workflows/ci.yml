@@ -29,10 +29,13 @@ jobs:
       - name: Install dependencies...
         run: yarn install:ci
 
-      - name: Building...
-        run: yarn build
-
       - name: Testing server...
         run: yarn test:ci
         env:
-          LISTEN_APP_PORT: 3333
+          EXPRESS_LISTEN_APP_PORT: ${{ secrets.EXPRESS_LISTEN_APP_PORT }}
+          STRIPE_PUBLISH_API_KEY: ${{ secrets.STRIPE_PUBLISH_API_KEY }}
+          STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY }}
+          STRIPE_API_VERSION: ${{ secrets.STRIPE_API_VERSION }}
+
+      - name: Building...
+        run: yarn build

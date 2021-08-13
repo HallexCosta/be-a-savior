@@ -9,12 +9,11 @@ export class StripeProvider {
   public constructor() {
     const apiVersion = configs.stripe.API_VERSION as '2020-08-27'
 
-    Object.assign(
-      new Stripe(configs.stripe.SECRET_API_KEY, {
-        apiVersion
-      }),
-      this
-    )
+    const stripe = new Stripe(configs.stripe.SECRET_API_KEY, {
+      apiVersion
+    })
+
+    Object.assign(this, stripe)
   }
 
   public async findPaymentByIncidentId(

@@ -19,6 +19,6 @@ export async function ensureDonor(
   }
 
   return response.status(401).json({
-    error: 'Unauthorized: Ong not found'
+    error: 'Unauthorized: Donor not found'
   })
 }

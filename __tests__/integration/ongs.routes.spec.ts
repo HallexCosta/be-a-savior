@@ -1,17 +1,21 @@
 import dirty from 'dirty-chai'
-import request from 'supertest'
+import { SuperTest, Test } from 'supertest'
 import { expect, use } from 'chai'
 
 import { app } from '@app'
 
-import { createTestingConnection } from './fakes/stubs'
+import { createAgent, createTestingConnection } from './fakes/stubs'
 
 use(dirty)
 
 describe('Ongs Routes', () => {
   let id: string
+  let agent: SuperTest<Test>
 
-  before(async () => await createTestingConnection())
+  before(async () => {
+    await createTestingConnection()
+    agent = createAgent(app)
+  })
 
   it('Should be able to create new Ong POST (/ongs)', async () => {
     const body = {
@@ -21,7 +25,7 @@ describe('Ongs Routes', () => {
       phone: '(99) 99999-9999'
     }
 
-    const response = await request(app).post('/ongs').send(body)
+    const response = await agent.post('/ongs').send(body)
 
     const expected = response.body
 
@@ -39,7 +43,7 @@ describe('Ongs Routes', () => {
       password: 'some123'
     }
 
-    const response = await request(app).post('/ongs/login').send(body)
+    const response = await agent.post('/ongs/login').send(body)
     const expected = response.body
 
     expect(expected).to.have.property('token')
@@ -47,7 +51,7 @@ describe('Ongs Routes', () => {
   })
 
   it('Should be able list Ongs GET (/ongs)', async () => {
-    const response = await request(app).get('/ongs')
+    const response = await agent.get('/ongs')
 
     const expected = response.body
 
@@ -57,7 +61,7 @@ describe('Ongs Routes', () => {
   })
 
   it('Should be able list one Ong by Id GET (/ongs/:id)', async () => {
-    const response = await request(app).get(`/ongs/${id}`)
+    const response = await agent.get(`/ongs/${id}`)
 
     const expected = response.body
 
