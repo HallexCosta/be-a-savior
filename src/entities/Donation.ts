@@ -1,6 +1,8 @@
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm'
 
-import { BaseEntity, Incident, Donor } from '@entities'
+import { BaseEntity } from '@entities/BaseEntity'
+import { Incident } from '@entities/Incident'
+import { Donor } from '@entities/Donor'
 
 @Entity('donations')
 export class Donation extends BaseEntity {
