@@ -7,6 +7,8 @@ import { DonorsRepository } from '@repositories/DonorsRepository'
 
 import { StripeProvider } from '@providers/StripeProvider'
 
+import { STRIPE_ACCOUNT_ID } from '@common/configs/stripe'
+
 export type CreateOngDTO = {
   name: string
   email: string
@@ -58,15 +60,20 @@ export class CreateOngService {
 
     await ongsRepository.save(ong)
 
-    await this.provider.customers.create({
-      name: ong.name,
-      email: ong.email,
-      phone: ong.phone,
-      description: `This customer refers to an ong "${ong.name}" of the Be a Savior app`,
-      metadata: {
-        ong_id: ong.id
+    await this.provider.customers.create(
+      {
+        name: ong.name,
+        email: ong.email,
+        phone: ong.phone,
+        description: `This customer refers to an ong "${ong.name}" of the Be a Savior app`,
+        metadata: {
+          ong_id: ong.id
+        }
+      },
+      {
+        stripeAccount: STRIPE_ACCOUNT_ID
       }
-    })
+    )
 
     return ong
   }
