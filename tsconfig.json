@@ -18,6 +18,8 @@
     "skipLibCheck": true,
     "allowJs": true,
     "resolveJsonModule": true,
+    "declaration": true,
+    "declarationDir": "./dist",
     "baseUrl": ".",
     "paths": {
       "@middlewares/*": ["./src/middlewares/*.ts"],
