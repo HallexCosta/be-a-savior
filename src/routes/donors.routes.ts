@@ -1,11 +1,9 @@
 import { Router } from 'express'
 
-import {
-  CreateDonorController,
-  ListDonorsController,
-  ListDonorController,
-  AuthenticateDonorController
-} from '@controllers'
+import { CreateDonorController } from '@controllers/donors/CreateDonorController'
+import { ListDonorsController } from '@controllers/donors/ListDonorsController'
+import { ListDonorController } from '@controllers/donors/ListDonorController'
+import { AuthenticateDonorController } from '@controllers/donors/AuthenticateDonorController'
 
 const authenticateDonorController = new AuthenticateDonorController()
 const createDonorController = new CreateDonorController()
@@ -19,4 +17,4 @@ routes.post('/', createDonorController.handle)
 routes.get('/', listDonorsController.handle)
 routes.get('/:id', listDonorController.handle)
 
-export { routes }
+export { routes as donorsRoutes }
