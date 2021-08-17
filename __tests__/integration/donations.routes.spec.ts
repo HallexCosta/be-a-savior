@@ -4,7 +4,9 @@ import { expect, use } from 'chai'
 
 import { app } from '@app'
 
-import { Donor, Incident, Ong } from '@entities'
+import { Donor } from '@entities/Donor'
+import { Incident } from '@entities/Incident'
+import { Ong } from '@entities/Ong'
 
 import {
   createTestingConnection,

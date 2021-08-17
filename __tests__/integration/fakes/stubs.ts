@@ -3,7 +3,8 @@ import { Connection, createConnection } from 'typeorm'
 import request, { SuperTest, Test } from 'supertest'
 import { Application } from 'express'
 
-import { Incident, Ong } from '@entities'
+import { Incident } from '@entities/Incident'
+import { Ong } from '@entities/Ong'
 
 type CreateFakeIncidentParams = {
   ong_id: string

@@ -3,7 +3,7 @@ import { expect, use } from 'chai'
 
 import { app } from '@app'
 
-import { Ong } from '@entities'
+import { Ong } from '@entities/Ong'
 
 import {
   createAgent,
