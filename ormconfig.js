@@ -1,5 +1,5 @@
-const Development = function () {
-  this.config = function () {
+class Development {
+  config() {
     return {
       type: 'sqlite',
       database: 'src/database/database.sqlite',
@@ -12,8 +12,9 @@ const Development = function () {
     }
   }
 }
-const Production = function () {
-  this.config = function () {
+
+class Production {
+  config() {
     return {
       type: 'sqlite',
       database: 'dist/database/database.sqlite',
@@ -26,8 +27,9 @@ const Production = function () {
     }
   }
 }
-const Test = function () {
-  this.config = function () {
+
+class Test {
+  config() {
     return {
       type: 'sqlite',
       database: 'src/database/database.sqlite-test',
@@ -41,13 +43,8 @@ const Test = function () {
   }
 }
 
-const Orm = function () {
-  return this
-}
-
-Orm.prototype = {
-  strategies: ['test', 'development', 'production'],
-  check: function (envrionment) {
+class Orm {
+  check(envrionment) {
     const test = new Test()
     const production = new Production()
     const development = new Development()
@@ -55,18 +52,21 @@ Orm.prototype = {
     if (envrionment === 'test') {
       return test
     }
+
     if (envrionment === 'production') {
       return production
     }
+
     if (envrionment === 'development') {
       return development
     }
-  },
-  add: function (envrionment) {
-    this.envrionment = envrionment
-  },
+  }
 
-  config: function () {
+  add(envrionment) {
+    this.envrionment = envrionment
+  }
+
+  config() {
     return this.envrionment.config()
   }
 }
