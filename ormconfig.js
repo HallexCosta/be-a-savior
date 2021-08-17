@@ -1,37 +1,80 @@
-function checkEnvironmentFromDatabase(path) {
-  const paths = path.split('/')
-  const file = paths.pop()
-  const filename = file.split('-')
-  const envrionment = filename.pop()
-
-  return envrionment === process.env.NODE_ENV
-}
-
-const configs = [
-  {
-    type: 'sqlite',
-    database: 'src/database/database.sqlite',
-    migrations: ['src/database/migrations/*.ts'],
-    entities: ['src/entities/*.ts'],
-    cli: {
-      migrationsDir: 'src/database/migrations',
-      entitiesDir: 'src/entities'
-    }
-  },
-  {
-    type: 'sqlite',
-    database: 'src/database/database.sqlite-test',
-    migrations: ['src/database/migrations/*.ts'],
-    entities: ['src/entities/*.ts'],
-    cli: {
-      migrationsDir: 'src/database/migrations',
-      entitiesDir: 'src/entities'
+const Development = function () {
+  this.config = function () {
+    return {
+      type: 'sqlite',
+      database: 'src/database/database.sqlite',
+      migrations: ['src/database/migrations/*.ts'],
+      entities: ['src/entities/*.ts'],
+      cli: {
+        migrationsDir: 'src/database/migrations',
+        entitiesDir: 'src/entities'
+      }
     }
   }
-]
+}
+const Production = function () {
+  this.config = function () {
+    return {
+      type: 'sqlite',
+      database: 'dist/database/database.sqlite',
+      migrations: ['dist/database/migrations/*.js'],
+      entities: ['dist/entities/*.js'],
+      cli: {
+        migrationsDir: 'dist/database/migrations',
+        entitiesDir: 'dist/entities'
+      }
+    }
+  }
+}
+const Test = function () {
+  this.config = function () {
+    return {
+      type: 'sqlite',
+      database: 'src/database/database.sqlite-test',
+      migrations: ['src/database/migrations/*.ts'],
+      entities: ['src/entities/*.ts'],
+      cli: {
+        migrationsDir: 'src/database/migrations',
+        entitiesDir: 'src/entities'
+      }
+    }
+  }
+}
 
-const config = configs.find(({ database: path }) =>
-  checkEnvironmentFromDatabase(path)
-)
+const Orm = function () {
+  return this
+}
 
-module.exports = config
+Orm.prototype = {
+  strategies: ['test', 'development', 'production'],
+  check: function (envrionment) {
+    const test = new Test()
+    const production = new Production()
+    const development = new Development()
+
+    if (envrionment === 'test') {
+      return test
+    }
+    if (envrionment === 'production') {
+      return production
+    }
+    if (envrionment === 'development') {
+      return development
+    }
+  },
+  add: function (envrionment) {
+    this.envrionment = envrionment
+  },
+
+  config: function () {
+    return this.envrionment.config()
+  }
+}
+
+const orm = new Orm()
+
+const envrionment = orm.check(process.env.NODE_ENV)
+
+orm.add(envrionment)
+
+module.exports = orm.config()
