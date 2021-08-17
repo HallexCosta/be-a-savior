@@ -1,10 +1,11 @@
 import { getCustomRepository } from 'typeorm'
 import { hash } from 'bcryptjs'
 
-import { Ong } from '@entities'
-import { OngsRepository, DonorsRepository } from '@repositories'
+import { Ong } from '@entities/Ong'
+import { OngsRepository } from '@repositories/OngsRepository'
+import { DonorsRepository } from '@repositories/DonorsRepository'
 
-import { StripeProvider } from '@providers'
+import { StripeProvider } from '@providers/StripeProvider'
 
 export type CreateOngDTO = {
   name: string

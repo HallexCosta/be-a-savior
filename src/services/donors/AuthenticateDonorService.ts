@@ -2,7 +2,7 @@ import { compare } from 'bcryptjs'
 import { getCustomRepository } from 'typeorm'
 import { sign } from 'jsonwebtoken'
 
-import { DonorsRepository } from '@repositories'
+import { DonorsRepository } from '@repositories/DonorsRepository'
 
 type AuthenticateDonorDTO = {
   email: string

@@ -1,8 +1,9 @@
 import { getCustomRepository } from 'typeorm'
 import { hash } from 'bcryptjs'
 
-import { Donor } from '@entities'
-import { DonorsRepository, OngsRepository } from '@repositories'
+import { Donor } from '@entities/Donor'
+import { DonorsRepository } from '@repositories/DonorsRepository'
+import { OngsRepository } from '@repositories/OngsRepository'
 
 type CreateDonorDTO = {
   name: string

@@ -1,14 +1,13 @@
 import { getCustomRepository } from 'typeorm'
 
-import { Donation } from '@entities'
+import { Donation } from '@entities/Donation'
 
-import {
-  IncidentsRepository,
-  DonorsRepository,
-  DonationsRepository
-} from '@repositories'
+import { IncidentsRepository } from '@repositories/IncidentsRepository'
+import { DonorsRepository } from '@repositories/DonorsRepository'
 
-import { StripeProvider } from '@providers'
+import { DonationsRepository } from '@repositories/DonationsRepository'
+
+import { StripeProvider } from '@providers/StripeProvider'
 
 type CreateDonationDTO = {
   incidentId: string

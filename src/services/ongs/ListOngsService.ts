@@ -1,7 +1,7 @@
 import { getCustomRepository } from 'typeorm'
 
-import { Ong } from '@entities'
-import { OngsRepository } from '@repositories'
+import { Ong } from '@entities/Ong'
+import { OngsRepository } from '@repositories/OngsRepository'
 
 export class ListOngsService {
   public async execute(): Promise<Ong[]> {
