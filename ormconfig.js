@@ -44,20 +44,21 @@ class Test {
 }
 
 class Orm {
-  check(envrionment) {
+  check(environment) {
     const test = new Test()
     const production = new Production()
     const development = new Development()
 
-    if (envrionment === 'test') {
+    if (environment === 'test') {
       return test
     }
 
-    if (envrionment === 'production') {
+    console.log(environment)
+    if (environment === 'production') {
       return production
     }
 
-    if (envrionment === 'development') {
+    if (environment === 'development') {
       return development
     }
   }
@@ -73,8 +74,8 @@ class Orm {
 
 const orm = new Orm()
 
-const envrionment = orm.check(process.env.NODE_ENV)
+const environment = orm.check(process.env.NODE_ENV)
 
-orm.add(envrionment)
+orm.add(environment)
 
 module.exports = orm.config()
