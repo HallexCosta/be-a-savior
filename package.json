@@ -16,7 +16,7 @@
     "compile": "yarn clean && tsc",
     "build": "yarn clean && sucrase -r tsconfig-paths/register ./src -d ./dist --transforms typescript,imports",
     "typeorm": "yarn ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "start:production": "NODE_ENV=production cd dist/ && node server.js",
+    "start:production": "NODE_ENV=production node dist/server.js",
     "start:development:watch": "NODE_ENV=development nodemon -L",
     "preinstall": "command -v link-module-alias && link-module-alias clean || true",
     "postinstall": "link-module-alias"

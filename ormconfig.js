@@ -53,7 +53,6 @@ class Orm {
       return test
     }
 
-    console.log(environment)
     if (environment === 'production') {
       return production
     }
