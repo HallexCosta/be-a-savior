@@ -1,6 +1,7 @@
 import { expect } from 'chai'
 
-import { BaseEntity, User } from '@entities'
+import { BaseEntity } from '@entities/BaseEntity'
+import { User } from '@entities/User'
 
 describe('Abstract User Entity', () => {
   it('Should be able to create a new User and be instance from Entity', () => {
