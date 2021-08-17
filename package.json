@@ -9,8 +9,8 @@
   "license": "MIT",
   "scripts": {
     "install:ci": "yarn install --fronzen-lockfile",
-    "test": "DATABASE=test mocha --config .mocharc.js",
-    "test:ci": "DATABASE=test mocha --config .mocharc-ci.js",
+    "test": "NODE_ENV=test mocha --config .mocharc.js",
+    "test:ci": "NODE_ENV=test mocha --config .mocharc-ci.js",
     "test:watch": "yarn test --watch",
     "clean": "rimraf dist",
     "compile": "yarn clean && tsc",
