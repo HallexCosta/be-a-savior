@@ -5,6 +5,7 @@
   "compilerOptions": {
     "target": "es2017",
     "lib": ["ES6", "es2017"],
+    "module": "commonjs",
     "outDir": "dist",
     "rootDirs": ["./src", "./__tests__"],
     "removeComments": true,
