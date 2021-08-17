@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm'
 
-import { Ong } from '@entities'
+import { Ong } from '@entities/Ong'
 
 @EntityRepository(Ong)
 export class OngsRepository extends Repository<Ong> {

@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from 'typeorm'
 
-import { Donation } from '@entities'
+import { Donation } from '@entities/Donation'
 
 @EntityRepository(Donation)
 export class DonationsRepository extends Repository<Donation> {
