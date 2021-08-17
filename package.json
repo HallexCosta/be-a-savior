@@ -10,7 +10,7 @@
   "scripts": {
     "install:ci": "yarn install --fronzen-lockfile",
     "test": "NODE_ENV=test mocha --config .mocharc.js",
-    "test:ci": "NODE_ENV=test mocha --config .mocharc-ci.js",
+    "test:ci": "NODE_ENV=test mocha --config .mocharc-ci.js --exit",
     "test:watch": "NODE_ENV=test yarn test --watch",
     "clean": "rimraf dist",
     "compile": "yarn clean && tsc",
