@@ -3,4 +3,4 @@ dist/
 .env
 
 src/database/database.sqlite
-src/database/database-test.sqlite
+src/database/database.sqlite-test
