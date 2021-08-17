@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 
-import { CreateOngService } from '@services'
+import { CreateOngService } from '@services/ongs/CreateOngService'
 
 export class CreateOngController {
   public async handle(request: Request, response: Response): Promise<Response> {

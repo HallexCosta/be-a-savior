@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 
-import { CreateDonationService } from '@services'
+import { CreateDonationService } from '@services/donations/CreateDonationService'
 
 export class CreateDonationController {
   public async handle(request: Request, response: Response): Promise<Response> {
