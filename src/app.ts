@@ -4,20 +4,16 @@ import 'express-async-errors'
 
 import './database'
 
-import {
-  handleErrors,
-  ensureAuthenticateOng,
-  ensureOng,
-  ensureAuthenticateDonor,
-  ensureDonor
-} from '@middlewares'
+import { handleErrors } from '@middlewares/handleErrors'
+import { ensureAuthenticateOng } from '@middlewares/ensureAuthenticateOng'
+import { ensureOng } from '@middlewares/ensureOng'
+import { ensureAuthenticateDonor } from '@middlewares/ensureAuthenticateDonor'
+import { ensureDonor } from '@middlewares/ensureDonor'
 
-import {
-  donorsRoutes,
-  ongsRoutes,
-  incidentsRoutes,
-  donationsRoutes
-} from '@routes'
+import { donorsRoutes } from '@routes/donors.routes'
+import { ongsRoutes } from '@routes/ongs.routes'
+import { incidentsRoutes } from '@routes/incidents.routes'
+import { donationsRoutes } from '@routes/donations.routes'
 
 const app = express()
 
