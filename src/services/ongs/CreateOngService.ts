@@ -60,21 +60,6 @@ export class CreateOngService {
 
     await ongsRepository.save(ong)
 
-    await this.provider.customers.create(
-      {
-        name: ong.name,
-        email: ong.email,
-        phone: ong.phone,
-        description: `This customer refers to an ong "${ong.name}" of the Be a Savior app`,
-        metadata: {
-          ong_id: ong.id
-        }
-      },
-      {
-        stripeAccount: STRIPE_ACCOUNT_ID
-      }
-    )
-
     return ong
   }
 
