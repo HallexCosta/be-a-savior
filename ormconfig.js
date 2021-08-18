@@ -49,17 +49,13 @@ class Orm {
     const production = new Production()
     const development = new Development()
 
-    if (environment === 'test') {
-      return test
+    const strategies = {
+      test,
+      production,
+      development
     }
 
-    if (environment === 'production') {
-      return production
-    }
-
-    if (environment === 'development') {
-      return development
-    }
+    return strategies[environment]
   }
 
   add(envrionment) {
