@@ -1,3 +1,4 @@
+import Stripe from 'stripe'
 import { getCustomRepository } from 'typeorm'
 
 import { Donation } from '@entities/Donation'
@@ -7,7 +8,7 @@ import { DonorsRepository } from '@repositories/DonorsRepository'
 
 import { DonationsRepository } from '@repositories/DonationsRepository'
 
-import { StripeProvider } from '@providers/StripeProvider'
+import { stripe as stripeConfig } from '@common/configs/stripe'
 
 type CreateDonationDTO = {
   incidentId: string
@@ -16,12 +17,6 @@ type CreateDonationDTO = {
 }
 
 export class CreateDonationService {
-  private readonly provider: StripeProvider
-
-  public constructor() {
-    this.provider = new StripeProvider()
-  }
-
   public async execute({
     incidentId,
     donorId,
@@ -56,7 +51,11 @@ export class CreateDonationService {
       donor_id: donorId
     })
 
-    await this.provider.paymentIntents.create({
+    const stripe = new Stripe(stripeConfig.SECRET_API_KEY, {
+      apiVersion: '2020-08-27'
+    })
+
+    await stripe.paymentIntents.create({
       amount,
       currency: 'brl',
       receipt_email: donor.email,
