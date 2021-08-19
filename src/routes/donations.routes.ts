@@ -6,6 +6,6 @@ const createDonationController = new CreateDonationController()
 
 const routes = Router()
 
-routes.post('/', createDonationController.handle)
+routes.post('/', createDonationController.handle.bind(createDonationController))
 
 export { routes as donationsRoutes }
