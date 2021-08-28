@@ -5,6 +5,7 @@ import { stripe as stripeConfig } from '@common/configs/stripe'
 export class StripeProvider {
   public readonly customers: Stripe.CustomersResource
   public readonly paymentIntents: Stripe.PaymentIntentsResource
+  public readonly paymentMethods: Stripe.PaymentMethodsResource
 
   public constructor() {
     const apiVersion = stripeConfig.API_VERSION as '2020-08-27'
