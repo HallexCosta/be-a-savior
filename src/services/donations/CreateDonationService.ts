@@ -1,14 +1,13 @@
 import { getCustomRepository } from 'typeorm'
 
-import { Donation } from '@entities'
+import { Donation } from '@entities/Donation'
 
-import {
-  IncidentsRepository,
-  DonorsRepository,
-  DonationsRepository
-} from '@repositories'
+import { IncidentsRepository } from '@repositories/IncidentsRepository'
+import { DonorsRepository } from '@repositories/DonorsRepository'
 
-import { StripeProvider } from '@providers'
+import { DonationsRepository } from '@repositories/DonationsRepository'
+
+import { StripeProvider } from '@providers/StripeProvider'
 
 type CreateDonationDTO = {
   incidentId: string
@@ -16,11 +15,19 @@ type CreateDonationDTO = {
   amount: number
 }
 
-export class CreateDonationService {
-  private readonly provider: StripeProvider
+type Providers = {
+  stripe: StripeProvider
+}
 
-  public constructor() {
-    this.provider = new StripeProvider()
+export type CreateDonationDependencies = {
+  providers: Providers
+}
+
+export class CreateDonationService {
+  private providers: Providers
+
+  public constructor(deps: CreateDonationDependencies) {
+    Object.assign(this, deps)
   }
 
   public async execute({
@@ -57,13 +64,14 @@ export class CreateDonationService {
       donor_id: donorId
     })
 
-    await this.provider.paymentIntents.create({
+    await this.providers.stripe.paymentIntents.create({
       amount,
       currency: 'brl',
       receipt_email: donor.email,
       metadata: {
         donation_id: donation.id
-      }
+      },
+      confirm: true
     })
 
     await donationsRepository.save(donation)

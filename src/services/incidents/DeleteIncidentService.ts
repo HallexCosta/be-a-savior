@@ -1,7 +1,7 @@
 import { DeleteResult, getCustomRepository } from 'typeorm'
 
-import { Incident } from '@entities'
-import { IncidentsRepository } from '@repositories'
+import { Incident } from '@entities/Incident'
+import { IncidentsRepository } from '@repositories/IncidentsRepository'
 
 type DeleteIncidentDTO = {
   id: string

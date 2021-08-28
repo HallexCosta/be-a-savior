@@ -1,10 +1,13 @@
 import { getCustomRepository } from 'typeorm'
 import { hash } from 'bcryptjs'
 
-import { Ong } from '@entities'
-import { OngsRepository, DonorsRepository } from '@repositories'
+import { Ong } from '@entities/Ong'
+import { OngsRepository } from '@repositories/OngsRepository'
+import { DonorsRepository } from '@repositories/DonorsRepository'
 
-import { StripeProvider } from '@providers'
+import { StripeProvider } from '@providers/StripeProvider'
+
+import { STRIPE_ACCOUNT_ID } from '@common/configs/stripe'
 
 export type CreateOngDTO = {
   name: string
@@ -56,16 +59,6 @@ export class CreateOngService {
     })
 
     await ongsRepository.save(ong)
-
-    await this.provider.customers.create({
-      name: ong.name,
-      email: ong.email,
-      phone: ong.phone,
-      description: `This customer refers to an ong "${ong.name}" of the Be a Savior app`,
-      metadata: {
-        ong_id: ong.id
-      }
-    })
 
     return ong
   }

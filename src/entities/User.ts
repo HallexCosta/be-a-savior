@@ -1,6 +1,6 @@
 import { Column } from 'typeorm'
 
-import { BaseEntity } from '@entities'
+import { BaseEntity } from '@entities/BaseEntity'
 
 export abstract class User extends BaseEntity {
   @Column()

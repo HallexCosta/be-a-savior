@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 
-import { ListOngService } from '@services'
+import { ListOngService } from '@services/ongs/ListOngService'
 
 export class ListOngController {
   public async handle(request: Request, response: Response): Promise<Response> {

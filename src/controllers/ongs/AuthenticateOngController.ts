@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
-import { AuthenticateOngService } from '@services'
+
+import { AuthenticateOngService } from '@services/ongs/AuthenticateOngService'
 
 export class AuthenticateOngController {
   public async handle(request: Request, response: Response): Promise<Response> {

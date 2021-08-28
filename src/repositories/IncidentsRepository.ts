@@ -1,6 +1,6 @@
 import { DeleteResult, EntityRepository, Repository } from 'typeorm'
 
-import { Incident } from '@entities'
+import { Incident } from '@entities/Incident'
 
 @EntityRepository(Incident)
 export class IncidentsRepository extends Repository<Incident> {

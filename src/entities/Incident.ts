@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 
-import { BaseEntity, Ong } from '@entities'
+import { BaseEntity } from '@entities/BaseEntity'
+import { Ong } from '@entities/Ong'
 
 @Entity('incidents')
 export class Incident extends BaseEntity {

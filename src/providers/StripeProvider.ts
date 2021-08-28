@@ -1,15 +1,15 @@
 import { Stripe } from 'stripe'
 
-import { configs } from '@common'
+import { stripe as stripeConfig } from '@common/configs/stripe'
 
 export class StripeProvider {
   public readonly customers: Stripe.CustomersResource
   public readonly paymentIntents: Stripe.PaymentIntentsResource
 
   public constructor() {
-    const apiVersion = configs.stripe.API_VERSION as '2020-08-27'
+    const apiVersion = stripeConfig.API_VERSION as '2020-08-27'
 
-    const stripe = new Stripe(configs.stripe.SECRET_API_KEY, {
+    const stripe = new Stripe(stripeConfig.SECRET_API_KEY, {
       apiVersion
     })
 

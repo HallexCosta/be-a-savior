@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { getCustomRepository } from 'typeorm'
 
-import { OngsRepository } from '@repositories'
+import { OngsRepository } from '@repositories/OngsRepository'
 
 export async function ensureOng(
   request: Request,

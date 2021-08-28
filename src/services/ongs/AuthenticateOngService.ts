@@ -2,7 +2,7 @@ import { compare } from 'bcryptjs'
 import { getCustomRepository } from 'typeorm'
 import { sign } from 'jsonwebtoken'
 
-import { OngsRepository } from '@repositories'
+import { OngsRepository } from '@repositories/OngsRepository'
 
 type AuthenticateOngDTO = {
   email: string

@@ -1,11 +1,9 @@
 import { Router } from 'express'
 
-import {
-  CreateOngController,
-  ListOngsController,
-  ListOngController,
-  AuthenticateOngController
-} from '@controllers'
+import { CreateOngController } from '@controllers/ongs/CreateOngController'
+import { ListOngsController } from '@controllers/ongs/ListOngsController'
+import { ListOngController } from '@controllers/ongs/ListOngController'
+import { AuthenticateOngController } from '@controllers/ongs/AuthenticateOngController'
 
 const authenticateOngController = new AuthenticateOngController()
 const createOngController = new CreateOngController()
@@ -19,4 +17,4 @@ routes.post('/', createOngController.handle)
 routes.get('/', listOngsController.handle)
 routes.get('/:id', listOngController.handle)
 
-export { routes }
+export { routes as ongsRoutes }

@@ -1,12 +1,10 @@
 import { Router } from 'express'
 
-import {
-  CreateIncidentController,
-  ListIncidentsController,
-  ListIncidentController,
-  UpdateIncidentController,
-  DeleteIncidentController
-} from '@controllers'
+import { CreateIncidentController } from '@controllers/incidents/CreateIncidentController'
+import { ListIncidentsController } from '@controllers/incidents/ListIncidentsController'
+import { ListIncidentController } from '@controllers/incidents/ListIncidentController'
+import { UpdateIncidentController } from '@controllers/incidents/UpdateIncidentController'
+import { DeleteIncidentController } from '@controllers/incidents/DeleteIncidentController'
 
 const createIncidentController = new CreateIncidentController()
 const listIncidentsController = new ListIncidentsController()
@@ -22,4 +20,4 @@ routes.get('/:id', listIncidentController.handle)
 routes.patch('/:id', updateIncidentController.handle)
 routes.delete('/:id', deleteIncidentController.handle)
 
-export { routes }
+export { routes as incidentsRoutes }

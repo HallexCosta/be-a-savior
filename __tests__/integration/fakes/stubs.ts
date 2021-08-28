@@ -1,9 +1,12 @@
 import { v4 as uuid } from 'uuid'
-import { Connection, createConnection } from 'typeorm'
+import { Connection, ConnectionOptions, createConnection } from 'typeorm'
 import request, { SuperTest, Test } from 'supertest'
 import { Application } from 'express'
 
-import { Incident, Ong } from '@entities'
+import { Incident } from '@entities/Incident'
+import { Ong } from '@entities/Ong'
+
+import ormconfig from '../../../ormconfig'
 
 type CreateFakeIncidentParams = {
   ong_id: string
@@ -31,18 +34,11 @@ export function createAgent(app: Application): SuperTest<Test> {
 
 export async function createTestingConnection(): Promise<Connection> {
   return await createConnection({
+    ...ormconfig,
     name: uuid(),
-    type: 'sqlite',
-    database: 'src/database/database-test.sqlite',
-    migrations: ['src/database/migrations/*.ts'],
-    entities: ['src/entities/*.ts'],
     migrationsRun: true,
-    dropSchema: true,
-    cli: {
-      migrationsDir: 'src/database/migrations',
-      entitiesDir: 'src/entities'
-    }
-  })
+    dropSchema: true
+  } as ConnectionOptions)
 }
 
 export async function createFakeOng(agent: SuperTest<Test>): Promise<Ong> {

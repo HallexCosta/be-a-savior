@@ -1,7 +1,8 @@
 import { getCustomRepository } from 'typeorm'
 
-import { Incident } from '@entities'
-import { IncidentsRepository, OngsRepository } from '@repositories'
+import { Incident } from '@entities/Incident'
+import { IncidentsRepository } from '@repositories/IncidentsRepository'
+import { OngsRepository } from '@repositories/OngsRepository'
 
 type CreateIncidentDTO = {
   name: string

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { getCustomRepository } from 'typeorm'
 
-import { DonorsRepository } from '@repositories'
+import { DonorsRepository } from '@repositories/DonorsRepository'
 
 export async function ensureDonor(
   request: Request,

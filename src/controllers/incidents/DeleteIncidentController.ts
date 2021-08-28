@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 
-import { DeleteIncidentService } from '@services'
+import { DeleteIncidentService } from '@services/incidents/DeleteIncidentService'
 
 export class DeleteIncidentController {
   public async handle(request: Request, response: Response): Promise<Response> {

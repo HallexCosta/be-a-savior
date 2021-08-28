@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 
-import { UpdateIncidentService } from '@services'
+import { UpdateIncidentService } from '@services/incidents/UpdateIncidentService'
 
 export class UpdateIncidentController {
   public async handle(request: Request, response: Response): Promise<Response> {

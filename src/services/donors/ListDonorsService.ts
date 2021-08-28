@@ -1,7 +1,7 @@
 import { getCustomRepository } from 'typeorm'
 
-import { Donor } from '@entities'
-import { DonorsRepository } from '@repositories'
+import { Donor } from '@entities/Donor'
+import { DonorsRepository } from '@repositories/DonorsRepository'
 
 export class ListDonorsService {
   public async execute(): Promise<Donor[]> {

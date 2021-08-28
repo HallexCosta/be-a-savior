@@ -1,5 +1,0 @@
-export * from './CreateIncidentService'
-export * from './ListIncidentsService'
-export * from './ListIncidentService'
-export * from './UpdateIncidentService'
-export * from './DeleteIncidentService'
