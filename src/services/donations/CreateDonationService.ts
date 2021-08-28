@@ -1,4 +1,3 @@
-import Stripe from 'stripe'
 import { getCustomRepository } from 'typeorm'
 
 import { Donation } from '@entities/Donation'
@@ -28,7 +27,7 @@ export class CreateDonationService {
   private providers: Providers
 
   public constructor(deps: CreateDonationDependencies) {
-    this.providers = deps.providers
+    Object.assign(this, deps)
   }
 
   public async execute({
@@ -65,15 +64,14 @@ export class CreateDonationService {
       donor_id: donorId
     })
 
-    const stripe = new StripeProvider()
-
-    await stripe.paymentIntents.create({
+    await this.providers.stripe.paymentIntents.create({
       amount,
       currency: 'brl',
       receipt_email: donor.email,
       metadata: {
         donation_id: donation.id
-      }
+      },
+      confirm: true
     })
 
     await donationsRepository.save(donation)
