@@ -64,9 +64,29 @@ export class CreateDonationService {
       donor_id: donorId
     })
 
+    const { ong } = await incidentsRepository.findById(incidentId)
+
+    const {
+      data: [customer]
+    } = await this.providers.stripe.customers.list({
+      email: ong.email
+    })
+
+    const paymentMethod = await this.providers.stripe.paymentMethods.create({
+      type: 'card',
+      card: { token: 'tok_mastercard' }
+    })
+
+    await this.providers.stripe.paymentMethods.attach(paymentMethod.id, {
+      customer: customer.id
+    })
+
     await this.providers.stripe.paymentIntents.create({
       amount,
       currency: 'brl',
+      payment_method_types: ['card'],
+      payment_method: paymentMethod.id,
+      customer: customer.id,
       receipt_email: donor.email,
       metadata: {
         donation_id: donation.id
