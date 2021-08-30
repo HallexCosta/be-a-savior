@@ -1,5 +1,6 @@
 import faker from 'faker'
 import assert from 'assert'
+import { expect } from 'chai'
 
 import { StripeProvider } from '../../../src/providers/StripeProvider'
 
@@ -7,7 +8,7 @@ faker.locale = 'pt_BR'
 
 const stripe = new StripeProvider()
 
-describe.only('Stripe Payments', () => {
+describe('Stripe Provider', () => {
   function log(msg, object) {
     console.log('\n')
     console.log(msg)
@@ -30,9 +31,9 @@ describe.only('Stripe Payments', () => {
 
     const customer = await stripe.customers.create(customerData)
 
-    assert(customer)
-    assert(customer.id)
-    assert(customer.balance === 0)
+    expect(customer).to.be.not.undefined()
+    expect(customer).to.have.property('id')
+    expect(customer.balance).to.be.equal(0)
 
     log('Customer created', customer)
   })
