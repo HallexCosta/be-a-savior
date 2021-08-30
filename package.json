@@ -30,8 +30,7 @@
     "@services": "./dist/services",
     "@providers": "./dist/providers",
     "@routes": "./dist/routes",
-    "@common": "./dist/common",
-    "@common/config": "./dist/common/configs",
+    "@common/configs": "./dist/common/configs",
     "@app": "./dist/app.js"
   },
   "dependencies": {
