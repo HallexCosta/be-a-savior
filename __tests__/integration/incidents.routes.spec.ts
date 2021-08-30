@@ -1,5 +1,6 @@
 import dirty from 'dirty-chai'
 import { expect, use } from 'chai'
+import { SuperTest, Test } from 'supertest'
 
 import { app } from '@app'
 
@@ -11,8 +12,6 @@ import {
   createTestingConnection,
   loginWithFakeOng
 } from './fakes/stubs'
-
-import { SuperTest, Test } from 'supertest'
 
 use(dirty)
 
@@ -27,6 +26,16 @@ describe('Incidents Routes', () => {
     agent = createAgent(app)
     ong = await createFakeOng(agent)
     token = await loginWithFakeOng(agent)
+  })
+
+  it('Should be able to throw an error if ong_id is fake POST (/incidents)', async () => {
+    const body = {
+      name: 'Some a name',
+      coast: 100.5,
+      description: 'This is a description'
+    }
+
+    await agent.post('/incidents').send(body).expect(401)
   })
 
   it('Should be able to create new Incident POST (/incidents)', async () => {
@@ -50,24 +59,6 @@ describe('Incidents Routes', () => {
     expect(expected).to.have.property('id')
     expect(expected).to.have.property('created_at')
     expect(expected).to.have.property('updated_at')
-  })
-
-  it('Should be able to throw an error if ong_id is fake POST (/incidents)', async () => {
-    const body = {
-      name: 'Some a name',
-      coast: 100.5,
-      description: 'This is a description',
-      ong_id: 'this is fake ong id'
-    }
-
-    const response = await agent
-      .post('/incidents')
-      .send(body)
-      .set('Authorization', `bearer ${token}`)
-
-    const expected = response.body
-
-    expect(expected).to.have.property('error')
   })
 
   it('Should be able list incidents GET (/incidents)', async () => {
