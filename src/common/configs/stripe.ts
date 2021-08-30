@@ -1,6 +1,6 @@
-export const stripe = {
+export default {
   PUBLISH_API_KEY: process.env.STRIPE_PUBLISH_API_KEY,
   SECRET_API_KEY: process.env.STRIPE_SECRET_API_KEY,
-  API_VERSION: process.env.STRIPE_API_VERSION,
+  API_VERSION: process.env.STRIPE_API_VERSION as '2020-08-27',
   ACCOUNT_ID: process.env.STRIPE_ACCOUNT_ID
 }
