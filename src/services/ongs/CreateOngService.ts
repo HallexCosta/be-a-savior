@@ -7,8 +7,6 @@ import { DonorsRepository } from '@repositories/DonorsRepository'
 
 import { StripeProvider } from '@providers/StripeProvider'
 
-import { STRIPE_ACCOUNT_ID } from '@common/configs/stripe'
-
 export type CreateOngDTO = {
   name: string
   email: string
@@ -57,6 +55,23 @@ export class CreateOngService {
       password: passwordHash,
       phone
     })
+
+    const customer = {
+      name,
+      email,
+      address: {
+        line1: 'Madalena Lourenço Bruno',
+        line2: '501',
+        city: 'Araçatuba',
+        state: 'SP',
+        postal_code: '16021-305'
+      },
+      metadata: {
+        ong_id: ong.id
+      }
+    }
+
+    await this.provider.customers.create(customer)
 
     await ongsRepository.save(ong)
 
