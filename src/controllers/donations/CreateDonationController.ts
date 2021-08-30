@@ -9,7 +9,9 @@ import {
 
 export class CreateDonationController {
   public async handle(request: Request, response: Response): Promise<Response> {
-    const { incident_id: incidentId, donor_id: donorId, amount } = request.body
+    const { donor_id: donorId } = request
+
+    const { incident_id: incidentId, amount } = request.body
 
     const service = new CreateDonationService(this.dependencies())
 
