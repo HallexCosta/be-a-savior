@@ -12,7 +12,7 @@ import { DonationsRepository } from '@repositories/DonationsRepository'
 import { StripeProvider } from '@providers/StripeProvider'
 import { OngsRepository } from '@repositories/OngsRepository'
 
-import { configs } from '@common/config'
+import { configs } from '@common/configs'
 
 type CreateDonationDTO = {
   incidentId: string

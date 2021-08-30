@@ -1,6 +1,6 @@
 import Stripe from 'stripe'
 
-import { configs } from '@common/config'
+import { configs } from '@common/configs'
 
 export class StripeProvider extends Stripe {
   public constructor() {
