@@ -1,0 +1,40 @@
+{
+  "ts-node": {
+    "transpileOnly": true
+  },
+  "compilerOptions": {
+    "target": "es2017",
+    "lib": ["ES6", "es2017"],
+    "module": "commonjs",
+    "outDir": "dist",
+    "rootDirs": ["./src", "./__tests__"],
+    "removeComments": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "moduleResolution": "Node",
+    "strictPropertyInitialization": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "@middlewares/*": ["./src/middlewares/*.ts"],
+      "@entities/*": ["./src/entities/*.ts"],
+      "@repositories/*": ["./src/repositories/*.ts"],
+      "@controllers/*": ["./src/controllers/*.ts"],
+      "@services/*": ["./src/services/*.ts"],
+      "@providers/*": ["./src/providers/*.ts"],
+      "@routes/*": ["./src/routes/*.ts"],
+      "@common/*": ["./src/common/*.ts"],
+      "@common/config": ["./src/common/configs/index.ts"],
+      "@app": ["./src/app.ts"]
+    },
+    "typeRoots": ["node_modules/@types", "./src/@types"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules/**/*"]
+}
