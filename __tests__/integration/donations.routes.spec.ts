@@ -1,11 +1,8 @@
 import dirty from 'dirty-chai'
-import { SuperTest, Test } from 'supertest'
 import { expect, use } from 'chai'
-import { Stripe } from 'stripe'
-import * as sinon from 'sinon'
+import { SuperTest, Test } from 'supertest'
 
 import { app } from '@app'
-import { stripe as stripeConfigs } from '@common/configs/stripe'
 
 import { Donor } from '@entities/Donor'
 import { Incident } from '@entities/Incident'
@@ -43,16 +40,8 @@ describe('Donation Routes', () => {
   })
 
   it('Should be create new Donation POST (/donations)', async () => {
-    const stripe = new Stripe(stripeConfigs.SECRET_API_KEY, {
-      apiVersion: '2020-08-27'
-    })
-
-    const stripeStub = sinon.stub(stripe.paymentIntents, 'create')
-
-    stripeStub.callsFake({} as any)
-
     const body = {
-      amount: 1020,
+      amount: 1788,
       incident_id: incident.id,
       donor_id: donor.id
     }
