@@ -8,6 +8,7 @@ type UpdateIncidentDTO = {
   name: string
   coast: number
   description: string
+  ongId: string
 }
 
 export class UpdateIncidentService {
@@ -15,13 +16,16 @@ export class UpdateIncidentService {
     id,
     name,
     coast,
-    description
+    description,
+    ongId
   }: UpdateIncidentDTO): Promise<Incident> {
     const incidentsRepository = getCustomRepository(IncidentsRepository)
 
     const incidentAlreadyExists = await incidentsRepository.findById(id)
 
     this.checkIncidentExists(incidentAlreadyExists)
+
+    this.checkIncidentBelongsThisOng(ongId, incidentAlreadyExists.ong_id)
 
     const incident = incidentsRepository.create({
       ...incidentAlreadyExists,
@@ -40,7 +44,16 @@ export class UpdateIncidentService {
     return incident
   }
 
-  public checkIncidentExists(incident: Incident): void {
+  private checkIncidentBelongsThisOng(
+    ongId: string,
+    ongIdFromIncident: string
+  ) {
+    if (ongId !== ongIdFromIncident) {
+      throw new Error('This incident not belong this ong')
+    }
+  }
+
+  private checkIncidentExists(incident: Incident): void {
     if (!incident) {
       throw new Error('Incident not exists')
     }

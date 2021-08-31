@@ -8,7 +8,7 @@ type CreateIncidentDTO = {
   name: string
   coast: number
   description: string
-  ong_id: string
+  ongId: string
 }
 
 export class CreateIncidentService {
@@ -16,46 +16,34 @@ export class CreateIncidentService {
     name,
     coast,
     description,
-    ong_id
+    ongId
   }: CreateIncidentDTO): Promise<Incident> {
-    const repository = getCustomRepository(IncidentsRepository)
+    const incidentsRepository = getCustomRepository(IncidentsRepository)
 
     this.checkForFieldIsFilled({
       name,
       coast,
       description,
-      ong_id
+      ongId
     })
 
-    await this.checkOngExists(ong_id)
-
-    const incident = repository.create({
+    const incident = incidentsRepository.create({
       name,
       coast,
       description,
-      ong_id
+      ong_id: ongId
     })
 
-    await repository.save(incident)
+    await incidentsRepository.save(incident)
 
     return incident
-  }
-
-  private async checkOngExists(ong_id: string): Promise<void> {
-    const repository = getCustomRepository(OngsRepository)
-
-    const ong = await repository.findById(ong_id)
-
-    if (!ong) {
-      throw new Error('Ong not exists')
-    }
   }
 
   private checkForFieldIsFilled({
     name,
     coast,
     description,
-    ong_id
+    ongId
   }: CreateIncidentDTO) {
     if (!name) {
       throw new Error("Name can't empty")
@@ -69,7 +57,7 @@ export class CreateIncidentService {
       throw new Error("Description can't empty")
     }
 
-    if (!ong_id) {
+    if (!ongId) {
       throw new Error("Ong Id can't empty")
     }
   }

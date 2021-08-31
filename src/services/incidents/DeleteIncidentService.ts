@@ -5,21 +5,33 @@ import { IncidentsRepository } from '@repositories/IncidentsRepository'
 
 type DeleteIncidentDTO = {
   id: string
+  ongId: string
 }
 
 export class DeleteIncidentService {
-  public async execute({ id }: DeleteIncidentDTO): Promise<Incident> {
+  public async execute({ id, ongId }: DeleteIncidentDTO): Promise<Incident> {
     const repository = getCustomRepository(IncidentsRepository)
 
     const incident = await repository.findById(id)
 
     this.checkIncidentExists(incident)
 
+    this.checkIncidentBelongsThisOng(ongId, incident.ong_id)
+
     const result = await repository.deleteById(id)
 
     this.checkIncidentDeleteWithSuccess(result)
 
     return incident
+  }
+
+  private checkIncidentBelongsThisOng(
+    ongId: string,
+    ongIdFromIncident: string
+  ) {
+    if (ongId !== ongIdFromIncident) {
+      throw new Error('This incident not belong this ong')
+    }
   }
 
   private checkIncidentExists(incident: Incident): void {
