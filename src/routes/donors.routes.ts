@@ -20,4 +20,4 @@ routes.post('/', createDonorController.handle.bind(createDonorController))
 routes.get('/', listDonorsController.handle.bind(listDonorsController))
 routes.get('/:id', listDonorController.handle.bind(listDonorController))
 
-export { routes as donorsRoutes }
+export { routes as donors }

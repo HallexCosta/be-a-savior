@@ -20,4 +20,4 @@ routes.post('/', createOngController.handle.bind(createOngController))
 routes.get('/', listOngsController.handle.bind(listOngsController))
 routes.get('/:id', listOngController.handle.bind(listOngController))
 
-export { routes as ongsRoutes }
+export { routes as ongs }

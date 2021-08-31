@@ -26,4 +26,4 @@ routes.delete(
   deleteIncidentController.handle.bind(deleteIncidentController)
 )
 
-export { routes as incidentsRoutes }
+export { routes as incidents }

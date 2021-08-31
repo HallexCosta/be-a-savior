@@ -8,4 +8,4 @@ const routes = Router()
 
 routes.post('/', createDonationController.handle.bind(createDonationController))
 
-export { routes as donationsRoutes }
+export { routes as donations }
