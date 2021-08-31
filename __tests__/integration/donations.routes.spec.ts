@@ -1,11 +1,8 @@
 import dirty from 'dirty-chai'
-import { SuperTest, Test } from 'supertest'
 import { expect, use } from 'chai'
-import { Stripe } from 'stripe'
-import * as sinon from 'sinon'
+import { SuperTest, Test } from 'supertest'
 
 import { app } from '@app'
-import { stripe as stripeConfigs } from '@common/configs/stripe'
 
 import { Donor } from '@entities/Donor'
 import { Incident } from '@entities/Incident'
@@ -23,48 +20,42 @@ import {
 
 use(dirty)
 
-describe('Donation Routes', () => {
-  let agent: SuperTest<Test>
-  let ong: Ong
-  let donor: Donor
-  let incident: Incident
-  let token: string
+export const donations = () => {
+  describe('Donation Routes', () => {
+    let agent: SuperTest<Test>
+    let ong: Ong
+    let donor: Donor
+    let incident: Incident
+    let token: string
 
-  before(async () => {
-    await createTestingConnection()
-    agent = createAgent(app)
-    ong = await createFakeOng(agent)
-    donor = await createFakeDonor(agent)
-    incident = await createFakeIncident(agent, {
-      ong_id: ong.id,
-      token: await loginWithFakeOng(agent)
-    })
-    token = await loginWithFakeDonor(agent)
-  })
-
-  it('Should be create new Donation POST (/donations)', async () => {
-    const stripe = new Stripe(stripeConfigs.SECRET_API_KEY, {
-      apiVersion: '2020-08-27'
+    before(async () => {
+      await createTestingConnection()
+      agent = createAgent(app)
+      ong = await createFakeOng(agent)
+      donor = await createFakeDonor(agent)
+      incident = await createFakeIncident(agent, {
+        ong_id: ong.id,
+        token: await loginWithFakeOng(agent)
+      })
+      token = await loginWithFakeDonor(agent)
     })
 
-    const stripeStub = sinon.stub(stripe.paymentIntents, 'create')
+    it('Should be create new Donation POST (/donations)', async () => {
+      const body = {
+        amount: 1788,
+        incident_id: incident.id,
+        donor_id: donor.id
+      }
 
-    stripeStub.callsFake({} as any)
+      const response = await agent
+        .post('/donations')
+        .send(body)
+        .set('Authorization', `bearer ${token}`)
 
-    const body = {
-      amount: 1020,
-      incident_id: incident.id,
-      donor_id: donor.id
-    }
+      const expected = response.body
 
-    const response = await agent
-      .post('/donations')
-      .send(body)
-      .set('Authorization', `bearer ${token}`)
-
-    const expected = response.body
-
-    expect(expected).to.not.be.undefined()
-    expect(expected).to.have.property('id')
+      expect(expected).to.not.be.undefined()
+      expect(expected).to.have.property('id')
+    })
   })
-})
+}

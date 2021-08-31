@@ -32,11 +32,8 @@
       "@common/configs": ["./src/common/configs/index.ts"],
       "@app": ["./src/app.ts"]
     },
-    "typeRoots": [
-      "node_modules/@types",
-      "./src/@types"
-    ]
+    "typeRoots": ["node_modules/@types", "./src/@types"]
   },
-  "include": ["src/**/*", "__tests__/**/*"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules/**/*"]
 }

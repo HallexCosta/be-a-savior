@@ -1,19 +1,12 @@
-import { Stripe } from 'stripe'
+import Stripe from 'stripe'
 
-import { stripe as stripeConfig } from '@common/configs/stripe'
+import { configs } from '@common/configs'
 
-export class StripeProvider {
-  public readonly customers: Stripe.CustomersResource
-  public readonly paymentIntents: Stripe.PaymentIntentsResource
-
+export class StripeProvider extends Stripe {
   public constructor() {
-    const apiVersion = stripeConfig.API_VERSION as '2020-08-27'
-
-    const stripe = new Stripe(stripeConfig.SECRET_API_KEY, {
-      apiVersion
+    super(configs.stripe.SECRET_API_KEY, {
+      apiVersion: configs.stripe.API_VERSION
     })
-
-    Object.assign(this, stripe)
   }
 
   public async findPaymentByIncidentId(

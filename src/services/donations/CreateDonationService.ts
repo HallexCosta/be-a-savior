@@ -1,3 +1,5 @@
+import Stripe from 'stripe'
+
 import { getCustomRepository } from 'typeorm'
 
 import { Donation } from '@entities/Donation'
@@ -8,6 +10,9 @@ import { DonorsRepository } from '@repositories/DonorsRepository'
 import { DonationsRepository } from '@repositories/DonationsRepository'
 
 import { StripeProvider } from '@providers/StripeProvider'
+import { OngsRepository } from '@repositories/OngsRepository'
+
+import { configs } from '@common/configs'
 
 type CreateDonationDTO = {
   incidentId: string
@@ -64,15 +69,42 @@ export class CreateDonationService {
       donor_id: donorId
     })
 
-    await this.providers.stripe.paymentIntents.create({
+    const ongsRepository = getCustomRepository(OngsRepository)
+
+    const { email } = await ongsRepository.findById(incident.ong_id)
+
+    const {
+      data: [customer]
+    } = await this.providers.stripe.customers.list({
+      email
+    })
+
+    const paymentMethod = await this.providers.stripe.paymentMethods.create({
+      type: 'card',
+      card: { token: 'tok_mastercard' }
+    })
+
+    await this.providers.stripe.paymentMethods.attach(paymentMethod.id, {
+      customer: customer.id
+    })
+
+    const paymentIntent: Stripe.PaymentIntentCreateParams = {
       amount,
       currency: 'brl',
+      payment_method_types: ['card'],
+      payment_method: paymentMethod.id,
+      customer: customer.id,
       receipt_email: donor.email,
       metadata: {
         donation_id: donation.id
-      },
-      confirm: true
-    })
+      }
+    }
+
+    if (configs.modes.test) {
+      paymentIntent.confirm = true
+    }
+
+    await this.providers.stripe.paymentIntents.create(paymentIntent)
 
     await donationsRepository.save(donation)
 

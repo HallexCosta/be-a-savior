@@ -4,7 +4,9 @@ import { CreateIncidentService } from '@services/incidents/CreateIncidentService
 
 export class CreateIncidentController {
   public async handle(request: Request, response: Response): Promise<Response> {
-    const { name, coast, description, ong_id } = request.body
+    const { ong_id } = request
+
+    const { name, coast, description } = request.body
 
     const service = new CreateIncidentService()
 
