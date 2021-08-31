@@ -29,6 +29,7 @@
       "@services/*": ["./src/services/*.ts"],
       "@providers/*": ["./src/providers/*.ts"],
       "@routes/*": ["./src/routes/*.ts"],
+      "@routes": ["./src/routes/index.ts"],
       "@common/configs": ["./src/common/configs/index.ts"],
       "@app": ["./src/app.ts"]
     },
