@@ -12,9 +12,12 @@ const listOngController = new ListOngController()
 
 const routes = Router()
 
-routes.post('/login', authenticateOngController.handle)
-routes.post('/', createOngController.handle)
-routes.get('/', listOngsController.handle)
-routes.get('/:id', listOngController.handle)
+routes.post(
+  '/login',
+  authenticateOngController.handle.bind(authenticateOngController)
+)
+routes.post('/', createOngController.handle.bind(createOngController))
+routes.get('/', listOngsController.handle.bind(listOngsController))
+routes.get('/:id', listOngController.handle.bind(listOngController))
 
 export { routes as ongsRoutes }

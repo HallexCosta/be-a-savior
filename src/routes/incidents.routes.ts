@@ -15,9 +15,15 @@ const deleteIncidentController = new DeleteIncidentController()
 const routes = Router()
 
 routes.post('/', createIncidentController.handle.bind(createIncidentController))
-routes.get('/', listIncidentsController.handle)
-routes.get('/:id', listIncidentController.handle)
-routes.patch('/:id', updateIncidentController.handle)
-routes.delete('/:id', deleteIncidentController.handle)
+routes.get('/', listIncidentsController.handle.bind(listIncidentsController))
+routes.get('/:id', listIncidentController.handle.bind(listIncidentController))
+routes.patch(
+  '/:id',
+  updateIncidentController.handle.bind(updateIncidentController)
+)
+routes.delete(
+  '/:id',
+  deleteIncidentController.handle.bind(deleteIncidentController)
+)
 
 export { routes as incidentsRoutes }

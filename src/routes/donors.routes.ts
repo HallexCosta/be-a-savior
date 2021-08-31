@@ -12,9 +12,12 @@ const listDonorController = new ListDonorController()
 
 const routes = Router()
 
-routes.post('/login', authenticateDonorController.handle)
-routes.post('/', createDonorController.handle)
-routes.get('/', listDonorsController.handle)
-routes.get('/:id', listDonorController.handle)
+routes.post(
+  '/login',
+  authenticateDonorController.handle.bind(authenticateDonorController)
+)
+routes.post('/', createDonorController.handle.bind(createDonorController))
+routes.get('/', listDonorsController.handle.bind(listDonorsController))
+routes.get('/:id', listDonorController.handle.bind(listDonorController))
 
 export { routes as donorsRoutes }
