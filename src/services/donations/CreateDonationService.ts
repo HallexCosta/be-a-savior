@@ -45,6 +45,20 @@ export class CreateDonationService {
       donorId,
       amount
     })
+    const donationsRepository = getCustomRepository(DonationsRepository)
+
+    const donation = donationsRepository.create({
+      incident_id: incidentId,
+      donor_id: donorId
+    })
+
+    const donationAlreadyExists = await donationsRepository.findByIncidentId(
+      donation.incident_id
+    )
+
+    if (donationAlreadyExists) {
+      throw new Error('Already was accomplish a donation to this incident')
+    }
 
     const incidentsRepository = getCustomRepository(IncidentsRepository)
 
@@ -61,13 +75,6 @@ export class CreateDonationService {
     if (!donor) {
       throw new Error('Donor not exists')
     }
-
-    const donationsRepository = getCustomRepository(DonationsRepository)
-
-    const donation = donationsRepository.create({
-      incident_id: incidentId,
-      donor_id: donorId
-    })
 
     const ongsRepository = getCustomRepository(OngsRepository)
 
