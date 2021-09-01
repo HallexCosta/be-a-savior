@@ -57,5 +57,16 @@ export const donations = () => {
       expect(expected).to.not.be.undefined()
       expect(expected).to.have.property('id')
     })
+
+    it('Should be to list all donations GET (/donations)', async () => {
+      const response = await agent.get('/donations').send()
+
+      const expected = response.body
+
+      expect(expected).to.not.be.undefined()
+      expect(expected[0]).to.have.property('id')
+      expect(expected[0]).to.have.property('incident_id')
+      expect(expected[0]).to.have.property('donor_id')
+    })
   })
 }
