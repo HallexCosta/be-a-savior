@@ -15,6 +15,6 @@ const routes = Router()
 routes.use('/donors', donors)
 routes.use('/ongs', ongs)
 routes.use('/incidents', ensureAuthenticateOng, ensureOng, incidents)
-routes.use('/donations', ensureAuthenticateDonor, ensureDonor, donations)
+routes.use('/donations', donations)
 
 export { routes }
