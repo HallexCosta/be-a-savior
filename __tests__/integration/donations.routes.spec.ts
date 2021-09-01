@@ -58,6 +58,23 @@ export const donations = () => {
       expect(expected).to.have.property('id')
     })
 
+    it('Should be thrown error if try donate in same incident POST (/donations)', async () => {
+      const body = {
+        amount: 1788,
+        incident_id: incident.id,
+        donor_id: donor.id
+      }
+
+      const response = await agent
+        .post('/donations')
+        .send(body)
+        .set('Authorization', `bearer ${token}`)
+
+      const expected = response.body
+
+      expect(expected).to.have.property('message')
+    })
+
     it('Should be to list all donations GET (/donations)', async () => {
       const response = await agent.get('/donations').send()
 
