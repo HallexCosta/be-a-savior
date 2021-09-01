@@ -11,4 +11,8 @@ export class DonationsRepository extends Repository<Donation> {
   public async findById(id: string): Promise<Donation> {
     return await this.findOne({ id })
   }
+
+  public async findByIncidentId(incident_id: string): Promise<Donation> {
+    return await this.findOne({ incident_id })
+  }
 }
