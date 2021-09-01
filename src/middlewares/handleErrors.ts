@@ -8,7 +8,7 @@ export function handleErrors(
 ): Response {
   if (error instanceof Error) {
     return response.status(409).json({
-      error: error.message
+      message: error.message
     })
   }
 
