@@ -4,12 +4,24 @@ import { DonationsRepository } from '@repositories/DonationsRepository'
 
 import { Donation } from '@entities/Donation'
 
-export class ListDonationsService {
-  public async execute(): Promise<Donation[]> {
-    const repository = getCustomRepository(DonationsRepository)
+type ListDonationsDTO = {
+  ongId: string
+}
 
-    const donations = await repository.find()
+export class ListDonationsService {
+  public async execute({ ongId }: ListDonationsDTO): Promise<Donation[]> {
+    const donations = await this.getDonations(ongId)
 
     return donations
+  }
+
+  public async getDonations(ongId?: string): Promise<Donation[]> {
+    const repository = getCustomRepository(DonationsRepository)
+
+    if (ongId) {
+      return await repository.findByOngId(ongId)
+    }
+
+    return await repository.findAll()
   }
 }
