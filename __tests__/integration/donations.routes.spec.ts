@@ -20,7 +20,7 @@ import {
 
 use(dirty)
 
-export const donations = () => {
+export function donations(): void {
   describe('Donation Routes', () => {
     let agent: SuperTest<Test>
     let ong: Ong
@@ -44,7 +44,7 @@ export const donations = () => {
       const body = {
         amount: 1788,
         incident_id: incident.id,
-        donor_id: donor.id
+        ong_id: ong.id
       }
 
       const response = await agent
@@ -84,6 +84,27 @@ export const donations = () => {
       expect(expected[0]).to.have.property('id')
       expect(expected[0]).to.have.property('incident_id')
       expect(expected[0]).to.have.property('donor_id')
+    })
+
+    it('Should be to return empty list donations with fake ong_id GET (/donations?ong_id=)', async () => {
+      const response = await agent.get('/donations?ong_id=FAKE ONG ID').send()
+
+      const expected = response.body
+
+      expect(expected).to.not.be.undefined()
+      expect(expected).to.have.lengthOf(0)
+    })
+
+    it('Should be to list donations by ong_id GET (/donations?ong_id=)', async () => {
+      const response = await agent.get(`/donations?ong_id=${ong.id}`).send()
+
+      const expected = response.body
+
+      expect(expected).to.not.be.undefined()
+      expect(expected[0]).to.have.property('id')
+      expect(expected[0]).to.have.property('incident_id')
+      expect(expected[0]).to.have.property('donor_id')
+      expect(expected[0]).to.have.property('ong_id')
     })
   })
 }

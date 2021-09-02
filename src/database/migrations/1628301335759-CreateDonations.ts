@@ -20,6 +20,10 @@ export class CreateDonations1628301335759 implements MigrationInterface {
             type: 'varchar'
           },
           {
+            name: 'ong_id',
+            type: 'varchar'
+          },
+          {
             name: 'created_at',
             type: 'date',
             default: 'now()'
@@ -28,6 +32,32 @@ export class CreateDonations1628301335759 implements MigrationInterface {
             name: 'updated_at',
             type: 'date',
             default: 'now()'
+          }
+        ],
+        foreignKeys: [
+          {
+            name: 'FKIncidentDonations',
+            referencedTableName: 'incidents',
+            referencedColumnNames: ['id'],
+            columnNames: ['incident_id'],
+            onDelete: 'SET NULL',
+            onUpdate: 'SET NULL'
+          },
+          {
+            name: 'FKDonorDonations',
+            referencedTableName: 'donors',
+            referencedColumnNames: ['id'],
+            columnNames: ['donor_id'],
+            onDelete: 'SET NULL',
+            onUpdate: 'SET NULL'
+          },
+          {
+            name: 'FKOngDonations',
+            referencedTableName: 'ongs',
+            referencedColumnNames: ['id'],
+            columnNames: ['ong_id'],
+            onDelete: 'SET NULL',
+            onUpdate: 'SET NULL'
           }
         ]
       })

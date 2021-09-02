@@ -15,4 +15,12 @@ export class DonationsRepository extends Repository<Donation> {
   public async findByIncidentId(incident_id: string): Promise<Donation> {
     return await this.findOne({ incident_id })
   }
+
+  public async findByOngId(ong_id: string): Promise<Donation[]> {
+    const donations = await this.find({
+      ong_id
+    })
+
+    return donations
+  }
 }

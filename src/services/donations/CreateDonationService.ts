@@ -17,6 +17,7 @@ import { configs } from '@common/configs'
 type CreateDonationDTO = {
   incidentId: string
   donorId: string
+  ongId: string
   amount: number
 }
 
@@ -38,18 +39,22 @@ export class CreateDonationService {
   public async execute({
     incidentId,
     donorId,
+    ongId,
     amount
   }: CreateDonationDTO): Promise<Donation> {
     this.checkForFieldIsFilled({
       incidentId,
       donorId,
+      ongId,
       amount
     })
+
     const donationsRepository = getCustomRepository(DonationsRepository)
 
     const donation = donationsRepository.create({
       incident_id: incidentId,
-      donor_id: donorId
+      donor_id: donorId,
+      ong_id: ongId
     })
 
     const donationAlreadyExists = await donationsRepository.findByIncidentId(
@@ -121,14 +126,19 @@ export class CreateDonationService {
   private checkForFieldIsFilled({
     incidentId,
     donorId,
+    ongId,
     amount
   }: CreateDonationDTO): void {
     if (!incidentId) {
-      throw new Error("Incident can't empty")
+      throw new Error("Incident id can't empty")
     }
 
     if (!donorId) {
-      throw new Error("Donor can't empty")
+      throw new Error("Donor id can't empty")
+    }
+
+    if (!ongId) {
+      throw new Error("Ong id can't empty")
     }
 
     if (!amount) {
