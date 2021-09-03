@@ -1,6 +1,16 @@
-import { DeleteResult, EntityRepository, Repository } from 'typeorm'
+import {
+  DeleteResult,
+  EntityRepository,
+  Repository,
+  UpdateResult
+} from 'typeorm'
 
 import { Incident } from '@entities/Incident'
+
+type UpdateDonationIdByIncidentIdParams = {
+  incident_id: string
+  donation_id: string
+}
 
 @EntityRepository(Incident)
 export class IncidentsRepository extends Repository<Incident> {
@@ -19,6 +29,15 @@ export class IncidentsRepository extends Repository<Incident> {
   async deleteById(id: string): Promise<DeleteResult> {
     return await this.delete({
       id
+    })
+  }
+
+  async updateDonationIdByIncidentId({
+    incident_id,
+    donation_id
+  }: UpdateDonationIdByIncidentIdParams): Promise<UpdateResult> {
+    return await this.update(incident_id, {
+      donation_id
     })
   }
 }
