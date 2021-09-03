@@ -42,9 +42,8 @@ export function donations(): void {
 
     it('Should be create new Donation POST (/donations)', async () => {
       const body = {
-        amount: 1788,
         incident_id: incident.id,
-        ong_id: ong.id
+        donor_id: donor.id
       }
 
       const response = await agent
@@ -60,7 +59,6 @@ export function donations(): void {
 
     it('Should be thrown error if try donate in same incident POST (/donations)', async () => {
       const body = {
-        amount: 1788,
         incident_id: incident.id,
         donor_id: donor.id
       }
