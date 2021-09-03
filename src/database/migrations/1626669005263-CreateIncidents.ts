@@ -16,7 +16,7 @@ export class CreateIncidents1626669005263 implements MigrationInterface {
             type: 'string'
           },
           {
-            name: 'coast',
+            name: 'cost',
             type: 'float'
           },
           {
