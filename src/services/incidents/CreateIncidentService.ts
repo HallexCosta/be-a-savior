@@ -2,11 +2,10 @@ import { getCustomRepository } from 'typeorm'
 
 import { Incident } from '@entities/Incident'
 import { IncidentsRepository } from '@repositories/IncidentsRepository'
-import { OngsRepository } from '@repositories/OngsRepository'
 
 type CreateIncidentDTO = {
   name: string
-  coast: number
+  cost: number
   description: string
   ongId: string
 }
@@ -14,7 +13,7 @@ type CreateIncidentDTO = {
 export class CreateIncidentService {
   public async execute({
     name,
-    coast,
+    cost,
     description,
     ongId
   }: CreateIncidentDTO): Promise<Incident> {
@@ -22,14 +21,14 @@ export class CreateIncidentService {
 
     this.checkForFieldIsFilled({
       name,
-      coast,
+      cost,
       description,
       ongId
     })
 
     const incident = incidentsRepository.create({
       name,
-      coast,
+      cost,
       description,
       ong_id: ongId
     })
@@ -41,7 +40,7 @@ export class CreateIncidentService {
 
   private checkForFieldIsFilled({
     name,
-    coast,
+    cost,
     description,
     ongId
   }: CreateIncidentDTO) {
@@ -49,7 +48,7 @@ export class CreateIncidentService {
       throw new Error("Name can't empty")
     }
 
-    if (!coast) {
+    if (!cost) {
       throw new Error("Coast can't empty")
     }
 

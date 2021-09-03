@@ -6,7 +6,7 @@ import { IncidentsRepository } from '@repositories/IncidentsRepository'
 type UpdateIncidentDTO = {
   id: string
   name: string
-  coast: number
+  cost: number
   description: string
   ongId: string
 }
@@ -15,7 +15,7 @@ export class UpdateIncidentService {
   public async execute({
     id,
     name,
-    coast,
+    cost,
     description,
     ongId
   }: UpdateIncidentDTO): Promise<Incident> {
@@ -30,7 +30,7 @@ export class UpdateIncidentService {
     const incident = incidentsRepository.create({
       ...incidentAlreadyExists,
       name,
-      coast,
+      cost,
       description
     })
 
