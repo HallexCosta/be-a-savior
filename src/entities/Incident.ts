@@ -13,7 +13,7 @@ export class Incident extends BaseEntity {
   public readonly description: string
 
   @Column()
-  public readonly coast: number
+  public readonly cost: number
 
   @Column()
   public readonly ong_id: string
