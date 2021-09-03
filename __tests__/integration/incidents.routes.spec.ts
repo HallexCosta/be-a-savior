@@ -32,7 +32,7 @@ export const incidents = () => {
     it('Should be able to throw an error if ong_id is fake POST (/incidents)', async () => {
       const body = {
         name: 'Some a name',
-        coast: 100.5,
+        cost: 100.5,
         description: 'This is a description'
       }
 
@@ -42,7 +42,7 @@ export const incidents = () => {
     it('Should be able to create new Incident POST (/incidents)', async () => {
       const body = {
         name: 'Some a name',
-        coast: 100.5,
+        cost: 100.5,
         description: 'This is a description',
         ong_id: ong.id
       }
@@ -101,7 +101,7 @@ export const incidents = () => {
     it('Should be able update one Incident by Id PATCH (/incidents/:id)', async () => {
       const body = {
         name: 'Some a name updated',
-        coast: 100,
+        cost: 100,
         description: 'This is a description updated'
       }
 
@@ -113,7 +113,7 @@ export const incidents = () => {
       const expected = response.body
 
       expect(expected.name).to.be.equal('Some a name updated')
-      expect(expected.coast).to.be.equal(100)
+      expect(expected.cost).to.be.equal(100)
       expect(expected.description).to.be.equal('This is a description updated')
     })
 

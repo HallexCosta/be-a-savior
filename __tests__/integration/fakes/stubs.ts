@@ -59,7 +59,7 @@ export async function createFakeIncident(
 ): Promise<Incident> {
   const body = {
     name: 'Dog',
-    coast: 74.7,
+    cost: 74.7,
     description: 'Run over the Dog and it dead :(',
     ong_id
   }
