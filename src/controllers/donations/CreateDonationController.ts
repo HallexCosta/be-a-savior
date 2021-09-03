@@ -11,15 +11,13 @@ export class CreateDonationController {
   public async handle(request: Request, response: Response): Promise<Response> {
     const { donor_id: donorId } = request
 
-    const { incident_id: incidentId, ong_id: ongId, amount } = request.body
+    const { incident_id: incidentId } = request.body
 
     const service = new CreateDonationService(this.dependencies())
 
     const donate = await service.execute({
       incidentId,
-      donorId,
-      ongId,
-      amount
+      donorId
     })
 
     return response.status(201).json(donate)
