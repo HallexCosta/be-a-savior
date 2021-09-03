@@ -17,8 +17,6 @@ import { configs } from '@common/configs'
 type CreateDonationDTO = {
   incidentId: string
   donorId: string
-  ongId: string
-  amount: number
 }
 
 type Providers = {
@@ -38,27 +36,17 @@ export class CreateDonationService {
 
   public async execute({
     incidentId,
-    donorId,
-    ongId,
-    amount
+    donorId
   }: CreateDonationDTO): Promise<Donation> {
     this.checkForFieldIsFilled({
       incidentId,
-      donorId,
-      ongId,
-      amount
+      donorId
     })
 
     const donationsRepository = getCustomRepository(DonationsRepository)
 
-    const donation = donationsRepository.create({
-      incident_id: incidentId,
-      donor_id: donorId,
-      ong_id: ongId
-    })
-
     const donationAlreadyExists = await donationsRepository.findByIncidentId(
-      donation.incident_id
+      incidentId
     )
 
     if (donationAlreadyExists) {
@@ -100,6 +88,14 @@ export class CreateDonationService {
       customer: customer.id
     })
 
+    const donation = donationsRepository.create({
+      incident_id: incident.id,
+      donor_id: donorId,
+      ong_id: incident.ong_id
+    })
+
+    const amount = this.parseCoastToAmount(incident.cost)
+
     const paymentIntent: Stripe.PaymentIntentCreateParams = {
       amount,
       currency: 'brl',
@@ -121,18 +117,22 @@ export class CreateDonationService {
     await donationsRepository.save(donation)
 
     await incidentsRepository.updateDonationIdByIncidentId({
-      incident_id: incident.id,
-      donation_id: donation.id
+      donation_id: donation.id,
+      incident_id: donation.incident_id
     })
 
     return donation
   }
 
+  private parseCoastToAmount(cost: number) {
+    const amount = cost * 100
+
+    return amount
+  }
+
   private checkForFieldIsFilled({
     incidentId,
-    donorId,
-    ongId,
-    amount
+    donorId
   }: CreateDonationDTO): void {
     if (!incidentId) {
       throw new Error("Incident id can't empty")
@@ -140,14 +140,6 @@ export class CreateDonationService {
 
     if (!donorId) {
       throw new Error("Donor id can't empty")
-    }
-
-    if (!ongId) {
-      throw new Error("Ong id can't empty")
-    }
-
-    if (!amount) {
-      throw new Error("Amount can't empty")
     }
   }
 }
