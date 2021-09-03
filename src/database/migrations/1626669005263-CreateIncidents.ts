@@ -28,6 +28,11 @@ export class CreateIncidents1626669005263 implements MigrationInterface {
             type: 'uuid'
           },
           {
+            name: 'donation_id',
+            type: 'uuid',
+            isNullable: true
+          },
+          {
             name: 'created_at',
             type: 'timestamp',
             default: 'now()'
@@ -40,10 +45,18 @@ export class CreateIncidents1626669005263 implements MigrationInterface {
         ],
         foreignKeys: [
           {
-            name: 'FKONGIdIncidents',
+            name: 'FKOngIdIncidents',
             referencedTableName: 'ongs',
             referencedColumnNames: ['id'],
             columnNames: ['ong_id'],
+            onDelete: 'SET NULL',
+            onUpdate: 'SET NULL'
+          },
+          {
+            name: 'FKDonationIdIncidents',
+            referencedTableName: 'donations',
+            referencedColumnNames: ['id'],
+            columnNames: ['donation_id'],
             onDelete: 'SET NULL',
             onUpdate: 'SET NULL'
           }

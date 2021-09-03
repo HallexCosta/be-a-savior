@@ -120,6 +120,11 @@ export class CreateDonationService {
 
     await donationsRepository.save(donation)
 
+    await incidentsRepository.updateDonationIdByIncidentId({
+      incident_id: incident.id,
+      donation_id: donation.id
+    })
+
     return donation
   }
 
