@@ -8,14 +8,14 @@ export class UpdateIncidentController {
 
     const { id } = request.params
 
-    const { name, coast, description } = request.body
+    const { name, cost, description } = request.body
 
     const service = new UpdateIncidentService()
 
     const incident = await service.execute({
       id,
       name,
-      coast,
+      cost,
       description,
       ongId
     })
