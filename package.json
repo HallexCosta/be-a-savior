@@ -13,6 +13,7 @@
     "test:ci": "cross-env NODE_ENV=test mocha --config .mocharc-ci.js",
     "test:watch": "cross-env NODE_ENV=test yarn test --watch",
     "clean": "rimraf dist",
+    "clean:database": "rimraf src/database/database.sqlite && yarn typeorm:development migration:run",
     "compile": "yarn clean && tsc --project tsconfig.production.json",
     "build": "yarn clean && sucrase -r tsconfig-paths/register ./src -d ./dist --transforms typescript,imports",
     "typeorm": "cross-env NODE_ENV=production yarn ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
