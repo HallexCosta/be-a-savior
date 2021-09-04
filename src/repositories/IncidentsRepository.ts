@@ -1,8 +1,8 @@
 import {
   DeleteResult,
   EntityRepository,
-  Repository,
-  UpdateResult
+  UpdateResult,
+  Repository
 } from 'typeorm'
 
 import { Incident } from '@entities/Incident'
@@ -14,15 +14,25 @@ type UpdateDonationIdByIncidentIdParams = {
 
 @EntityRepository(Incident)
 export class IncidentsRepository extends Repository<Incident> {
+  async findAll(): Promise<Incident[]> {
+    return await this.find()
+  }
+
+  async findByOngId(ong_id: string): Promise<Incident[]> {
+    return await this.find({
+      ong_id
+    })
+  }
+
   async findById(id: string): Promise<Incident> {
     return await this.findOne({
       id
     })
   }
 
-  async findByOngId(ong_id: string): Promise<Incident[]> {
+  async findByDonationId(donation_id?: string): Promise<Incident[]> {
     return await this.find({
-      ong_id
+      donation_id
     })
   }
 
