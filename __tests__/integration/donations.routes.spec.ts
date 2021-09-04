@@ -35,7 +35,7 @@ export function donations(): void {
       donor = await createFakeDonor(agent)
       incident = await createFakeIncident(agent, {
         ong_id: ong.id,
-        token: await loginWithFakeOng(agent)
+        ongToken: await loginWithFakeOng(agent)
       })
       token = await loginWithFakeDonor(agent)
     })

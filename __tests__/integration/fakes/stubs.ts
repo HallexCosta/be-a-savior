@@ -10,7 +10,12 @@ import ormconfig from '../../../ormconfig'
 
 type CreateFakeIncidentParams = {
   ong_id: string
-  token: string
+  ongToken: string
+}
+
+type CreateFakeDonationParams = {
+  incident_id: string
+  donorToken: string
 }
 
 const body = {
@@ -55,7 +60,7 @@ export async function createFakeDonor(agent: SuperTest<Test>): Promise<Ong> {
 
 export async function createFakeIncident(
   agent: SuperTest<Test>,
-  { ong_id, token }: CreateFakeIncidentParams
+  { ong_id, ongToken }: CreateFakeIncidentParams
 ): Promise<Incident> {
   const body = {
     name: 'Dog',
@@ -67,7 +72,23 @@ export async function createFakeIncident(
   const response = await agent
     .post('/incidents')
     .send(body)
-    .set('Authorization', `bearer ${token}`)
+    .set('Authorization', `bearer ${ongToken}`)
+
+  return response.body
+}
+
+export async function createFakeDonation(
+  agent: SuperTest<Test>,
+  { incident_id, donorToken }: CreateFakeDonationParams
+): Promise<Incident> {
+  const body = {
+    incident_id
+  }
+
+  const response = await agent
+    .post('/donations')
+    .send(body)
+    .set('Authorization', `bearer ${donorToken}`)
 
   return response.body
 }
