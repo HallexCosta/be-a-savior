@@ -1,36 +1,47 @@
 import { getCustomRepository } from 'typeorm'
 
 import { Incident } from '@entities/Incident'
+
 import { IncidentsRepository } from '@repositories/IncidentsRepository'
 
 type ListIncidentsDTO = {
-  ong_id: string
+  ongId?: string
+  donated?: boolean
 }
 
 export class ListIncidentsService {
-  public async execute({ ong_id }: ListIncidentsDTO): Promise<Incident[]> {
-    const incidents = await this.findBy(ong_id)
+  public async execute({
+    ongId,
+    donated
+  }: ListIncidentsDTO): Promise<Incident[]> {
+    const repository = getCustomRepository(IncidentsRepository)
+
+    let incidents = await repository.findAll()
+
+    if (ongId) {
+      incidents = this.filterByOngId(incidents, ongId)
+    }
+
+    if (donated === true) {
+      incidents = this.filterDonated(incidents)
+    }
+
+    if (donated === false) {
+      incidents = this.filterNonDonated(incidents)
+    }
 
     return incidents
   }
 
-  private async findBy(ong_id?: string): Promise<Incident[]> {
-    if (ong_id) {
-      return await this.findByOngId(ong_id)
-    }
-
-    return await this.findAll()
+  private filterByOngId(incidents: Incident[], ongId: string) {
+    return incidents.filter(incident => incident.ong_id === ongId)
   }
 
-  private async findAll(): Promise<Incident[]> {
-    const repository = getCustomRepository(IncidentsRepository)
-
-    return await repository.find()
+  private filterDonated(incidents: Incident[]) {
+    return incidents.filter(incident => incident.donation_id !== null)
   }
 
-  private async findByOngId(ong_id: string): Promise<Incident[]> {
-    const repository = getCustomRepository(IncidentsRepository)
-
-    return await repository.findByOngId(ong_id)
+  private filterNonDonated(incidents: Incident[]) {
+    return incidents.filter(incident => incident.donation_id === null)
   }
 }
