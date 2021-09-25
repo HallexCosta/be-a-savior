@@ -1,3 +1,4 @@
+import { classToClass, classToPlain } from 'class-transformer'
 import { getCustomRepository } from 'typeorm'
 import { hash } from 'bcryptjs'
 
@@ -16,6 +17,8 @@ type Repository = {
   donors: DonorsRepository
   ongs: OngsRepository
 }
+
+type CreateDonorResponse = Omit<Donor, 'password'>
 
 export class CreateDonorService {
   private async checkForUserEmailExists(
@@ -40,7 +43,7 @@ export class CreateDonorService {
     email,
     password,
     phone
-  }: CreateDonorDTO): Promise<Donor> {
+  }: CreateDonorDTO): Promise<CreateDonorResponse> {
     this.checkForFieldIsFilled({
       name,
       email,
@@ -66,8 +69,10 @@ export class CreateDonorService {
     })
 
     await donorsRepository.save(donor)
+    
+    const donorResponse = classToClass<CreateDonorResponse>(donor)
 
-    return donor
+    return donorResponse
   }
 
   private async encryptPassword(password: string) {
