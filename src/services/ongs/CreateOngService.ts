@@ -6,6 +6,7 @@ import { OngsRepository } from '@repositories/OngsRepository'
 import { DonorsRepository } from '@repositories/DonorsRepository'
 
 import { StripeProvider } from '@providers/StripeProvider'
+import { classToClass } from "class-transformer"
 
 export type CreateOngDTO = {
   name: string
@@ -19,6 +20,8 @@ type Repositories = {
   ongs: OngsRepository
 }
 
+type CreateOngResponse = Omit<Ong, 'password'>
+
 export class CreateOngService {
   private readonly provider: StripeProvider
 
@@ -31,7 +34,7 @@ export class CreateOngService {
     email,
     password,
     phone
-  }: CreateOngDTO): Promise<Ong> {
+  }: CreateOngDTO): Promise<CreateOngResponse> {
     this.checkForFieldIsFilled({
       name,
       email,
@@ -75,7 +78,9 @@ export class CreateOngService {
 
     await ongsRepository.save(ong)
 
-    return ong
+    const ongResponse = classToClass<CreateOngResponse>(ong)
+
+    return ongResponse
   }
 
   private async checkForUserEmailExists(
