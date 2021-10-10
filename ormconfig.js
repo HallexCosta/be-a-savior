@@ -1,5 +1,5 @@
 class Development {
-  config() {
+  sqlite() {
     return {
       type: 'sqlite',
       database: 'src/database/database.sqlite',
@@ -11,10 +11,13 @@ class Development {
       }
     }
   }
+  config() {
+    return this.sqlite()
+  }
 }
 
 class Production {
-  config() {
+  sqlite() {
     return {
       type: 'sqlite',
       database: 'dist/database/database.sqlite',
@@ -26,10 +29,13 @@ class Production {
       }
     }
   }
+  config() {
+    return this.sqlite()
+  }
 }
 
 class Test {
-  config() {
+  sqlite() {
     return {
       type: 'sqlite',
       database: 'src/database/database.sqlite-test',
@@ -40,6 +46,9 @@ class Test {
         entitiesDir: 'src/entities'
       }
     }
+  }
+  config() {
+    return this.sqlite()
   }
 }
 
