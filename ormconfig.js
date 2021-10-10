@@ -1,4 +1,20 @@
 class Development {
+  postgres() {
+    return {
+     type: process.env.DB_TYPE,
+     host: process.env.DB_HOST,
+     port: process.env.DB_PORT,
+     username: process.env.DB_USERNAME,
+     password: process.env.DB_PASSWORD,
+     database: process.env.DB_NAME,
+     migrations: ['src/database/migrations/*.ts'],
+     entities: ['src/entities/*.ts'],
+     cli: {
+        migrationsDir: 'src/database/migrations',
+        entitiesDir: 'src/entities'
+      }
+    }
+  }
   sqlite() {
     return {
       type: 'sqlite',
@@ -12,11 +28,27 @@ class Development {
     }
   }
   config() {
-    return this.sqlite()
+    return this.postgres()
   }
 }
 
 class Production {
+  postgres() {
+    return {
+      type: process.env.DB_TYPE,
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      migrations: ['dist/database/migrations/*.js'],
+      entities: ['dist/entities/*.js'],
+      cli: {
+        migrationsDir: 'dist/database/migrations',
+        entitiesDir: 'dist/entities'
+      }
+    }
+  }
   sqlite() {
     return {
       type: 'sqlite',
@@ -30,11 +62,27 @@ class Production {
     }
   }
   config() {
-    return this.sqlite()
+    return this.postgres()
   }
 }
 
 class Test {
+  postgres() {
+    return {
+      type: process.env.DB_TYPE,
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      migrations: ['src/database/migrations/*.ts'],
+      entities: ['src/entities/*.ts'],
+      cli: {
+        migrationsDir: 'src/database/migrations',
+        entitiesDir: 'src/entities'
+      }
+    }
+  }
   sqlite() {
     return {
       type: 'sqlite',
@@ -48,7 +96,7 @@ class Test {
     }
   }
   config() {
-    return this.sqlite()
+    return this.postgres()
   }
 }
 
