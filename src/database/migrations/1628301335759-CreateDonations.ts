@@ -13,15 +13,11 @@ export class CreateDonations1628301335759 implements MigrationInterface {
           },
           {
             name: 'incident_id',
-            type: 'varchar'
+            type: 'uuid'
           },
           {
             name: 'donor_id',
-            type: 'varchar'
-          },
-          {
-            name: 'ong_id',
-            type: 'varchar'
+            type: 'uuid'
           },
           {
             name: 'created_at',
@@ -36,7 +32,7 @@ export class CreateDonations1628301335759 implements MigrationInterface {
         ],
         foreignKeys: [
           {
-            name: 'FKIncidentDonations',
+            name: 'FKIncidentIdDonations',
             referencedTableName: 'incidents',
             referencedColumnNames: ['id'],
             columnNames: ['incident_id'],
@@ -44,18 +40,10 @@ export class CreateDonations1628301335759 implements MigrationInterface {
             onUpdate: 'SET NULL'
           },
           {
-            name: 'FKDonorDonations',
+            name: 'FKDonorIdDonations',
             referencedTableName: 'donors',
             referencedColumnNames: ['id'],
             columnNames: ['donor_id'],
-            onDelete: 'SET NULL',
-            onUpdate: 'SET NULL'
-          },
-          {
-            name: 'FKOngDonations',
-            referencedTableName: 'ongs',
-            referencedColumnNames: ['id'],
-            columnNames: ['ong_id'],
             onDelete: 'SET NULL',
             onUpdate: 'SET NULL'
           }

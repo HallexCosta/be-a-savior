@@ -1,5 +1,21 @@
 class Development {
-  config() {
+  postgres() {
+    return {
+     type: process.env.DB_TYPE,
+     host: process.env.DB_HOST,
+     port: process.env.DB_PORT,
+     username: process.env.DB_USERNAME,
+     password: process.env.DB_PASSWORD,
+     database: process.env.DB_NAME,
+     migrations: ['src/database/migrations/*.ts'],
+     entities: ['src/entities/*.ts'],
+     cli: {
+        migrationsDir: 'src/database/migrations',
+        entitiesDir: 'src/entities'
+      }
+    }
+  }
+  sqlite() {
     return {
       type: 'sqlite',
       database: 'src/database/database.sqlite',
@@ -11,10 +27,29 @@ class Development {
       }
     }
   }
+  config() {
+    return this.postgres()
+  }
 }
 
 class Production {
-  config() {
+  postgres() {
+    return {
+      type: process.env.DB_TYPE,
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      migrations: ['dist/database/migrations/*.js'],
+      entities: ['dist/entities/*.js'],
+      cli: {
+        migrationsDir: 'dist/database/migrations',
+        entitiesDir: 'dist/entities'
+      }
+    }
+  }
+  sqlite() {
     return {
       type: 'sqlite',
       database: 'dist/database/database.sqlite',
@@ -26,10 +61,29 @@ class Production {
       }
     }
   }
+  config() {
+    return this.postgres()
+  }
 }
 
 class Test {
-  config() {
+  postgres() {
+    return {
+      type: process.env.DB_TYPE,
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      migrations: ['src/database/migrations/*.ts'],
+      entities: ['src/entities/*.ts'],
+      cli: {
+        migrationsDir: 'src/database/migrations',
+        entitiesDir: 'src/entities'
+      }
+    }
+  }
+  sqlite() {
     return {
       type: 'sqlite',
       database: 'src/database/database.sqlite-test',
@@ -40,6 +94,9 @@ class Test {
         entitiesDir: 'src/entities'
       }
     }
+  }
+  config() {
+    return this.postgres()
   }
 }
 

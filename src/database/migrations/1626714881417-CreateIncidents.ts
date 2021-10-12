@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
-export class CreateIncidents1626669005263 implements MigrationInterface {
+export class CreateIncidents1626714881417 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -13,7 +13,7 @@ export class CreateIncidents1626669005263 implements MigrationInterface {
           },
           {
             name: 'name',
-            type: 'string'
+            type: 'varchar'
           },
           {
             name: 'cost',
@@ -26,11 +26,6 @@ export class CreateIncidents1626669005263 implements MigrationInterface {
           {
             name: 'ong_id',
             type: 'uuid'
-          },
-          {
-            name: 'donation_id',
-            type: 'uuid',
-            isNullable: true
           },
           {
             name: 'created_at',
@@ -49,14 +44,6 @@ export class CreateIncidents1626669005263 implements MigrationInterface {
             referencedTableName: 'ongs',
             referencedColumnNames: ['id'],
             columnNames: ['ong_id'],
-            onDelete: 'SET NULL',
-            onUpdate: 'SET NULL'
-          },
-          {
-            name: 'FKDonationIdIncidents',
-            referencedTableName: 'donations',
-            referencedColumnNames: ['id'],
-            columnNames: ['donation_id'],
             onDelete: 'SET NULL',
             onUpdate: 'SET NULL'
           }
