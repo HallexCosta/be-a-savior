@@ -29,13 +29,33 @@ jobs:
       - name: Install dependencies...
         run: yarn install:ci
 
-      - name: Testing server...
-        run: yarn test:ci
+      - name: Run unit tests...
+        run: yarn test:unit
         env:
           EXPRESS_LISTEN_APP_PORT: ${{ secrets.EXPRESS_LISTEN_APP_PORT }}
-          STRIPE_PUBLISH_API_KEY: ${{ secrets.STRIPE_PUBLISH_API_KEY }}
           STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY }}
           STRIPE_API_VERSION: ${{ secrets.STRIPE_API_VERSION }}
+          DB_TYPE: ${{ secrets.DB_TYPE }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          ELEPHANT_API_KEY: ${{ secrets.ELEPHANT_API_KEY }}
+
+      - name: Run integration tests...
+        run: yarn test:integration
+        env:
+          EXPRESS_LISTEN_APP_PORT: ${{ secrets.EXPRESS_LISTEN_APP_PORT }}
+          STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY }}
+          STRIPE_API_VERSION: ${{ secrets.STRIPE_API_VERSION }}
+          DB_TYPE: ${{ secrets.DB_TYPE }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          ELEPHANT_API_KEY: ${{ secrets.ELEPHANT_API_KEY }}
 
       - name: Building...
         run: yarn build
