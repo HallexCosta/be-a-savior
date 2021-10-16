@@ -9,9 +9,9 @@
   "license": "MIT",
   "scripts": {
     "install:ci": "yarn install --fronzen-lockfile",
-    "test": "cross-env NODE_ENV=test mocha --config .mocharc.js",
-    "test:ci": "cross-env NODE_ENV=test mocha --config .mocharc-ci.js",
-    "test:watch": "cross-env NODE_ENV=test yarn test --watch",
+    "test:unit": "cross-env NODE_ENV=test mocha --config .mocharc.unit.js",
+    "test:integration": "cross-env NODE_ENV=test mocha --config .mocharc.integration.js",
+    "test:unit:watch": "cross-env NODE_ENV=test yarn test:unit --watch",
     "clean": "rimraf dist",
     "clean:database": "rimraf src/database/database.sqlite && yarn typeorm:development migration:run",
     "compile": "yarn clean && tsc --project tsconfig.production.json",
