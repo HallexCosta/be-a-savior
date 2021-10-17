@@ -56,7 +56,7 @@ function parseDBConfigs(url: string): DBConfigs {
   return {
     type: parseType,
     host,
-    port: 5746,
+    port: 5432,
     username,
     password,
     name: username
