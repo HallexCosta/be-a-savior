@@ -6,17 +6,21 @@ import { createConnection } from 'typeorm'
 import { URL } from 'url'
 import { ElephantSQLInstanceProvider } from '@providers/elephant/ElephantSQLInstanceProvider'
 
+const environment = process.env.NODE_ENV
 const apikey = process.env.ELEPHANT_API_KEY
+const instanceName = process.env.ELEPHANT_INSTANCE_NAME
 const elephantProvider = new ElephantSQLInstanceProvider(apikey)
 
 async function prepareEnvironment(environment: string = null) {
   environment = environment.toUpperCase()
-  const lines = (await fs.readFile('.env.test')).toString().split('\n')
-  const defineInstanceName = lines.map(line => {
-    if (line === 'ELEPHANT_INSTANCE_NAME') return 1
-  })
-  if (defineInstanceName.length == 0) throw new Error('Ops... not found nothing elephant instance name')
 
+  const lines = (await fs.readFile('.env')).toString().split('\n')
+
+  const declaredElephantInstance = lines.find(line => line.includes('ELEPHANT_INSTANCE_NAME'))
+  if (!declaredElephantInstance) {
+    console.error('Ops... not found environment variable "ELEPHANT_INSTANCE_NAME"')
+    return
+  }
 
   const replaces = [
     `DB_TYPE_${environment}`,
@@ -27,26 +31,23 @@ async function prepareEnvironment(environment: string = null) {
     `DB_NAME_${environment}`
   ]
 
-  let configs: Map<string, string>
-
   const newLines = []
+
+  console.log('> Up database: %s', instanceName)
+  await elephantProvider.deleteInstance(instanceName)
+  const instance = await elephantProvider.createInstance({
+    name: instanceName,
+    plan: 'turtle',
+    region: 'amazon-web-services::us-east-1'
+  })
+
   for (const line of lines) {
-    if (line.includes('ELEPHANT_INSTANCE_NAME')) {
-      const instanceName = line.substr(line.indexOf('=') + 1, line.indexOf('='))
-
-      console.log('> Up database: %s', instanceName)
-      await elephantProvider.deleteInstance(instanceName)
-      const instance = await elephantProvider.createInstance({
-        name: instanceName,
-        plan: 'turtle',
-        region: 'amazon-web-services::us-east-1'
-      })
-
-      configs = parseDBConfigs(instance.url)
+    if (!replaces.includes(line.split('=')[0])) {
+      newLines.push(line)
     }
-    newLines.push(line)
   }
 
+  const configs = parseDBConfigs(instance.url)
   const dbconfigs = replaces.map(replace => {
     return `${replace}=${configs.get(replace.split('_')[1].toLocaleLowerCase())}`
   })
@@ -54,10 +55,10 @@ async function prepareEnvironment(environment: string = null) {
   newLines.push(...dbconfigs)
 
   console.log('> Rewrite db configs test in .env...')
-  const content = newLines.join('\n')
+  const content = newLines.filter(line => line !== '\n').join('\n')
   await fs.writeFile('.env', content)
 
-  console.log('> Override db configs test')
+  console.log('> Override db configs: %s', environment.toLocaleLowerCase())
   const env = dotenv.parse(await fs.readFile(path.resolve(process.cwd(), '.env')))
   for (const k in env) {
     process.env[k] = env[k]
@@ -92,5 +93,5 @@ function sleep(ms: number) {
   });
 }
 
-console.log('> Prepare environment: %s', process.env.NODE_ENV)
-prepareEnvironment(process.env.NODE_ENV)
+console.log('> Prepare environment: %s', environment)
+prepareEnvironment(environment)
