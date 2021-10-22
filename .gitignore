@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .env
+.env.bkp
 
 src/database/database.sqlite
 src/database/database.sqlite-test
