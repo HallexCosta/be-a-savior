@@ -56,6 +56,7 @@ async function prepareEnvironment(environment: string = null) {
 
   console.log('> Rewrite db configs test in .env...')
   const content = newLines.filter(line => line !== '\n').join('\n')
+  await fs.writeFile('.env.bkp', await fs.readFile('.env'))
   await fs.writeFile('.env', content)
 
   console.log('> Override db configs: %s', environment.toLocaleLowerCase())
