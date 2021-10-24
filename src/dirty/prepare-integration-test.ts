@@ -8,30 +8,19 @@ import { ElephantSQLInstanceProvider } from '@providers/elephant/ElephantSQLInst
 
 const environment = process.env.NODE_ENV
 const apikey = process.env.ELEPHANT_API_KEY
-const instanceName = process.env.ELEPHANT_INSTANCE_NAME
+const instanceName = process.env.ELEPHANT_INSTANCE_NAME_TEST
 const elephantProvider = new ElephantSQLInstanceProvider(apikey)
 
 async function prepareEnvironment(environment: string = null) {
   environment = environment.toUpperCase()
 
-  const lines = (await fs.readFile('.env')).toString().split('\n')
+  const lines = (await fs.readFile('.env.example')).toString().split('\n')
 
   const declaredElephantInstance = lines.find(line => line.includes('ELEPHANT_INSTANCE_NAME'))
   if (!declaredElephantInstance) {
     console.error('Ops... not found environment variable "ELEPHANT_INSTANCE_NAME"')
     return
   }
-
-  const replaces = [
-    `DB_TYPE_${environment}`,
-    `DB_HOST_${environment}`,
-    `DB_PORT_${environment}`,
-    `DB_USERNAME_${environment}`,
-    `DB_PASSWORD_${environment}`,
-    `DB_NAME_${environment}`
-  ]
-
-  const newLines = []
 
   console.log('> Up database: %s', instanceName)
   await elephantProvider.deleteInstance(instanceName)
@@ -41,23 +30,34 @@ async function prepareEnvironment(environment: string = null) {
     region: 'amazon-web-services::us-east-1'
   })
 
-  for (const line of lines) {
-    if (!replaces.includes(line.split('=')[0])) {
-      newLines.push(line)
-    }
-  }
+  const envMain = new Map<string, string>() as Map<string, string>
 
-  const configs = parseDBConfigs(instance.url)
-  const dbconfigs = replaces.map(replace => {
-    return `${replace}=${configs.get(replace.split('_')[1].toLocaleLowerCase())}`
+  //const envExample = new Map<string, string>() as Map<string, string>
+  const [] = (await fs.readFile('.env.example')).toString().split('\n').map(line => {
+    const [key, value] = line.split('=')
+    envMain.set(key, value)
   })
 
-  newLines.push(...dbconfigs)
+  const [] = (await fs.readFile('.env')).toString().split('\n').map(line => {
+    const [key, value] = line.split('=')
+    envMain.set(key, value)
+  })
+
+  const configs = parseDBConfigs(instance.url)
+
+  envMain.forEach((value, key) => key !== '' ? envMain.set(key.toUpperCase(), value) : null)
+  configs.forEach((value, key) => envMain.set(key.toUpperCase(), value))
+  envMain.forEach((value, key) => key !== '' ? envMain.set(key.toUpperCase(), value) : null)
+
+  console.log(envMain)
 
   console.log('> Rewrite db configs test in .env...')
-  const content = newLines.filter(line => line !== '\n').join('\n')
+  const content = []
+  for (const [key, value] of envMain.entries()) {
+    content.push(`${key}=${value}`)
+  }
   await fs.writeFile('.env.bkp', await fs.readFile('.env'))
-  await fs.writeFile('.env', content)
+  await fs.writeFile('.env', content.join('\n'))
 
   console.log('> Override db configs: %s', environment.toLocaleLowerCase())
   const env = dotenv.parse(await fs.readFile(path.resolve(process.cwd(), '.env')))
@@ -78,12 +78,12 @@ function parseDBConfigs(url: string): Map<string, string> {
   const parseType = type.substr(0, type.lastIndexOf(':'))
 
   const configs = new Map()
-  configs.set('type', parseType)
-  configs.set('host', host)
-  configs.set('port', 5432)
-  configs.set('username', username)
-  configs.set('password', password)
-  configs.set('name', username)
+  configs.set(`DB_TYPE_${environment}`, parseType)
+  configs.set(`DB_HOST_${environment}`, host)
+  configs.set(`DB_PORT_${environment}`, 5432)
+  configs.set(`DB_USERNAME_${environment}`, username)
+  configs.set(`DB_PASSWORD_${environment}`, password)
+  configs.set(`DB_NAME_${environment}`, username)
 
   return configs
 }
