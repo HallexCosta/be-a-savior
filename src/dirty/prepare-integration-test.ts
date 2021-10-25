@@ -32,24 +32,26 @@ async function prepareEnvironment(environment: string = null) {
 
   const envMain = new Map<string, string>() as Map<string, string>
 
-  //const envExample = new Map<string, string>() as Map<string, string>
   const [] = (await fs.readFile('.env.example')).toString().split('\n').map(line => {
     const [key, value] = line.split('=')
     envMain.set(key, value)
   })
+
 
   const [] = (await fs.readFile('.env')).toString().split('\n').map(line => {
     const [key, value] = line.split('=')
     envMain.set(key, value)
   })
 
+
+  envMain.forEach((value, key) => value === 'undefined' || value === undefined ? envMain.delete(key) : null)
+
   const configs = parseDBConfigs(instance.url)
 
-  envMain.forEach((value, key) => key !== '' ? envMain.set(key.toUpperCase(), value) : null)
-  configs.forEach((value, key) => envMain.set(key.toUpperCase(), value))
-  envMain.forEach((value, key) => key !== '' ? envMain.set(key.toUpperCase(), value) : null)
-
   console.log(envMain)
+  envMain.forEach((value, key) => envMain.set(key.toUpperCase(), value))
+  configs.forEach((value, key) => envMain.set(key.toUpperCase(), value))
+
 
   console.log('> Rewrite db configs test in .env...')
   const content = []
