@@ -4,7 +4,7 @@ import { ElephantSQLInstanceProvider } from '@providers/elephant/ElephantSQLInst
 import ormconfig from '../ormconfig'
 
 const apikey = process.env.ELEPHANT_API_KEY
-let instanceName: string = process.env.ELEPHANT_INSTANCE_NAME
+let instanceName: string = process.env.ELEPHANT_INSTANCE_NAME_TEST
 const elephantProvider = new ElephantSQLInstanceProvider(apikey)
 
 async function dropTestCustomers() {
