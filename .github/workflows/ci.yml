@@ -46,7 +46,7 @@ jobs:
       - name: Prepare database for integration tests...
         run: yarn prepare:test:integration
         env:
-          ELEPHANT_INSTANCE_NAME: ${{ secrets.ELEPHANT_INSTANCE_NAME }}
+          ELEPHANT_INSTANCE_NAME_TEST: ${{ secrets.ELEPHANT_INSTANCE_NAME }}
           ELEPHANT_API_KEY: ${{ secrets.ELEPHANT_API_KEY }}
 
       - name: Run integration tests...
