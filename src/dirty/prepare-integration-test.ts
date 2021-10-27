@@ -57,7 +57,11 @@ async function prepareEnvironment(environment: string = null) {
   for (const [key, value] of envMain.entries()) {
     content.push(`${key}=${value}`)
   }
-  await fs.writeFile('.env.bkp', await fs.readFile('.env'))
+  if (fs.access('.env')) {
+    await fs.writeFile('.env.bkp', await fs.readFile('.env'))
+  } else {
+    await fs.writeFile('.env.bkp', (process.env as unknown as []).join('\n'))
+  }
   await fs.writeFile('.env', content.join('\n'))
 
   console.log('> Override db configs: %s', environment.toLocaleLowerCase())
