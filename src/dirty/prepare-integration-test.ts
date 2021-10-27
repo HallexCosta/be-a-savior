@@ -48,7 +48,6 @@ async function prepareEnvironment(environment: string = null) {
 
   const configs = parseDBConfigs(instance.url)
 
-  console.log(envMain)
   envMain.forEach((value, key) => envMain.set(key.toUpperCase(), value))
   configs.forEach((value, key) => envMain.set(key.toUpperCase(), value))
 
