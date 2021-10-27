@@ -10,7 +10,7 @@
   "scripts": {
     "install:ci": "yarn install --fronzen-lockfile",
     "test:unit": "cross-env NODE_ENV=test mocha --config .mocharc.unit.js",
-    "prepare:test:integration": "cross-env NODE_ENV=test ts-node -r make-promises-safe -r dotenv/config -r tsconfig-paths/register ./src/dirty/prepare-integration-test.ts",
+    "prepare:test:integration": "cross-env NODE_ENV=test ts-node -r dotenv/config -r tsconfig-paths/register ./src/dirty/prepare-integration-test.ts",
     "test:integration": "cross-env NODE_ENV=test mocha --config .mocharc.integration.js",
     "test:unit:watch": "cross-env NODE_ENV=test yarn test:unit --watch",
     "clean": "rimraf dist",
