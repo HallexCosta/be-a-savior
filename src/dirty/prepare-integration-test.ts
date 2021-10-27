@@ -24,41 +24,42 @@ async function prepareEnvironment(environment: string = null) {
 
   console.log('> Up database: %s', instanceName)
   await elephantProvider.deleteInstance(instanceName)
+  console.log('> Deleting')
   const instance = await elephantProvider.createInstance({
     name: instanceName,
     plan: 'turtle',
     region: 'amazon-web-services::us-east-1'
   })
+  console.log('> Creating')
 
   const envMain = new Map<string, string>() as Map<string, string>
 
-  const [] = (await fs.readFile('.env.example')).toString().split('\n').map(line => {
-    const [key, value] = line.split('=')
-    envMain.set(key, value)
-  })
+  if (!process.env.GITHUB_ACTIONS) {
+    const [] = (await fs.readFile('.env.example')).toString().split('\n').map(line => {
+      const [key, value] = line.split('=')
+      envMain.set(key, value)
+    })
 
+    const [] = (await fs.readFile('.env')).toString().split('\n').map(line => {
+      const [key, value] = line.split('=')
+      envMain.set(key, value)
+    })
 
-  const [] = (await fs.readFile('.env')).toString().split('\n').map(line => {
-    const [key, value] = line.split('=')
-    envMain.set(key, value)
-  })
-
-
-  envMain.forEach((value, key) => value === 'undefined' || value === undefined ? envMain.delete(key) : null)
+    envMain.forEach((value, key) => value === 'undefined' || value === undefined ? envMain.delete(key) : null)
+    envMain.forEach((value, key) => envMain.set(key.toUpperCase(), value))
+  }
 
   const configs = parseDBConfigs(instance.url)
-
-  envMain.forEach((value, key) => envMain.set(key.toUpperCase(), value))
   configs.forEach((value, key) => envMain.set(key.toUpperCase(), value))
-
 
   console.log('> Rewrite db configs test in .env...')
   const content = []
+
   for (const [key, value] of envMain.entries()) {
     content.push(`${key}=${value}`)
   }
-  if (fs.access('.env')) {
-    console.log('> Creating env.bkp')
+
+  if (!process.env.GITHUB_ACTIONS) {
     await fs.writeFile('.env.bkp', await fs.readFile('.env'))
   }
 
@@ -99,5 +100,9 @@ function sleep(ms: number) {
   });
 }
 
-console.log('> Prepare environment: %s', environment)
+function isGithubActions() {
+  return process.env.GITHUB_ACTIONS ? 'github actions' : 'locally'
+}
+
+console.log('> Prepare environment %s in %s', environment, isGithubActions())
 prepareEnvironment(environment)
