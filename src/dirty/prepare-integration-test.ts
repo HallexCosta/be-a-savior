@@ -11,10 +11,6 @@ const apikey = process.env.ELEPHANT_API_KEY
 const instanceName = process.env.ELEPHANT_INSTANCE_NAME_TEST
 const elephantProvider = new ElephantSQLInstanceProvider(apikey)
 
-process.on('unhandledRejection', error => {
-  throw error
-})
-
 async function prepareEnvironment(environment: string = null) {
   environment = environment.toUpperCase()
 
