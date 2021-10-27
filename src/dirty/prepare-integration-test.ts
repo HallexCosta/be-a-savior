@@ -30,7 +30,7 @@ async function prepareEnvironment(environment: string = null) {
     plan: 'turtle',
     region: 'amazon-web-services::us-east-1'
   })
-  console.log('> Creating')
+  console.log('> Creating', instance)
 
   const envMain = new Map<string, string>() as Map<string, string>
 
@@ -61,14 +61,20 @@ async function prepareEnvironment(environment: string = null) {
 
   if (!process.env.GITHUB_ACTIONS) {
     await fs.writeFile('.env.bkp', await fs.readFile('.env'))
+    await fs.writeFile('.env', content.join('\n'))
   }
 
-  await fs.writeFile('.env', content.join('\n'))
 
-  console.log('> Override db configs: %s', environment.toLocaleLowerCase())
-  const env = dotenv.parse(await fs.readFile(path.resolve(process.cwd(), '.env')))
-  for (const k in env) {
-    process.env[k] = env[k]
+  if (process.env.GITHUB_ACTIONS) {
+    for (const [key, value] of configs) {
+      process.env[key] = value
+    }
+  } else {
+    console.log('> Override db configs: %s', environment.toLocaleLowerCase())
+    const env = dotenv.parse(await fs.readFile(path.resolve(process.cwd(), '.env')))
+    for (const k in env) {
+      process.env[k] = env[k]
+    }
   }
 
   const seconds = 6 * 1000
