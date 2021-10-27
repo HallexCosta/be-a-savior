@@ -16,8 +16,13 @@ describe('Donors Routes', () => {
   let agent: SuperTest<Test>
 
   before(async () => {
-    await createTestingConnection()
-    agent = createAgent(app)
+    try {
+      await createTestingConnection()
+      agent = createAgent(app)
+    } catch (e) {
+      console.log(e)
+      throw e
+    }
   })
 
   it('Should be create new Donor POST (/donors)', async () => {
