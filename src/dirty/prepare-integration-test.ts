@@ -53,23 +53,22 @@ async function prepareEnvironment(environment: string = null) {
   configs.forEach((value, key) => envMain.set(key.toUpperCase(), value))
 
   console.log('> Rewrite db configs test in .env...')
-  const content = []
-
-  for (const [key, value] of envMain.entries()) {
-    content.push(`${key}=${value}`)
-  }
-
-  if (!process.env.GITHUB_ACTIONS) {
-    await fs.writeFile('.env.bkp', await fs.readFile('.env'))
-    await fs.writeFile('.env', content.join('\n'))
-  }
-
 
   if (process.env.GITHUB_ACTIONS) {
+    console.log('DB Configs', configs)
     for (const [key, value] of configs) {
       process.env[key] = value
     }
   } else {
+    const content = []
+
+    for (const [key, value] of envMain.entries()) {
+      content.push(`${key}=${value}`)
+    }
+
+    await fs.writeFile('.env.bkp', await fs.readFile('.env'))
+    await fs.writeFile('.env', content.join('\n'))
+
     console.log('> Override db configs: %s', environment.toLocaleLowerCase())
     const env = dotenv.parse(await fs.readFile(path.resolve(process.cwd(), '.env')))
     for (const k in env) {
