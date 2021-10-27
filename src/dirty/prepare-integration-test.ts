@@ -24,13 +24,12 @@ async function prepareEnvironment(environment: string = null) {
 
   console.log('> Up database: %s', instanceName)
   await elephantProvider.deleteInstance(instanceName)
-  console.log('> Deleting')
   const instance = await elephantProvider.createInstance({
     name: instanceName,
     plan: 'turtle',
     region: 'amazon-web-services::us-east-1'
   })
-  console.log('> Creating', instance)
+  console.log('> Creating instance...', instance)
 
   const envMain = new Map<string, string>() as Map<string, string>
 
@@ -55,8 +54,8 @@ async function prepareEnvironment(environment: string = null) {
   console.log('> Rewrite db configs test in .env...')
 
   if (process.env.GITHUB_ACTIONS) {
-    console.log('DB Configs', configs)
-    for (const [key, value] of configs) {
+    console.log('Env main in github actions', envMain)
+    for (const [key, value] of envMain) {
       process.env[key] = value
     }
   } else {
