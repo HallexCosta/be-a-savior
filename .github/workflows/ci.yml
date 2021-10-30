@@ -46,7 +46,6 @@ jobs:
       - name: Prepare database for integration tests...
         run: yarn prepare:test:integration
         env:
-          ELEPHANT_INSTANCE_NAME_TEST: ${{ secrets.ELEPHANT_INSTANCE_NAME }}
           ELEPHANT_API_KEY: ${{ secrets.ELEPHANT_API_KEY }}
 
       - name: Run integration tests...
@@ -55,7 +54,12 @@ jobs:
           EXPRESS_LISTEN_APP_PORT: ${{ secrets.EXPRESS_LISTEN_APP_PORT }}
           STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY }}
           STRIPE_API_VERSION: ${{ secrets.STRIPE_API_VERSION }}
-          ELEPHANT_INSTANCE_NAME_TEST: ${{ secrets.ELEPHANT_INSTANCE_NAME }}
+          DB_TYPE: ${{ secrets.DB_TYPE }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           ELEPHANT_API_KEY: ${{ secrets.ELEPHANT_API_KEY }}
 
       - name: Building...
