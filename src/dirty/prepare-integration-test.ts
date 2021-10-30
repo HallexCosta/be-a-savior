@@ -8,7 +8,7 @@ import { URL } from 'url'
 import { ElephantSQLInstanceProvider } from '@providers/elephant/ElephantSQLInstanceProvider'
 
 const environment = process.env.NODE_ENV
-const apikey = process.env.ELEPHANT_API_KEY
+const apikey = process.env.ELEPHANT_API_KEY_TEST
 const instanceName = uuid()
 const elephantProvider = new ElephantSQLInstanceProvider(apikey)
 
