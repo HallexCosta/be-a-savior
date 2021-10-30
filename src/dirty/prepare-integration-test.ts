@@ -23,7 +23,12 @@ async function prepareEnvironment(environment: string = null) {
   }
 
   console.log('> Up database: %s', instanceName)
+
   await elephantProvider.deleteInstance(instanceName)
+
+  let seconds = 6 * 1000
+  await sleep(seconds)
+
   const instance = await elephantProvider.createInstance({
     name: instanceName,
     plan: 'turtle',
@@ -75,7 +80,7 @@ async function prepareEnvironment(environment: string = null) {
     }
   }
 
-  const seconds = 6 * 1000
+  seconds = 6 * 1000
   await sleep(seconds)
 
   console.log('> Run migrations...')
