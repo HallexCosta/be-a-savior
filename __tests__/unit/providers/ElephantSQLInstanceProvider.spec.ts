@@ -65,7 +65,7 @@ describe('#ElephantSQLInstanceProvider', () => {
     })
   })
 
-  describe('#findInRemote', () => {
+  describe('#listInstance', () => {
     beforeEach(() => sandbox = sinon.createSandbox())
     afterEach(() => sandbox.restore())
 
@@ -73,24 +73,23 @@ describe('#ElephantSQLInstanceProvider', () => {
       const elephantInstanceProvider = new ElephantSQLInstanceProvider(defaultElephantParam)
 
       const instanceName = 'be-a-savior-test'
-      const instances = [...mockInstances.values()]
-      sandbox.stub(elephantInstanceProvider, 'listInstances').resolves(instances)
+      const instance = [...mockInstances.values()][0]
+      sandbox.stub(elephantInstanceProvider, 'listInstance').resolves(instance)
 
-      const expectedInstance = await elephantInstanceProvider.findInRemote(instanceName)
+      const expectedInstance = await elephantInstanceProvider.listInstance(instanceName)
 
-      expect(expectedInstance).to.be.equal(instances.find(instance => instance.name === instanceName))
+      expect(expectedInstance).to.be.equal(instance)
     })
 
-    it('should return undefined if not found instance by name in remote', async () => {
+    it('should return null if not found instance by name in remote', async () => {
       const elephantInstanceProvider = new ElephantSQLInstanceProvider(defaultElephantParam)
-      const apiGetStub = sandbox.stub(api, 'get').resolves({
-        data: []
-      })
 
-      const expectedInstance = await elephantInstanceProvider.findInRemote('return-undefined-instance')
+      const findInstanceIdStub = sandbox.stub(elephantInstanceProvider, 'findInstanceId').resolves(null)
 
-      expect(apiGetStub.calledOnce).to.be.true()
-      expect(expectedInstance).to.be.undefined()
+      const expectedInstance = await elephantInstanceProvider.listInstance('return-null-instance')
+
+      expect(findInstanceIdStub.calledOnce).to.be.true()
+      expect(expectedInstance).to.be.null()
     })
   })
 
@@ -101,23 +100,23 @@ describe('#ElephantSQLInstanceProvider', () => {
     it('should return true if instance already exists in remote', async () => {
       const elephantInstanceProvider = new ElephantSQLInstanceProvider(defaultElephantParam)
 
-      const findInRemoteStub = sandbox.stub(elephantInstanceProvider, 'findInRemote').resolves([...mockInstances.values()][0])
+      const listInstanceStub = sandbox.stub(elephantInstanceProvider, 'listInstance').resolves([...mockInstances.values()][0])
 
       const instanceName = 'be-a-savior-test'
       const alreadyExists = await elephantInstanceProvider.verifyInstanceExists(instanceName)
 
-      expect(findInRemoteStub.calledOnce).to.be.true()
+      expect(listInstanceStub.calledOnce).to.be.true()
       expect(alreadyExists).to.be.true()
     })
 
     it('should return false if not found instance in memory or remote', async () => {
       const elephantInstanceProvider = new ElephantSQLInstanceProvider(defaultElephantParam)
 
-      const findInRemoteStub = sandbox.stub(elephantInstanceProvider, 'findInRemote').resolves(undefined)
+      const listInstanceStub = sandbox.stub(elephantInstanceProvider, 'listInstance').resolves(undefined)
 
       const alreadyExists = await elephantInstanceProvider.verifyInstanceExists('be-a-savior-test')
 
-      expect(findInRemoteStub.calledOnce).to.be.true()
+      expect(listInstanceStub.calledOnce).to.be.true()
       expect(alreadyExists).to.be.false()
     })
   })
@@ -130,10 +129,10 @@ describe('#ElephantSQLInstanceProvider', () => {
       const elephantInstanceProvider = new ElephantSQLInstanceProvider(defaultElephantParam)
 
       const mockInstance = [...mockInstances.values()][0]
-      const findInRemoteStub = sandbox.stub(elephantInstanceProvider, 'findInRemote').resolves(mockInstance)
+      const listInstancesStub = sandbox.stub(elephantInstanceProvider, 'listInstances').resolves([mockInstance])
       const instanceId = await elephantInstanceProvider.findInstanceId(mockInstance.name)
 
-      expect(findInRemoteStub.calledOnce).to.be.true()
+      expect(listInstancesStub.calledOnce).to.be.true()
       expect(instanceId).to.be.equal(mockInstance.id)
 
     })
@@ -142,7 +141,7 @@ describe('#ElephantSQLInstanceProvider', () => {
       const elephantInstanceProvider = new ElephantSQLInstanceProvider(defaultElephantParam)
 
       const mockInstance = [...mockInstances.values()][0]
-      sandbox.stub(elephantInstanceProvider, 'findInRemote').returns(null)
+      sandbox.stub(elephantInstanceProvider, 'listInstances').resolves([])
       const instanceIdNotFound = await elephantInstanceProvider.findInstanceId(mockInstance.name)
 
       expect(instanceIdNotFound).to.be.null()
