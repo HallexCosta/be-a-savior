@@ -1,6 +1,7 @@
 import fs from 'fs/promises'
 import dotenv from 'dotenv'
 import path from 'path'
+import { v4 as uuid } from 'uuid'
 import { createConnection } from 'typeorm'
 
 import { URL } from 'url'
@@ -8,7 +9,7 @@ import { ElephantSQLInstanceProvider } from '@providers/elephant/ElephantSQLInst
 
 const environment = process.env.NODE_ENV
 const apikey = process.env.ELEPHANT_API_KEY
-const instanceName = process.env.ELEPHANT_INSTANCE_NAME_TEST
+let instanceName = process.env.ELEPHANT_INSTANCE_NAME_TEST
 const elephantProvider = new ElephantSQLInstanceProvider(apikey)
 
 async function prepareEnvironment(environment: string = null) {
@@ -16,9 +17,9 @@ async function prepareEnvironment(environment: string = null) {
 
   const lines = (await fs.readFile('.env.example')).toString().split('\n')
 
-  const declaredElephantInstance = lines.find(line => line.includes('ELEPHANT_INSTANCE_NAME'))
+  const declaredElephantInstance = lines.find(line => line.includes('ELEPHANT_INSTANCE_NAME_TEST'))
   if (!declaredElephantInstance) {
-    console.error('Ops... not found environment variable "ELEPHANT_INSTANCE_NAME"')
+    console.error('Ops... not found environment variable "ELEPHANT_INSTANCE_NAME_TEST"')
     return
   }
 
@@ -55,6 +56,8 @@ async function prepareEnvironment(environment: string = null) {
 
   const configs = parseDBConfigs(instance.url)
   configs.forEach((value, key) => envMain.set(key.toUpperCase(), value))
+
+  envMain.set('ELEPHANT_INSTANCE_NAME_TEST', uuid())
 
   console.log('> Rewrite db configs test in .env...')
 
