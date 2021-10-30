@@ -48,8 +48,8 @@ jobs:
         env:
           ELEPHANT_API_KEY: ${{ secrets.ELEPHANT_API_KEY }}
 
-      - name: Run integration tests...
-        run: yarn test:integration -g 'ongs'
+      - name: Prepare database and run integration tests...
+        run: yarn prepare:test:integration && yarn test:integration -g 'ongs'
         env:
           EXPRESS_LISTEN_APP_PORT: ${{ secrets.EXPRESS_LISTEN_APP_PORT }}
           STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY }}
