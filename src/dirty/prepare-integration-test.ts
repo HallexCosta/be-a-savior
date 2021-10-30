@@ -9,7 +9,7 @@ import { ElephantSQLInstanceProvider } from '@providers/elephant/ElephantSQLInst
 
 const environment = process.env.NODE_ENV
 const apikey = process.env.ELEPHANT_API_KEY
-let instanceName = process.env.ELEPHANT_INSTANCE_NAME_TEST
+const instanceName = uuid()
 const elephantProvider = new ElephantSQLInstanceProvider(apikey)
 
 async function prepareEnvironment(environment: string = null) {
