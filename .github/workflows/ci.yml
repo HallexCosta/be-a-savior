@@ -34,7 +34,7 @@ jobs:
 
       - name: Prepare database and run integration tests...
         run: |
-          docker build -t be-a-savior/server . --build-arg ELEPHANT_API_KEY=${{ secrets.ELEPHANT_API_KEY_TEST }} --build-arg STRIPE_SECRET_API_KEY=${{ secrets.STRIPE_SECRET_API_KEY }}
+          docker build -t be-a-savior/server . --build-arg ELEPHANT_API_KEY=${{ secrets.ELEPHANT_API_KEY_TEST }} --build-arg STRIPE_SECRET_API_KEY=${{ secrets.STRIPE_SECRET_API_KEY }} --build-arg GITHUB_ACTIONS=${{ secrets.GITHUB_ACTIONS }}
         env:
           STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY }}
           STRIPE_API_VERSION: ${{ secrets.STRIPE_API_VERSION }}
