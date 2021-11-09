@@ -49,18 +49,12 @@ jobs:
           ELEPHANT_API_KEY_TEST: ${{ secrets.ELEPHANT_API_KEY_TEST }}
 
       - name: Prepare database and run integration tests...
-        run: yarn prepare:test:integration && yarn test:integration -g 'ongs'
+        run: |
+          docker build -t be-a-savior/server .
         env:
-          EXPRESS_LISTEN_APP_PORT: ${{ secrets.EXPRESS_LISTEN_APP_PORT }}
           STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY }}
           STRIPE_API_VERSION: ${{ secrets.STRIPE_API_VERSION }}
-          DB_TYPE_TEST: ${{ secrets.DB_TYPE }}
-          DB_HOST_TEST: ${{ secrets.DB_HOST }}
-          DB_NAME_TEST: ${{ secrets.DB_NAME }}
-          DB_PORT_TEST: ${{ secrets.DB_PORT }}
-          DB_USERNAME_TEST: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD_TEST: ${{ secrets.DB_PASSWORD }}
-          ELEPHANT_API_KEY_TEST: ${{ secrets.ELEPHANT_API_KEY_TEST }}
+          ELEPHANT_API_KEY: ${{ secrets.ELEPHANT_API_KEY_TEST }}
 
       - name: Building...
         run: yarn build
