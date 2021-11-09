@@ -3,7 +3,7 @@ import { ElephantSQLInstanceProvider } from '@providers/elephant/ElephantSQLInst
 
 import ormconfig from '../ormconfig'
 
-const apikey = process.env.ELEPHANT_API_KEY_TEST
+const apikey = process.env.ELEPHANT_API_KEY
 const instanceName: string = process.env.ELEPHANT_INSTANCE_NAME_TEST
 const elephantProvider = new ElephantSQLInstanceProvider(apikey)
 
