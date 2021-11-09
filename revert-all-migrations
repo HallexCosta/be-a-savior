@@ -1,0 +1,6 @@
+#!/usr/bin/luajit
+
+for v = 1, 5 do
+  print('> RUNNING: ', v)
+  os.execute('yarn typeorm:development migration:revert')
+end
