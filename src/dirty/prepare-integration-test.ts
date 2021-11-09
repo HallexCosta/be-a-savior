@@ -15,13 +15,13 @@ const elephantProvider = new ElephantSQLInstanceProvider(apikey)
 async function prepareEnvironment(environment: string = null) {
   environment = environment.toUpperCase()
 
-  const lines = (await fs.readFile('.env.example')).toString().split('\n')
+  //const lines = (await fs.readFile('.env.example')).toString().split('\n')
 
-  const declaredElephantInstance = lines.find(line => line.includes('ELEPHANT_INSTANCE_NAME_TEST'))
-  if (!declaredElephantInstance) {
-    console.error('Ops... not found environment variable "ELEPHANT_INSTANCE_NAME_TEST"')
-    return
-  }
+  //const declaredElephantInstance = lines.find(line => line.includes('ELEPHANT_INSTANCE_NAME_TEST'))
+  //if (!declaredElephantInstance) {
+  //  console.error('Ops... not found environment variable "ELEPHANT_INSTANCE_NAME_TEST"')
+  //  return
+  //}
 
   console.log('> Up database: %s', instanceName)
 
@@ -39,20 +39,22 @@ async function prepareEnvironment(environment: string = null) {
 
   const envMain = new Map<string, string>() as Map<string, string>
 
-  if (!process.env.GITHUB_ACTIONS) {
-    const [] = (await fs.readFile('.env.example')).toString().split('\n').map(line => {
-      const [key, value] = line.split('=')
-      envMain.set(key, value)
-    })
+  //if (!process.env.DOCKER_CONTAINER) {
+  const [] = (await fs.readFile('.env.example')).toString().split('\n').map(line => {
+    const [key, value] = line.split('=')
+    envMain.set(key, value)
+  })
 
+  if (!process.env.GITHUB_ACTIONS) {
     const [] = (await fs.readFile('.env')).toString().split('\n').map(line => {
       const [key, value] = line.split('=')
       envMain.set(key, value)
     })
-
-    envMain.forEach((value, key) => value === 'undefined' || value === undefined ? envMain.delete(key) : null)
-    envMain.forEach((value, key) => envMain.set(key.toUpperCase(), value))
   }
+
+  envMain.forEach((value, key) => value === 'undefined' || value === undefined ? envMain.delete(key) : null)
+  envMain.forEach((value, key) => envMain.set(key.toUpperCase(), value))
+  //}
 
   const configs = parseDBConfigs(instance.url)
   configs.forEach((value, key) => envMain.set(key.toUpperCase(), value))
@@ -115,6 +117,9 @@ function sleep(ms: number) {
 function isGithubActions() {
   return process.env.GITHUB_ACTIONS ? 'github actions' : 'locally'
 }
+function isDockerContainer() {
+  return process.env.DOCKER_CONTAINER ? 'with docker container' : 'without docker container'
+}
 
-console.log('> Prepare environment %s in %s', environment, isGithubActions())
+console.log('> Prepare environment %s in %s %s', environment, isGithubActions(), isDockerContainer())
 prepareEnvironment(environment)
