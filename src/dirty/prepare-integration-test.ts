@@ -115,6 +115,7 @@ function sleep(ms: number) {
 }
 
 function isGithubActions() {
+  console.log('github actions: ', process.env.GITHUB_ACTIONS)
   console.log(process.env.IN_REMOTE)
   return process.env.IN_REMOTE ? 'github actions' : 'locally'
 }
