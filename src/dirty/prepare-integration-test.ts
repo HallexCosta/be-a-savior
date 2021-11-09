@@ -45,7 +45,7 @@ async function prepareEnvironment(environment: string = null) {
     envMain.set(key, value)
   })
 
-  if (!process.env.RUN_GITHUB_ACTIONS) {
+  if (!process.env.GITHUB_ACTIONS) {
     const [] = (await fs.readFile('.env')).toString().split('\n').map(line => {
       const [key, value] = line.split('=')
       envMain.set(key, value)
@@ -115,7 +115,7 @@ function sleep(ms: number) {
 }
 
 function isGithubActions() {
-  return process.env.RUN_GITHUB_ACTIONS ? 'github actions' : 'locally'
+  return process.env.GITHUB_ACTIONS ? 'github actions' : 'locally'
 }
 function isDockerContainer() {
   return process.env.DOCKER_CONTAINER ? 'with docker container' : 'without docker container'
