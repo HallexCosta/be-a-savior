@@ -8,7 +8,7 @@ import { URL } from 'url'
 import { ElephantSQLInstanceProvider } from '@providers/elephant/ElephantSQLInstanceProvider'
 
 const environment = process.env.NODE_ENV
-const apikey = process.env.ELEPHANT_API_KEY_TEST
+const apikey = process.env.ELEPHANT_API_KEY
 const instanceName = uuid()
 const elephantProvider = new ElephantSQLInstanceProvider(apikey)
 
@@ -96,12 +96,12 @@ function parseDBConfigs(url: string): Map<string, string> {
   const parseType = type.substr(0, type.lastIndexOf(':'))
 
   const configs = new Map()
-  configs.set(`DB_TYPE_${environment}`, parseType)
-  configs.set(`DB_HOST_${environment}`, host)
-  configs.set(`DB_PORT_${environment}`, 5432)
-  configs.set(`DB_USERNAME_${environment}`, username)
-  configs.set(`DB_PASSWORD_${environment}`, password)
-  configs.set(`DB_NAME_${environment}`, username)
+  configs.set(`DB_TYPE`, parseType)
+  configs.set(`DB_HOST`, host)
+  configs.set(`DB_PORT`, 5432)
+  configs.set(`DB_USERNAME`, username)
+  configs.set(`DB_PASSWORD`, password)
+  configs.set(`DB_NAME`, username)
 
   return configs
 }
