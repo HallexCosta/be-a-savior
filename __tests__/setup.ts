@@ -2,10 +2,9 @@ import { Stripe } from 'stripe'
 import { ElephantSQLInstanceProvider } from '@providers/elephant/ElephantSQLInstanceProvider'
 
 import ormconfig from '../ormconfig'
-console.log('ormconfig', ormconfig)
 
 const apikey = process.env.ELEPHANT_API_KEY
-const instanceName: string = process.env.ELEPHANT_INSTANCE_NAME_TEST
+const instanceName: string = process.env.ELEPHANT_INSTANCE_NAME
 const elephantProvider = new ElephantSQLInstanceProvider(apikey)
 
 async function dropTestCustomers() {
@@ -20,7 +19,13 @@ async function dropTestCustomers() {
 
   for (const customer of customers) {
     console.log('> Delete %s', customer.email)
-    await stripe.customers.del(customer.id)
+    try {
+      const alreadyCustomer = await stripe.customers.retrieve(customer.id)
+
+      if (!alreadyCustomer.deleted) {
+        await stripe.customers.del(customer.id)
+      }
+    } catch (e) { }
   }
 
   await dropTestCustomers()

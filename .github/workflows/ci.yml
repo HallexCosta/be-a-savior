@@ -9,13 +9,12 @@ on:
 
 jobs:
   build:
-    name: Test on ${{ matrix.node_version }} and ${{ matrix.os }}
+    name: Test on Node.js ${{ matrix.node_version }} and Platform ${{ matrix.platform }}
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x]
-        os: [ubuntu-latest]
+        node_version: [12.x, 14.x, 16.x]
+        platform: [ubuntu-latest, mac-lastest, windows-latest]
 
     steps:
       - uses: actions/checkout@v2
