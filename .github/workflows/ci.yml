@@ -42,7 +42,7 @@ jobs:
           docker build -t be-a-savior/server . \
           --build-arg ELEPHANT_API_KEY="${{ secrets.ELEPHANT_API_KEY_TEST }}" \
           --build-arg STRIPE_SECRET_API_KEY="${{ secrets.STRIPE_SECRET_API_KEY }}" \
-          --build-arg IN_REMOTE=$GITHUB_ACTIONS \
+          --build-arg GITHUB_ACTIONS=$GITHUB_ACTIONS \
           --no-cache
 
       - name: Building...
