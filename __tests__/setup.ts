@@ -19,11 +19,13 @@ async function dropTestCustomers() {
 
   for (const customer of customers) {
     console.log('> Delete %s', customer.email)
-    const alreadyCustomer = await stripe.customers.retrieve(customer.id)
+    try {
+      const alreadyCustomer = await stripe.customers.retrieve(customer.id)
 
-    if (!alreadyCustomer.deleted) {
-      await stripe.customers.del(customer.id)
-    }
+      if (!alreadyCustomer.deleted) {
+        await stripe.customers.del(customer.id)
+      }
+    } catch (e) { }
   }
 
   await dropTestCustomers()
