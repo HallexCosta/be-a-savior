@@ -21,4 +21,4 @@ COPY . .
 
 RUN yarn test:unit
 
-RUN yarn prepare:test:integration && yarn test:integration -g 'ongs'
+RUN yarn prepare:test:integration && yarn test:integration -g 'ongs' && yarn test:integration -g 'donors'
