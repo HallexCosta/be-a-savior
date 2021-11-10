@@ -40,9 +40,10 @@ jobs:
           IN_REMOTE: ${{ secrets.IN_REMOTE }}
         run: |
           docker build -t be-a-savior/server . \
-          --env ELEPHANT_API_KEY="${{ secrets.ELEPHANT_API_KEY_TEST }}" \
-          --env STRIPE_SECRET_API_KEY="${{ secrets.STRIPE_SECRET_API_KEY }}" \
-          --env IN_REMOTE="$GITHUB_ACTIONS"
+          --build-arg ELEPHANT_API_KEY="${{ secrets.ELEPHANT_API_KEY_TEST }}" \
+          --build-arg STRIPE_SECRET_API_KEY="${{ secrets.STRIPE_SECRET_API_KEY }}" \
+          --build-arg IN_REMOTE=$GITHUB_ACTIONS \
+          --no-cache
 
       - name: Building...
         run: yarn build
