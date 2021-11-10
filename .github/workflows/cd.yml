@@ -1,12 +1,9 @@
 name: CD Heroku
 
 on:
-  workflow_run:
-    workflows: ['CI Tests and Build']
-    branches: 
+  push:
+    branches:
       - main
-    types: 
-      - completed
   workflow_dispatch:
 
 jobs:
