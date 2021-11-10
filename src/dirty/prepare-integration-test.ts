@@ -42,7 +42,7 @@ async function prepareEnvironment(environment: string = null) {
   //if (!process.env.DOCKER_CONTAINER) {
   const [] = (await fs.readFile('.env.example')).toString().split('\n').map(line => {
     const [key, value] = line.split('=')
-    envMain.set(key, value)
+    //envMain.set(key, value)
   })
 
   if (!process.env.GITHUB_ACTIONS) {
@@ -59,7 +59,7 @@ async function prepareEnvironment(environment: string = null) {
   const configs = parseDBConfigs(instance.url)
   configs.forEach((value, key) => envMain.set(key.toUpperCase(), value))
 
-  envMain.set('ELEPHANT_INSTANCE_NAME_TEST', uuid())
+  envMain.set('ELEPHANT_INSTANCE_NAME', instanceName)
 
   console.log('> Rewrite db configs test in .env...')
 
