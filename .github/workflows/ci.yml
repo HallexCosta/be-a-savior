@@ -31,7 +31,7 @@ jobs:
 
       - name: Prepare database and run integration tests...
         env:
-          STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY }}
+          STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY_TEST }}
           STRIPE_API_VERSION: ${{ secrets.STRIPE_API_VERSION }}
           ELEPHANT_API_KEY: ${{ secrets.ELEPHANT_API_KEY_TEST }}
         run: |
@@ -63,8 +63,7 @@ jobs:
 
       - name: Clean test databases
         env:
-          STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY }}
-          STRIPE_API_VERSION: ${{ secrets.STRIPE_API_VERSION }}
+          STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY_TEST }}
           ELEPHANT_API_KEY: ${{ secrets.ELEPHANT_API_KEY_TEST }}
         run: |
           yarn clean:elephant:instances:team
@@ -88,5 +87,5 @@ jobs:
       - name: Install dependencies
         run: yarn install:ci
 
-      - name: Building
+      - name: Build
         run: yarn build
