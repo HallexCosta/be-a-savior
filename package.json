@@ -13,6 +13,7 @@
     "prepare:test:integration": "cross-env NODE_ENV=test ts-node -r make-promises-safe -r dotenv/config -r tsconfig-paths/register ./src/dirty/prepare-integration-test.ts",
     "test:integration": "cross-env NODE_ENV=test mocha --config .mocharc.integration.js",
     "test:unit:watch": "cross-env NODE_ENV=test yarn test:unit --watch",
+    "clean:elephant:instances:team": "cross-env NODE_ENV=development ts-node -r dotenv/config -r tsconfig-paths/register src/dirty/clean-elephant-team.ts",
     "clean": "rimraf dist",
     "clean:database:postgres": "cross-env NODE_ENV=development yarn ts-node -r dotenv/config -r tsconfig-paths/register ./src/dirty/clean-elephant-team.ts",
     "clean:database:sqlite": "rimraf src/database/database.sqlite && yarn typeorm:development migration:run",
