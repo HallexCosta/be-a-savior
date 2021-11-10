@@ -4,13 +4,21 @@ export const api = axios.create({
   baseURL: 'https://customer.elephantsql.com/api'
 })
 
-export type Instance = {
+export type InstanceDetail = {
   id: number
   name: string
   url: string
   plan: string
   region: string
   apikey: string
+  providerid: string
+}
+
+export type Instance = {
+  id: number
+  name: string
+  plan: string
+  region: string
   providerid: string
 }
 
@@ -60,12 +68,12 @@ export class ElephantSQLInstanceProvider {
     })
   }
 
-  public async listInstance(instanceName: string): Promise<Instance> {
+  public async listInstance(instanceName: string): Promise<InstanceDetail> {
     try {
       const id = await this.findInstanceId(instanceName)
 
       if (id) {
-        const { data: instance } = await api.get<Instance>(`/instances/${id}`)
+        const { data: instance } = await api.get<ElephantInstanceDetail>(`/instances/${id}`)
 
         return instance
       }
@@ -86,26 +94,39 @@ export class ElephantSQLInstanceProvider {
     return false
   }
 
-  public async listInstances(): Promise<Instance[]> {
+  public async listInstances(verbose: boolean = false): Promise<Instance[] | InstanceDetail[]> {
     try {
       const { data } = await api.get<ElephantListInstance[]>('/instances')
 
-      const instances: Instance[] = []
+      if (!verbose) {
+        const instance = data.map<Instance>(({ id, name, plan, region, providerid }) => ({
+          id,
+          name,
+          plan,
+          region,
+          providerid
+        }))
+
+        return instance
+      }
+
+      const instanceDetails: Instance[] = []
+
       for (const elephantInstance of data) {
         const { data: instanceDetail } = await api.get<ElephantInstanceDetail>(`/instances/${elephantInstance.id}`)
 
         const { ready, tags, ...instance } = instanceDetail
 
-        instances.push(instance)
+        instanceDetails.push(instance)
       }
 
-      return instances
+      return instanceDetails
     } catch (e) {
       console.log(e.message)
     }
   }
 
-  public async createInstance({ name, plan, region }: CreateInstanceParams): Promise<Instance> {
+  public async createInstance({ name, plan, region }: CreateInstanceParams): Promise<InstanceDetail> {
     const instanceAlreadyExists = await this.verifyInstanceExists(name)
 
     if (instanceAlreadyExists) {
@@ -127,9 +148,8 @@ export class ElephantSQLInstanceProvider {
     return instance
   }
 
-  public async deleteInstance(instanceName: string): Promise<boolean> {
+  public async deleteInstance(instanceId: number): Promise<boolean> {
     try {
-      const instanceId = await this.findInstanceId(instanceName)
       await api.delete(`/instances/${instanceId}`)
       return true
     } catch (e) {
