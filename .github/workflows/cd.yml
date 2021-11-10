@@ -1,0 +1,34 @@
+name: CD Heroku
+
+on:
+  workflow_run:
+    workflows: ['CI Tests and Build']
+    branches: 
+      - main
+    types: 
+      - completed
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Deploy on Node.js ${{ matrix.node_version }} and Platform ${{ matrix.platform }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node_version: [16.x]
+        platform: [ubuntu-latest]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node_version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node_version }}
+
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3.8.8
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: be-a-savior
+          heroku_email: ${{ secrets.HEROKU_EMAIL }}
