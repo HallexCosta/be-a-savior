@@ -3,7 +3,8 @@ name: CI Clean Test Databases
 on:
   workflow_run:
     workflows: ['CI Tests']
-    branches: ['separate-workflows']
+    branches: 
+      - main
     types: 
       - completed
 
