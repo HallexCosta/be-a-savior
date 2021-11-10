@@ -68,6 +68,17 @@ async function prepareEnvironment(environment: string = null) {
     for (const [key, value] of envMain) {
       process.env[key] = value
     }
+
+    if (process.env.DOCKER_CONTAINER) {
+      const content = []
+
+      for (const [key, value] of envMain.entries()) {
+        console.log('KEY', key, 'VALUE', value)
+        content.push(`${key}=${value}`)
+      }
+
+      await fs.writeFile('.env', content.join('\n'))
+    }
   } else {
     const content = []
 
