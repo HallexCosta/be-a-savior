@@ -1,12 +1,22 @@
+class DB {
+  constructor(environment) {
+    environment = environment.toUpperCase()
+
+    this.config = {
+      type: process.env.DB_TYPE,
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+    }
+  }
+}
+
 class Development {
-  postgres() {
+  postgres(db) {
     return {
-     type: process.env.DB_TYPE,
-     host: process.env.DB_HOST,
-     port: process.env.DB_PORT,
-     username: process.env.DB_USERNAME,
-     password: process.env.DB_PASSWORD,
-     database: process.env.DB_NAME,
+     ...db.config,
      migrations: ['src/database/migrations/*.ts'],
      entities: ['src/entities/*.ts'],
      cli: {
@@ -15,6 +25,7 @@ class Development {
       }
     }
   }
+
   sqlite() {
     return {
       type: 'sqlite',
@@ -27,20 +38,17 @@ class Development {
       }
     }
   }
-  config() {
-    return this.postgres()
+
+  config(orm) {
+    if (orm.environment !== 'development') return
+    orm.configs = this.postgres(orm.db)
   }
 }
 
 class Production {
-  postgres() {
+  postgres(db) {
     return {
-      type: process.env.DB_TYPE,
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
+      ...db.config,
       migrations: ['dist/database/migrations/*.js'],
       entities: ['dist/entities/*.js'],
       cli: {
@@ -49,6 +57,7 @@ class Production {
       }
     }
   }
+
   sqlite() {
     return {
       type: 'sqlite',
@@ -61,20 +70,17 @@ class Production {
       }
     }
   }
-  config() {
-    return this.postgres()
+
+  config(orm) {
+    if (orm.environment !== 'production') return
+    orm.configs = this.postgres(orm.db)
   }
 }
 
 class Test {
-  postgres() {
+  postgres(db) {
     return {
-      type: process.env.DB_TYPE,
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_NAME,
+      ...db.config,
       migrations: ['src/database/migrations/*.ts'],
       entities: ['src/entities/*.ts'],
       cli: {
@@ -83,6 +89,7 @@ class Test {
       }
     }
   }
+
   sqlite() {
     return {
       type: 'sqlite',
@@ -95,39 +102,45 @@ class Test {
       }
     }
   }
-  config() {
-    return this.postgres()
+
+  config(orm) {
+    if (orm.environment !== 'test') return
+    orm.configs = this.postgres(orm.db)
   }
 }
 
 class Orm {
-  check(environment) {
-    const test = new Test()
-    const production = new Production()
-    const development = new Development()
-
-    const strategies = {
-      test,
-      production,
-      development
-    }
-
-    return strategies[environment]
+  constructor(db, environment) {
+    this.db = db
+    this.configs = {}
+    this.environments = []
+    this.environment = environment
   }
 
-  add(envrionment) {
-    this.envrionment = envrionment
+  subscribe(environment) {
+    this.environments.push(environment)
+  }
+
+  notify() {
+    for (const environment of this.environments) {
+      environment.config(this)
+    }
   }
 
   config() {
-    return this.envrionment.config()
+    return this.configs
   }
 }
 
-const orm = new Orm()
+const environment = process.env.NODE_ENV
 
-const environment = orm.check(process.env.NODE_ENV)
+const db = new DB(environment)
+const orm = new Orm(db, environment)
 
-orm.add(environment)
+orm.subscribe(new Test)
+orm.subscribe(new Development)
+orm.subscribe(new Production)
+
+orm.notify()
 
 module.exports = orm.config()

@@ -60,13 +60,24 @@ export class ElephantSQLInstanceProvider {
     })
   }
 
-  public async findInRemote(instanceName: string): Promise<Instance | null> {
-    const instances = await this.listInstances()
-    return instances.find(instance => instance.name === instanceName)
+  public async listInstance(instanceName: string): Promise<Instance> {
+    try {
+      const id = await this.findInstanceId(instanceName)
+
+      if (id) {
+        const { data: instance } = await api.get<Instance>(`/instances/${id}`)
+
+        return instance
+      }
+
+      return null
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   public async verifyInstanceExists(instanceName: string) {
-    const instanceRemote = await this.findInRemote(instanceName)
+    const instanceRemote = await this.listInstance(instanceName)
 
     if (instanceRemote) {
       return true
@@ -127,9 +138,11 @@ export class ElephantSQLInstanceProvider {
   }
 
   public async findInstanceId(instanceName: string): Promise<number | null> {
-    const findInstanceIdInRemote = await this.findInRemote(instanceName)
-    return findInstanceIdInRemote
-      ? findInstanceIdInRemote.id
+    const instances = await this.listInstances()
+    const instance = instances.find(({ name }) => instanceName === name)
+
+    return instance
+      ? instance.id
       : null
   }
 }

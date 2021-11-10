@@ -1,12 +1,15 @@
-import { v4 as uuid } from 'uuid'
-import { Connection, ConnectionOptions, createConnection } from 'typeorm'
 import request, { SuperTest, Test } from 'supertest'
+import faker from 'faker'
+import { v4 as uuid } from 'uuid'
 import { Application } from 'express'
+import { Connection, ConnectionOptions, createConnection } from 'typeorm'
 
 import { Incident } from '@entities/Incident'
 import { Ong } from '@entities/Ong'
 
 import ormconfig from '../../../ormconfig'
+
+faker.locale = 'pt_BR'
 
 type CreateFakeIncidentParams = {
   ong_id: string
@@ -18,18 +21,23 @@ type CreateFakeDonationParams = {
   donorToken: string
 }
 
-const body = {
+export const mock = {
   ong: {
-    name: 'Some a ong',
-    email: 'ong@hotmail.com',
-    password: 'some123',
-    phone: '(99) 99999-9999'
+    name: faker.name.findName(),
+    email: faker.internet.email().toLowerCase(),
+    password: 'somepassword123',
+    phone: faker.phone.phoneFormats()
   },
   donor: {
-    name: 'Some a donor',
-    email: 'donor@hotmail.com',
-    password: 'some123',
-    phone: '(99) 99999-9999'
+    name: faker.name.findName(),
+    email: faker.internet.email().toLowerCase(),
+    password: 'somepassword123',
+    phone: faker.phone.phoneFormats()
+  },
+  incident: {
+    name: faker.fake('{{animal.dog}}'),
+    cost: Number(faker.commerce.price()),
+    description: `This animal is type ${faker.fake('{{animal.type}}')}`
   }
 }
 
@@ -37,23 +45,21 @@ export function createAgent(app: Application): SuperTest<Test> {
   return request(app)
 }
 
-export async function createTestingConnection(): Promise<Connection> {
+export async function createTestingConnection(name: string = uuid()): Promise<Connection> {
   return await createConnection({
     ...ormconfig,
-    name: uuid(),
-    migrationsRun: true,
-    dropSchema: true
+    name,
   } as ConnectionOptions)
 }
 
 export async function createFakeOng(agent: SuperTest<Test>): Promise<Ong> {
-  const response = await agent.post('/ongs').send(body.ong)
+  const response = await agent.post('/ongs').send(mock.ong)
 
   return response.body
 }
 
 export async function createFakeDonor(agent: SuperTest<Test>): Promise<Ong> {
-  const response = await agent.post('/donors').send(body.donor)
+  const response = await agent.post('/donors').send(mock.donor)
 
   return response.body
 }
@@ -96,7 +102,7 @@ export async function createFakeDonation(
 export async function loginWithFakeOng(
   agent: SuperTest<Test>
 ): Promise<string> {
-  const { email, password } = body.ong
+  const { email, password } = mock.ong
 
   const response = await agent.post('/ongs/login').send({
     email,
@@ -109,7 +115,7 @@ export async function loginWithFakeOng(
 export async function loginWithFakeDonor(
   agent: SuperTest<Test>
 ): Promise<string> {
-  const { email, password } = body.donor
+  const { email, password } = mock.donor
 
   const response = await agent.post('/donors/login').send({
     email,

@@ -1,5 +1,6 @@
 import faker from 'faker'
 import assert from 'assert'
+import sinon from 'sinon'
 import { expect } from 'chai'
 
 import { StripeProvider } from '../../../src/providers/StripeProvider'
@@ -9,6 +10,8 @@ faker.locale = 'pt_BR'
 const stripe = new StripeProvider()
 
 describe('Stripe Provider', () => {
+  before(() => sinon.stub(console, 'log').callsFake(() => { }))
+
   function log(msg, object) {
     console.log('\n')
     console.log(msg)
