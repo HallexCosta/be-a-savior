@@ -2,6 +2,7 @@ import { Stripe } from 'stripe'
 import { ElephantSQLInstanceProvider } from '@providers/elephant/ElephantSQLInstanceProvider'
 
 import ormconfig from '../ormconfig'
+console.log('ormconfig', ormconfig)
 
 const apikey = process.env.ELEPHANT_API_KEY
 const instanceName: string = process.env.ELEPHANT_INSTANCE_NAME_TEST
