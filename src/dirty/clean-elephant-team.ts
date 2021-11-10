@@ -7,6 +7,7 @@ const provider = new ElephantSQLInstanceProvider(apikey)
 export const api = axios.create({
   baseURL: 'https://customer.elephantsql.com/api'
 })
+
 api.interceptors.request.use(configs => {
   configs.auth = {
     username: null,
@@ -14,16 +15,24 @@ api.interceptors.request.use(configs => {
   }
   return configs
 })
-async function load() {
+
+async function cleanup(useApi = false) {
   console.log('load apikey', apikey)
 
-  //const instances = await provider.listInstances()
-  const { data: instances } = await api.get<ElephantListInstance[]>('/instances')
-  //console.log(instances)
-  for (const instance of instances) {
-    await api.delete(`/instances/${instance.id}`)
-    console.log(instance.name, true)
+  if (useApi) {
+    const { data: instances } = await api.get<ElephantListInstance[]>('/instances')
+    for (const instance of instances) {
+      //await api.delete(`/instances/${instance.id}`)
+      console.log(instance.name, true)
+    }
+  }
+  if (!useApi) {
+    const instances = await provider.listInstances()
+    for (const instance of instances) {
+      await provider.deleteInstance(instance.id)
+      console.log(instance.name, true)
+    }
   }
 }
 
-load()
+cleanup()
