@@ -4,13 +4,13 @@ import chaiAsPromised from 'chai-as-promised'
 import deepEqualInAnyOrder from 'deep-equal-in-any-order'
 import sinon from 'sinon'
 
-import { ElephantSQLInstanceProvider, Instance, api } from '@providers/elephant/ElephantSQLInstanceProvider'
+import { ElephantSQLInstanceProvider, InstanceDetail, api } from '@providers/elephant/ElephantSQLInstanceProvider'
 
 chai.use(dirtyChai)
 chai.use(chaiAsPromised)
 chai.use(deepEqualInAnyOrder)
 
-const mockInstances = new Map<string, Instance>([
+const mockInstances = new Map<string, InstanceDetail>([
   [
     'be-a-savior-test', {
       id: 239286,
@@ -152,7 +152,30 @@ describe('#ElephantSQLInstanceProvider', () => {
     beforeEach(() => sandbox = sinon.createSandbox())
     afterEach(() => sandbox.restore())
 
-    it('should list all instances', async () => {
+    it('should list all instances without details', async () => {
+      const elephantInstanceProvider = new ElephantSQLInstanceProvider(defaultElephantParam)
+
+      const mockApiGetResponse = [...mockInstances.values()].map(({ id, name, plan, region, providerid }) => ({
+        id, name, plan, region, tags: [], providerid
+      }))
+
+      sandbox.stub(api, 'get').resolves({
+        data: mockApiGetResponse
+      })
+
+      const expectedInstances = await elephantInstanceProvider.listInstances()
+
+      expect(expectedInstances).to.deep.equalInAnyOrder(mockApiGetResponse.map(({ id, name, plan, region, providerid }) => ({
+        id,
+        name,
+        plan,
+        region,
+        providerid
+      })
+      ))
+    })
+
+    it('should list all instance with details passing param verbose = true', async () => {
       const elephantInstanceProvider = new ElephantSQLInstanceProvider(defaultElephantParam)
 
       const mockApiGetResponse = [...mockInstances.values()].map(({ id, name, plan, region, providerid }) => ({
@@ -168,7 +191,7 @@ describe('#ElephantSQLInstanceProvider', () => {
       apiGetStub.onCall(2).resolves({ data: [...mockInstances.values()][1] })
       apiGetStub.onCall(3).resolves({ data: [...mockInstances.values()][2] })
 
-      const expectedInstances = await elephantInstanceProvider.listInstances()
+      const expectedInstances = await elephantInstanceProvider.listInstances(true)
 
       expect(expectedInstances).to.deep.equalInAnyOrder([...mockInstances.values()])
     })
@@ -253,10 +276,10 @@ describe('#ElephantSQLInstanceProvider', () => {
     it('should delete an instance remote by name', async () => {
       const elephantInstanceProvider = new ElephantSQLInstanceProvider(defaultElephantParam)
 
-      sandbox.stub(elephantInstanceProvider, 'findInstanceId').resolves(123456)
+      //sandbox.stub(elephantInstanceProvider, 'findInstanceId').resolves(123456)
       const apiDeleteStub = sandbox.stub(api, 'delete')
 
-      const deleted = await elephantInstanceProvider.deleteInstance('be-a-savior-test')
+      const deleted = await elephantInstanceProvider.deleteInstance(123456)
 
       expect(deleted).to.be.true()
       expect(apiDeleteStub.calledOnce).to.be.true()
@@ -265,11 +288,10 @@ describe('#ElephantSQLInstanceProvider', () => {
     it('should return false if instance already deleted', async () => {
       const elephantInstanceProvider = new ElephantSQLInstanceProvider(defaultElephantParam)
 
-      sandbox.stub(elephantInstanceProvider, 'findInstanceId').resolves(null)
+      //sandbox.stub(elephantInstanceProvider, 'findInstanceId').resolves(null)
       const apiDeleteStub = sandbox.stub(api, 'delete').rejects('Request failed with status code 404')
 
-
-      const deleted = await elephantInstanceProvider.deleteInstance('be-a-savior')
+      const deleted = await elephantInstanceProvider.deleteInstance(123456)
 
       expect(deleted).to.be.false()
       expect(apiDeleteStub.calledOnce).to.be.true()
