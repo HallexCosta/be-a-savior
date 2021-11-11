@@ -7,7 +7,12 @@
   "repository": "git@github.com:HallexCosta/be-a-savior-server.git",
   "author": "HallexCosta <hallex.costa@hotmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": "16.x"
+  },
   "scripts": {
+    "build": "yarn clean && tsc --project tsconfig.production.json",
+    "start": "yarn start:production",
     "install:ci": "yarn install --fronzen-lockfile",
     "test:unit": "cross-env NODE_ENV=test mocha --config .mocharc.unit.js",
     "prepare:test:integration": "cross-env NODE_ENV=test ts-node -r make-promises-safe -r dotenv/config -r tsconfig-paths/register ./src/dirty/prepare-integration-test.ts",
@@ -17,15 +22,13 @@
     "clean": "rimraf dist",
     "clean:database:postgres": "cross-env NODE_ENV=development yarn ts-node -r dotenv/config -r tsconfig-paths/register ./src/dirty/clean-elephant-team.ts",
     "clean:database:sqlite": "rimraf src/database/database.sqlite && yarn typeorm:development migration:run",
-    "build": "yarn clean && tsc --project tsconfig.production.json",
     "build:sucrase": "yarn clean && sucrase -r tsconfig-paths/register ./src -d ./dist --transforms typescript,imports",
     "typeorm": "cross-env NODE_ENV=production yarn ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "typeorm:development": "cross-env NODE_ENV=development yarn ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "typeorm:test": "cross-env NODE_ENV=test yarn ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "start": "yarn start:production",
-    "start:production": "cross-env NODE_ENV=production node -r module-alias/register dist/server.js",
+    "start:production": "cross-env NODE_ENV=production node -r module-alias/register -r dotenv/config dist/server.js",
     "start:development:watch": "cross-env NODE_ENV=development nodemon -L",
-    "postinsall": "npm run build",
+    "postinsall": "yarn run build",
     "postbuild": "link-module-alias",
     "prebuild": "command -v link-module-alias && link-module-alias clean || true"
   },
