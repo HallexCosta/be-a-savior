@@ -69,7 +69,7 @@ jobs:
           yarn clean:elephant:instances:team
     
   build:
-    name: Build on Node.js ${{ matrix.node_version }} and Platform ${{ matrix.platform }}
+    name: Build on Node.js ${{ matrix.node_version }} and platform ${{ matrix.platform }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
