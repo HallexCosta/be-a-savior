@@ -37,7 +37,7 @@
     "@services": "./dist/services",
     "@providers": "./dist/providers",
     "@routes": "./dist/routes",
-    "@common/configs": "./dist/common/configs/index.js",
+    "@common/configs": "./dist/common/configs",
     "@app": "./dist/app.js"
   },
   "dependencies": {
