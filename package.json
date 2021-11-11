@@ -7,9 +7,6 @@
   "repository": "git@github.com:HallexCosta/be-a-savior-server.git",
   "author": "HallexCosta <hallex.costa@hotmail.com>",
   "license": "MIT",
-  "engines": {
-    "node": "16.x"
-  },
   "scripts": {
     "build": "yarn clean && tsc --project tsconfig.production.json",
     "start": "yarn start:production",
