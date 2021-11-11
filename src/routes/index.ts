@@ -12,6 +12,7 @@ import { donations } from '@routes/donations.routes'
 
 const routes = Router()
 
+routes.get('/', (_, response) => response.end("I'm alive!"))
 routes.use('/donors', donors)
 routes.use('/ongs', ongs)
 routes.use('/incidents', ensureAuthenticateOng, ensureOng, incidents)
