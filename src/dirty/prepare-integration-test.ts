@@ -25,7 +25,7 @@ async function prepareEnvironment(environment: string = null) {
 
   console.log('> Up database: %s', instanceName)
 
-  await elephantProvider.deleteInstance(instanceName)
+  //await elephantProvider.deleteInstance(instanceName)
 
   let seconds = 6 * 1000
   await sleep(seconds)

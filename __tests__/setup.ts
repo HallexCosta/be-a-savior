@@ -33,7 +33,7 @@ async function dropTestCustomers() {
 
 async function dropDatabase(type: string, instanceName: string = null) {
   if (type === 'postgres') {
-    await elephantProvider.deleteInstance(instanceName)
+    //await elephantProvider.deleteInstance(instanceName)
   }
 }
 
@@ -42,5 +42,5 @@ after(async () => {
   await dropTestCustomers()
 
   console.log('> Drop database: %s', instanceName)
-  await dropDatabase(ormconfig.type, instanceName)
+  //await dropDatabase(ormconfig.type, instanceName)
 })
