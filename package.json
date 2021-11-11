@@ -25,6 +25,7 @@
     "start": "yarn start:production",
     "start:production": "cross-env NODE_ENV=production node -r module-alias/register dist/server.js",
     "start:development:watch": "cross-env NODE_ENV=development nodemon -L",
+    "postinsall": "npm run build",
     "postbuild": "link-module-alias",
     "prebuild": "command -v link-module-alias && link-module-alias clean || true"
   },
