@@ -8,7 +8,7 @@
   "author": "HallexCosta <hallex.costa@hotmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "yarn clean && yarn tsc --project tsconfig.production.json",
+    "build": "tsc --project tsconfig.production.json",
     "start": "yarn start:production",
     "install:ci": "yarn install --fronzen-lockfile",
     "test:unit": "cross-env NODE_ENV=test mocha --config .mocharc.unit.js",
