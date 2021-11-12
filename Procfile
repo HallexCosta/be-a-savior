@@ -1,1 +1,1 @@
-web: NODE_ENV=production node -r module-alias/register -r dotenv/config ./dist/server.js
+web: NODE_ENV=production node -r dotenv/config ./dist/server.js

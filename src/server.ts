@@ -1,3 +1,9 @@
+import moduleAlias from 'module-alias'
+
+if (process.env.NODE_ENV === 'production') {
+  moduleAlias({ base: process.cwd() })
+}
+
 import { app } from '@app'
 
 import { configs } from '@common/configs'
