@@ -23,7 +23,7 @@
     "typeorm": "cross-env NODE_ENV=production yarn ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "typeorm:development": "cross-env NODE_ENV=development yarn ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "typeorm:test": "cross-env NODE_ENV=test yarn ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "start:production": "cross-env NODE_ENV=production node -r module-alias/register -r dotenv/config dist/server.js",
+    "start:production": "cross-env NODE_ENV=production node -r module-alias/register -r dotenv/config ./dist/server.js",
     "start:development:watch": "cross-env NODE_ENV=development nodemon -L",
     "postinsall": "yarn run build",
     "postbuild": "link-module-alias",
