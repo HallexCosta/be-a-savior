@@ -35,6 +35,6 @@
     },
     "typeRoots": ["node_modules/@types", "./src/@types"]
   },
-  "include": ["src/*", "src/**/*", "src/**/**/*"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_mdoules"]
 }
