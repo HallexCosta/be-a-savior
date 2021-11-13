@@ -112,6 +112,6 @@ jobs:
           docker build -t registry.heroku.com/be-a-savior/web -f Dockerfile.production . \
             --build-arg EXPRESS_LISTEN_APP_PORT=3333 \
             --build-arg ELEPHANT_API_KEY=${{ secrets.ELEPHANT_API_KEY }} \
-            --build-arg STRIPE_SECRET_API_KEY=${{ secrets.STRIPE_SECRET_API_KEY }
+            --build-arg STRIPE_SECRET_API_KEY=${{ secrets.STRIPE_SECRET_API_KEY }}
           heroku container:push web --app ${HEROKU_APP_NAME}
           heroku container:release web --app ${HEROKU_APP_NAME}
