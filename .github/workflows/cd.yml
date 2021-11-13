@@ -8,27 +8,21 @@ on:
 
 jobs:
   deploy:
-    name: Deploy on Node.js ${{ matrix.node_version }} and Platform ${{ matrix.platform }}
+    name: Deploy on Heroku
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node_version: [16.x]
-        platform: [ubuntu-latest]
-
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Use Node.js ${{ matrix.node_version }}
-        uses: actions/setup-node@v1
+      - name: Build and push Docker to Heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
         with:
-          node-version: ${{ matrix.node_version }}
-
-      - name: Deploy to Heroku
-        uses: akhileshns/heroku-deploy@v3.8.8
-        with:
+          appdir: "."
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: be-a-savior
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
+          usedocker: true
+          healthcheck: "https://be-a-savior.herokuapp.com/health"
         env:
           HD_STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY }}
           HD_DB_TYPE: ${{ secrets.DB_TYPE }}
