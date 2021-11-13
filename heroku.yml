@@ -1,4 +1,6 @@
 build:
   docker:
     web: Dockerfile.production
-    worker: worker/Dockerfile.production
+    release:
+      dockerfile: Dockerfile.production
+      target: builder
