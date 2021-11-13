@@ -91,7 +91,7 @@ jobs:
         run: yarn build
 
   deploy:
-    name: Build and deploy Shiny app
+    name: Deploy on Heroku
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -100,9 +100,16 @@ jobs:
       - name: Build and push Docker to Heroku
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
-          heroku_app_name: be-a-savior
           appdir: "."
+          heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
           usedocker: true
-
+        env:
+          HD_STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY }}
+          HD_DB_TYPE: ${{ secrets.DB_TYPE }}
+          HD_DB_HOST: ${{ secrets.DB_HOST }}
+          HD_DB_PORT: ${{ secrets.DB_PORT }}
+          HD_DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          HD_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          HD_DB_NAME: ${{ secrets.DB_NAME }}
