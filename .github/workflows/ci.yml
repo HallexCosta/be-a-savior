@@ -92,18 +92,26 @@ jobs:
 
   deploy:
     name: Deploy to Heroku
-    runs-on: ubuntu-18.04
     steps:
-    # Clone the repository
-    - name: Checkout
-      uses: actions/checkout@v2
-     
-    # Build Docker image
-    - name: Docker build
-      run: docker login --username=_ --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
-
-    # Push the Docker image to Heroku Container Registry
-    - name: Publish
-      run: |
-        heroku container:push web -a be-a-savior
-        heroku container:release web -a be-a-savior  deploy:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build and push Docker to Heroku
+        env:
+          HEROKU_APP_NAME: be-a-savior
+          DOCKERFILE_DIRECTORY: "."
+          HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          DOCKERFILE_NAME: "Dockerfile.production"
+          DOCKER_OPTIONS: "--no-cache"
+        run: |
+          cd ${DOCKERFILE_DIRECTORY}
+          echo ${HEROKU_API_KEY} | docker login \
+            --username=${HEROKU_EMAIL} \
+            registry.heroku.com \
+            --password-stdin
+          docker build \
+            --file ${DOCKERFILE_NAME} \
+            ${DOCKER_OPTIONS} \
+            --tag registry.heroku.com/${HEROKU_APP_NAME}/web .
+          heroku container:push web --app ${HEROKU_APP_NAME}
+          heroku container:release web --app ${HEROKU_APP_NAME}
