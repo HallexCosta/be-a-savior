@@ -103,7 +103,10 @@ jobs:
           HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
           DOCKERFILE_NAME: "Dockerfile.production"
-          DOCKER_OPTIONS: "--no-cache"
+          DOCKER_OPTIONS: |
+            --build-arg EXPRESS_LISTEN_APP_PORT=3333 \
+            --build-arg ELEPHANT_API_KEY=f534291c-65ff-4a1a-8bd1-08e66931cf36 \
+            --build-arg STRIPE_SECRET_API_KEY=sk_test_51JJSD2EPk8xX8xXnUIdLybKTIGgY65u7fi74dXgrsgxgxHSNT8mlIXnC0jXayV4FsqBnTnXqDOiMSlRjcjgVLu5u00gm8iIYmY \
         run: |
           cd ${DOCKERFILE_DIRECTORY}
           echo ${HEROKU_API_KEY} | docker login \
@@ -113,6 +116,6 @@ jobs:
           docker build \
             -f Dockerfile.production \
             ${DOCKER_OPTIONS} \
-            --tag registry.heroku.com/${HEROKU_APP_NAME}/web Dockerfile.production
+            --tag registry.heroku.com/${HEROKU_APP_NAME}/web .
           heroku container:push web --app ${HEROKU_APP_NAME}
           heroku container:release web --app ${HEROKU_APP_NAME}
