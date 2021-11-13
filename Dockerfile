@@ -23,4 +23,4 @@ RUN rm -rf /usr/be-a-savior/server/node_modules
 
 RUN yarn install:ci --production
 
-ENTRYPOINT yarn start
+CMD ["yarn", "start"]
