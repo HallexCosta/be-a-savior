@@ -35,7 +35,7 @@ jobs:
           STRIPE_API_VERSION: ${{ secrets.STRIPE_API_VERSION }}
           ELEPHANT_API_KEY: ${{ secrets.ELEPHANT_API_KEY_TEST }}
         run: |
-          docker build -t be-a-savior/server . \
+          docker build -t be-a-savior/server -f Dockerfile.tests . \
           --build-arg ELEPHANT_API_KEY=${{ secrets.ELEPHANT_API_KEY_TEST }} \
           --build-arg STRIPE_SECRET_API_KEY=${{ secrets.STRIPE_SECRET_API_KEY }} \
           --build-arg GITHUB_ACTIONS=$GITHUB_ACTIONS \
@@ -102,14 +102,13 @@ jobs:
           DOCKERFILE_DIRECTORY: "."
           HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          DOCKERFILE_NAME: "Dockerfile.production"
         run: |
           cd ${DOCKERFILE_DIRECTORY}
           echo ${HEROKU_API_KEY} | docker login \
             --username=${HEROKU_EMAIL} \
             registry.heroku.com \
             --password-stdin
-          docker build -t registry.heroku.com/be-a-savior/web -f Dockerfile.production . \
+          docker build -t registry.heroku.com/be-a-savior/web . \
             --build-arg EXPRESS_LISTEN_APP_PORT=3333 \
             --build-arg ELEPHANT_API_KEY=${{ secrets.ELEPHANT_API_KEY }} \
             --build-arg STRIPE_SECRET_API_KEY=${{ secrets.STRIPE_SECRET_API_KEY }}
