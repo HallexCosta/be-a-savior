@@ -1,24 +1,26 @@
 FROM node:16-alpine
 
+ARG EXPRESS_LISTEN_APP_PORT
 ARG ELEPHANT_API_KEY
 ARG STRIPE_SECRET_API_KEY
-ARG GITHUB_ACTIONS
-ARG DOCKER_CONTAINER=true
 
 ENV ELEPHANT_API_KEY=$ELEPHANT_API_KEY
 ENV STRIPE_SECRET_API_KEY=$STRIPE_SECRET_API_KEY
-ENV DOCKER_CONTAINER=$DOCKER_CONTAINER
-ENV GITHUB_ACTIONS=$GITHUB_ACTIONS
+ENV EXPRESS_LISTEN_APP_PORT=$EXPRESS_LISTEN_APP_PORT
 
 WORKDIR /usr/be-a-savior/server
 
-COPY *.json ./
-COPY *.lock ./
+ADD *.json ./
+ADD *.lock ./
 
 RUN yarn install:ci
 
-COPY . .
+ADD . .
 
-RUN yarn test:unit
+RUN yarn build
 
-RUN yarn prepare:test:integration && yarn test:integration -g 'ongs' && yarn test:integration -g 'donors'
+RUN rm -rf /usr/be-a-savior/server/node_modules
+
+RUN yarn install:ci --production
+
+ENTRYPOINT /bin/sh -c "yarn start"
