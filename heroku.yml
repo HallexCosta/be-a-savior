@@ -1,0 +1,7 @@
+build:
+  config:
+    EXPRESS_LISTEN_APP_PORT: 3333
+    STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY }}
+    ELEPHANT_API_KEY: ${{ secrets.ELEPHANT_API_KEY }}
+  docker:
+    web: Dockerfile.production
