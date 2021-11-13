@@ -105,6 +105,7 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
           usedocker: true
+          healthcheck: "https://be-a-savior.herokuapp.com/health"
         env:
           HD_STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY }}
           HD_DB_TYPE: ${{ secrets.DB_TYPE }}
