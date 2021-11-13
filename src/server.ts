@@ -8,6 +8,8 @@ import { app } from '@app'
 
 import { configs } from '@common/configs'
 
-app.listen(configs.express.LISTEN_APP_PORT, () =>
-  console.log(`Listening on port ${configs.express.LISTEN_APP_PORT}`)
+const port = configs.express.LISTEN_APP_PORT || 5000
+
+app.listen(port, () =>
+  console.log(`Listening on port ${port}`)
 )
