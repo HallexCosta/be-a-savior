@@ -34,4 +34,4 @@ EXPOSE 3333
 EXPOSE 9229
 
 #CMD bash heroku-exec.sh && yarn start
-CMD yarn start
+CMD ./start.sh
