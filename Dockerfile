@@ -30,4 +30,8 @@ RUN apk add --no-cache bash
 
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
-CMD bash heroku-exec.sh && yarn start
+EXPOSE 3333
+EXPOSE 9229
+
+#CMD bash heroku-exec.sh && yarn start
+CMD yarn start
