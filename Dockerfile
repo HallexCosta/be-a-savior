@@ -25,9 +25,8 @@ RUN yarn install:ci --production
 
 RUN apk add --no-cache bash
 
+ADD ./.profile.d /app/.profile.d
+
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
-RUN bash -c "echo Hello Bash on Container!!!"
-RUN sh -c "bash -c 'echo Hello Sh using Bash on Container'" 
-
-CMD ["yarn", "start"]
+CMD bash heroku-exec.sh && yarn start
