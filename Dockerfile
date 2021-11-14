@@ -25,7 +25,7 @@ RUN yarn install:ci --production
 
 RUN apk add --no-cache bash
 
-ADD ./.profile.d /app/.profile.d
+ADD ./.profile.d /usr/be-a-saviort/server/.profile.d
 
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
