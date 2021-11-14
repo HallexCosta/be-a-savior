@@ -4,35 +4,60 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
-    {
-      "name": "Attach",
-      "port": 9229,
-      "request": "attach",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "trace": true,
-      "program": "${workspaceFolder}/dist/server.js",
-      "type": "pwa-node"
-    }
     // {
-    //   "name": "Docker: Attach to Node",
     //   "type": "node",
     //   "request": "attach",
-    //   "port": 9229,
-    //   "address": "localhost",
+    //   "name": "Docker: Attach to Node",
     //   "remoteRoot": "/usr/be-a-savior/server",
-    //   "localRoot": "${workspaceFolder}",
-    //   "protocol": "inspector"
+    //   "localRoot": "${workspaceFolder}"
     // }
     // {
-    //   "type": "pwa-node",
-    //   "request": "launch",
-    //   "name": "Be a Savior",
+    //   "name": "Attach",
+    //   "port": 9229,
+    //   "request": "attach",
     //   "skipFiles": [
     //     "<node_internals>/**"
     //   ],
-    //   "program": "${workspaceFolder}/dist/server.js -r module-alias/register -r dotenv/config"
+    //   "type": "pwa-node"
     // }
+    // TYpescript
+    // {
+    //   "type": "node",
+    //   "request": "launch",
+    //   "name": "Launch Program",
+    //   "skipFiles": [
+    //     "<node_internals>/**"
+    //   ],
+    //   "preLaunchTask": "tsc: build - tsconfig.json",
+    //   "program": "${workspaceFolder}/src/server.ts",
+    //   "outFiles": [
+    //     "${workspaceFolder}/**/*.js"
+    //   ]
+    // }
+    {
+      "type": "node",
+      "port": 9229,
+      "request": "attach",
+      "name": "Typescript",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "preLaunchTask": "tsc: build - tsconfig.production.json",
+      "program": "${workspaceFolder}/src/server.ts",
+      "remoteRoot": "/usr/be-a-savior/server",
+      "outFiles": [
+        "${workspaceFolder}/**/*.js"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Heroku",
+      "address": "localhost",
+      "port": 9229,
+      "protocol": "inspector",
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/usr/be-a-savior/server"
+    }
   ]
 }
