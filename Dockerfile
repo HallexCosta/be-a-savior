@@ -27,6 +27,7 @@ RUN apk add --no-cache bash
 
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
-RUN bash echo "Hello Bash on Container!!!"
+RUN bash -c "echo Hello Bash on Container!!!"
+RUN sh -c "bash -c 'echo Hello Sh using Bash on Container'" 
 
 CMD ["yarn", "start"]
