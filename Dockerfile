@@ -23,9 +23,10 @@ RUN rm -rf /usr/be-a-savior/server/node_modules
 
 RUN yarn install:ci --production
 
+# for heroku exec
 RUN apk add --no-cache bash
 
-ADD ./.profile.d /usr/be-a-savior/server/.profile.d
+# ADD ./.profile.d /usr/be-a-savior/server/.profile.d
 
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
