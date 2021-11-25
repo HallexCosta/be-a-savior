@@ -86,8 +86,10 @@ async function prepareEnvironment(environment: string = null) {
       content.push(`${key}=${value}`)
     }
 
-    await fs.writeFile('.env.bkp', await fs.readFile('.env'))
-    await fs.writeFile('.env', content.join('\n'))
+    if (process.env.DOCKER_CONTAINER) {
+      await fs.writeFile('.env.bkp', await fs.readFile('.env'))
+      await fs.writeFile('.env', content.join('\n'))
+    }
 
     console.log('> Override db configs: %s', environment.toLocaleLowerCase())
     const env = dotenv.parse(await fs.readFile(path.resolve(process.cwd(), '.env')))
