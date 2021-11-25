@@ -34,28 +34,27 @@
     //     "${workspaceFolder}/**/*.js"
     //   ]
     // }
-    {
-      "type": "node",
-      "port": 9229,
-      "request": "attach",
-      "name": "Typescript",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
-      "preLaunchTask": "tsc: build - tsconfig.production.json",
-      "program": "${workspaceFolder}/src/server.ts",
-      "remoteRoot": "/usr/be-a-savior/server",
-      "outFiles": [
-        "${workspaceFolder}/**/*.js"
-      ]
-    },
+    // {
+    //   "type": "node",
+    //   "port": 9229,
+    //   "request": "attach",
+    //   "name": "Typescript",
+    //   "skipFiles": [
+    //     "<node_internals>/**"
+    //   ],
+    //   "preLaunchTask": "tsc: build - tsconfig.production.json",
+    //   "program": "${workspaceFolder}/src/server.ts",
+    //   "remoteRoot": "/usr/be-a-savior/server",
+    //   "outFiles": [
+    //     "${workspaceFolder}/**/*.js"
+    //   ]
+    // },
     {
       "type": "node",
       "request": "attach",
       "name": "Heroku",
-      "address": "localhost",
+      "address": "be-a-savior.herokuapp.com",
       "port": 9229,
-      "protocol": "inspector",
       "localRoot": "${workspaceFolder}",
       "remoteRoot": "/usr/be-a-savior/server"
     }
