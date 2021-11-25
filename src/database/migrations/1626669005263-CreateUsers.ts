@@ -1,10 +1,10 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm'
 
-export class CreateOngs1626669005263 implements MigrationInterface {
+export class CreateUsers1626669005263 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'ongs',
+        name: 'users',
         columns: [
           {
             name: 'id',
@@ -29,13 +29,17 @@ export class CreateOngs1626669005263 implements MigrationInterface {
             type: 'varchar'
           },
           {
+            name: 'owner',
+            type: 'varchar'
+          },
+          {
             name: 'created_at',
-            type: 'date',
+            type: 'timestamp',
             default: 'now()'
           },
           {
             name: 'updated_at',
-            type: 'date',
+            type: 'timestamp',
             default: 'now()'
           }
         ]
@@ -44,6 +48,6 @@ export class CreateOngs1626669005263 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('ongs')
+    await queryRunner.dropTable('users')
   }
 }
