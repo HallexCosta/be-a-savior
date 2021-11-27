@@ -12,9 +12,9 @@ type ListDonorResponse = Omit<Donor, 'password'>
 
 export class ListDonorService {
   public async execute({ id }: ListDonorDTO): Promise<ListDonorResponse> {
-    const donorsRepository = getCustomRepository(UsersRepository)
+    const usersRepository = getCustomRepository(UsersRepository)
 
-    const donor = await donorsRepository.findById(id)
+    const donor = await usersRepository.findOwnerById(id, 'donor')
 
     const donorResponse = classToClass<ListDonorResponse>(donor)
 

@@ -12,9 +12,12 @@ export class UsersRepository extends Repository<Ong | Donor> {
     })
   }
 
-  async findById(id: string): Promise<Ong | Donor> {
+  async findOwnerById(id: string, owner: 'ong' | 'donor'): Promise<Ong | Donor> {
     return await this.findOne({
-      id
+      where: {
+        id,
+        owner
+      }
     })
   }
 

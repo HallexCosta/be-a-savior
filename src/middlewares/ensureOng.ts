@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { getCustomRepository } from 'typeorm'
 
-import { OngsRepository } from '@repositories/OngsRepository'
+import { UsersRepository } from '@repositories/UsersRepository'
 
 export async function ensureOng(
   request: Request,
@@ -10,9 +10,9 @@ export async function ensureOng(
 ): Promise<Response | void> {
   const { ong_id } = request
 
-  const repository = getCustomRepository(OngsRepository)
+  const repository = getCustomRepository(UsersRepository)
 
-  const ong = await repository.findById(ong_id)
+  const ong = await repository.findOwnerById(ong_id, 'ong')
 
   if (ong) {
     return next()

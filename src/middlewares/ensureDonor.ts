@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { getCustomRepository } from 'typeorm'
 
-import { DonorsRepository } from '@repositories/DonorsRepository'
+import { UsersRepository } from '@repositories/UsersRepository'
 
 export async function ensureDonor(
   request: Request,
@@ -10,9 +10,9 @@ export async function ensureDonor(
 ): Promise<Response | void> {
   const { donor_id } = request
 
-  const repository = getCustomRepository(DonorsRepository)
+  const repository = getCustomRepository(UsersRepository)
 
-  const donor = await repository.findById(donor_id)
+  const donor = await repository.findOwnerById(donor_id, 'donor')
 
   if (donor) {
     return next()
