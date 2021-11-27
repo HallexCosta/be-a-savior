@@ -1,6 +1,9 @@
-import { Entity } from 'typeorm'
+import { User, UserData } from '@entities/User'
 
-import { User } from '@entities/User'
-
-@Entity('donors')
-export class Donor extends User {}
+export class Donor extends User {
+  constructor(donor: UserData) {
+    super()
+    Object.assign(this, donor)
+    this.setOwner('donor')
+  }
+}
