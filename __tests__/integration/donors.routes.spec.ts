@@ -1,11 +1,13 @@
 import dirty from 'dirty-chai'
 import { SuperTest, Test } from 'supertest'
 import { expect, use } from 'chai'
+import { Donor } from '@entities/Donor'
 import faker from 'faker'
 
 import { app } from '@app'
 
 import { mock, createTestingConnection, createAgent } from './fakes/mocks'
+import { Util } from './util'
 
 faker.locale = 'pt_BR'
 
@@ -16,13 +18,8 @@ describe('Donors Routes', () => {
   let agent: SuperTest<Test>
 
   before(async () => {
-    try {
-      await createTestingConnection()
-      agent = createAgent(app)
-    } catch (e) {
-      console.log(e)
-      throw e
-    }
+    await createTestingConnection()
+    agent = createAgent(app)
   })
 
   it('Should be create new Donor POST (/donors)', async () => {
@@ -37,31 +34,35 @@ describe('Donors Routes', () => {
     expect(expected).to.have.property('updated_at')
   })
 
-  it('Should be able authenticate ong POST (/donors/login)', async () => {
+  it('Should be able authenticate donor POST (/donors/login)', async () => {
     const { email, password } = mock.donor
     const response = await agent.post('/donors/login').send({ email, password })
-    const expected = response.body
+    const { token } = response.body
 
-    expect(expected).to.have.property('token')
-    expect(expected).to.not.be.undefined()
+    const tokenDecrypted = Util.decryptJWTToken(token)
+    const tokenParsed = JSON.parse(tokenDecrypted)
+
+    expect(tokenParsed.email).to.be.equal(email)
+    expect(tokenParsed).to.have.property('exp')
   })
 
   it('Should be able list Donors GET (/donors)', async () => {
     const response = await agent.get('/donors')
-    const expected = response.body
+    const donors = response.body
 
-    expect(expected[0]).to.have.property('id')
-    expect(expected[0]).to.have.property('created_at')
-    expect(expected[0]).to.have.property('updated_at')
+    expect(donors).to.be.not.undefined()
+
+    const haveOng = donors.find((donor: Donor) => donor.owner === 'ong')
+    expect(haveOng).to.be.undefined()
   })
 
   it('Should be able list one Donor by Id GET (/donors/:id)', async () => {
     const response = await agent.get(`/donors/${id}`)
-    const expected = response.body
+    const ong = response.body
 
-    expect(expected).to.have.property('id')
-    expect(expected.id).to.be.equal(id)
-    expect(expected).to.have.property('created_at')
-    expect(expected).to.have.property('updated_at')
+    expect(ong).to.have.property('id')
+    expect(ong.id).to.be.equal(id)
+    expect(ong).to.have.property('created_at')
+    expect(ong).to.have.property('updated_at')
   })
 })

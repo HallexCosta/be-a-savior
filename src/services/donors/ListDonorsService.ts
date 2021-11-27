@@ -2,15 +2,15 @@ import { classToClass } from "class-transformer"
 import { getCustomRepository } from 'typeorm'
 
 import { Donor } from '@entities/Donor'
-import { DonorsRepository } from '@repositories/DonorsRepository'
+import { UsersRepository } from '@repositories/UsersRepository'
 
 type ListDonorsResponse = Omit<Donor, 'password'>[]
 
 export class ListDonorsService {
   public async execute(): Promise<ListDonorsResponse> {
-    const donorsRepository = getCustomRepository(DonorsRepository)
+    const usersRepository = getCustomRepository(UsersRepository)
 
-    const donors = await donorsRepository.find()
+    const donors = await usersRepository.findByOwner('donor')
 
     const donorsResponse = classToClass<ListDonorsResponse>(donors)
 
