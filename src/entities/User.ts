@@ -27,8 +27,4 @@ export abstract class User extends BaseEntity {
 
   @Column()
   public owner: string
-
-  setOwner(owner: string) {
-    this.owner = owner
-  }
 }
