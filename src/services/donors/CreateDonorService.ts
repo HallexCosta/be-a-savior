@@ -1,4 +1,4 @@
-import { classToClass, classToPlain } from 'class-transformer'
+import { classToClass } from 'class-transformer'
 import { getCustomRepository } from 'typeorm'
 import { hash } from 'bcryptjs'
 
