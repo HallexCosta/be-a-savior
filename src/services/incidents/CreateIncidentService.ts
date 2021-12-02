@@ -30,7 +30,7 @@ export class CreateIncidentService {
       name,
       cost,
       description,
-      ong_id: ongId
+      user_id: ongId
     })
 
     await incidentsRepository.save(incident)
@@ -49,7 +49,7 @@ export class CreateIncidentService {
     }
 
     if (!cost) {
-      throw new Error("Coast can't empty")
+      throw new Error("Cost can't empty")
     }
 
     if (!description) {
