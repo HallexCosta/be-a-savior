@@ -22,7 +22,9 @@ class Development {
      cli: {
         migrationsDir: 'src/database/migrations',
         entitiesDir: 'src/entities'
-      }
+      },
+      logging: 'all',
+      synchronize: true
     }
   }
 
