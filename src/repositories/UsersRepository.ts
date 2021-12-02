@@ -6,6 +6,14 @@ import { Donor } from '@entities/Donor'
 
 @EntityRepository(User)
 export class UsersRepository extends Repository<Ong | Donor> {
+  async findById(id: string): Promise<Ong | Donor> {
+    return await this.findOne({
+      where: {
+        id
+      }
+    })
+  }
+
   async findByEmail(email: string): Promise<Ong | Donor> {
     return await this.findOne({
       email
