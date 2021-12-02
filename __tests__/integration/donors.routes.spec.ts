@@ -6,7 +6,7 @@ import faker from 'faker'
 
 import { app } from '@app'
 
-import { mock, createTestingConnection, createAgent } from './fakes/mocks'
+import { BeASaviorMocks, createMocks, createTestingConnection, createAgent } from './fakes/mocks'
 import { Util } from './util'
 
 faker.locale = 'pt_BR'
@@ -16,14 +16,19 @@ use(dirty)
 describe('Donors Routes', () => {
   let id: string
   let agent: SuperTest<Test>
+  let mocks: BeASaviorMocks
+
 
   before(async () => {
     await createTestingConnection()
     agent = createAgent(app)
+    mocks = createMocks()
   })
 
   it('Should be create new Donor POST (/donors)', async () => {
-    const response = await agent.post('/donors').send(mock.donor)
+    console.log(mocks.ong)
+    console.log(mocks.donor)
+    const response = await agent.post('/donors').send(mocks.donor)
     const expected = response.body
 
     id = expected.id
@@ -35,9 +40,10 @@ describe('Donors Routes', () => {
   })
 
   it('Should be able authenticate donor POST (/donors/login)', async () => {
-    const { email, password } = mock.donor
+    const { email, password } = mocks.donor
     const response = await agent.post('/donors/login').send({ email, password })
     const { token } = response.body
+    console.log(token)
 
     const tokenDecrypted = Util.decryptJWTToken(token)
     const tokenParsed = JSON.parse(tokenDecrypted)

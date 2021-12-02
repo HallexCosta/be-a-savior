@@ -5,9 +5,11 @@ import { SuperTest, Test } from 'supertest'
 import { app } from '@app'
 
 import { Ong } from '@entities/Ong'
+import { Donation } from '@entities/Donation'
 
 import {
-  mock,
+  BeASaviorMocks,
+  createMocks,
   createAgent,
   createFakeDonation,
   createFakeDonor,
@@ -21,34 +23,34 @@ import {
 use(dirty)
 
 describe('Incidents Routes', () => {
-  let incident_id: string
+  let mocks: BeASaviorMocks
+  let incidentId: string
   let ong: Ong
   let ongToken: string
   let agent: SuperTest<Test>
 
   before(async () => {
-    console.log(mock.incident)
+    mocks = createMocks()
     await createTestingConnection()
     agent = createAgent(app)
-    ong = await createFakeOng(agent)
-    ongToken = await loginWithFakeOng(agent)
-    console.log('ongToken', ongToken)
+    ong = await createFakeOng(agent, mocks.ong)
+    ongToken = await loginWithFakeOng(agent, mocks.ong)
   })
 
   it('Should be able to throw an error if ong_id is fake POST (/incidents)', async () => {
-    await agent.post('/incidents').send(mock.incident).expect(401)
+    await agent.post('/incidents').send(mocks.incident).expect(401)
   })
 
   it('Should be able to create new Incident POST (/incidents)', async () => {
     const response = await agent
       .post('/incidents')
-      .send(mock.incident)
+      .send(mocks.incident)
       .set('Authorization', `bearer ${ongToken}`)
 
     const expected = response.body
     console.log(expected)
 
-    incident_id = expected.id
+    incidentId = expected.id
 
     expect(expected).to.not.be.undefined()
     expect(expected).to.have.property('id')
@@ -57,22 +59,23 @@ describe('Incidents Routes', () => {
   })
 
   it('Should be able list incidents GET (/incidents)', async () => {
-    const { id: ong_id } = ong
-
     await createFakeIncident(agent, {
-      ongToken,
-      ong_id
+      incidentMock: mocks.incident,
+      ongToken
     })
 
     const response = await agent
       .get('/incidents')
       .set('Authorization', `bearer ${ongToken}`)
 
-    const expected = response.body
+    const incidents = response.body
 
-    expect(expected[0]).to.have.property('id')
-    expect(expected[0]).to.have.property('created_at')
-    expect(expected[0]).to.have.property('updated_at')
+    expect(incidents[0]).to.have.property('id')
+    expect(incidents[0]).to.have.property('name')
+    expect(incidents[0]).to.have.property('description')
+    expect(incidents[0]).to.have.property('cost')
+    expect(incidents[0]).to.have.property('created_at')
+    expect(incidents[0]).to.have.property('updated_at')
   })
 
   it('Should be able list incidents by ong id GET (/incidents?ong_id=)', async () => {
@@ -80,23 +83,29 @@ describe('Incidents Routes', () => {
       .get(`/incidents?ong_id=${ong.id}`)
       .set('Authorization', `bearer ${ongToken}`)
 
-    const expected = response.body
+    const incidents = response.body
 
-    expect(expected[0]).to.have.property('id')
-    expect(expected[0]).to.have.property('created_at')
-    expect(expected[0]).to.have.property('updated_at')
+    expect(incidents[0]).to.have.property('id')
+    expect(incidents[0]).to.have.property('name')
+    expect(incidents[0]).to.have.property('description')
+    expect(incidents[0]).to.have.property('cost')
+    expect(incidents[0]).to.have.property('created_at')
+    expect(incidents[0]).to.have.property('updated_at')
   })
 
   it('Should be able list one Incident by Id GET (/incidents/:id)', async () => {
     const response = await agent
-      .get(`/incidents/${incident_id}`)
+      .get(`/incidents/${incidentId}`)
       .set('Authorization', `bearer ${ongToken}`)
 
-    const expected = response.body
+    const incident = response.body
 
-    expect(expected).to.have.property('id')
-    expect(expected).to.have.property('created_at')
-    expect(expected).to.have.property('updated_at')
+    expect(incident).to.have.property('id')
+    expect(incident).to.have.property('name')
+    expect(incident).to.have.property('description')
+    expect(incident).to.have.property('cost')
+    expect(incident).to.have.property('created_at')
+    expect(incident).to.have.property('updated_at')
   })
 
   it('Should be able update one Incident by Id PATCH (/incidents/:id)', async () => {
@@ -107,33 +116,33 @@ describe('Incidents Routes', () => {
     }
 
     await agent
-      .patch(`/incidents/${incident_id}`)
+      .patch(`/incidents/${incidentId}`)
       .send(body)
       .set('Authorization', `bearer ${ongToken}`)
 
-    const { body: expected } = await agent.get(`/incidents/${incident_id}`)
+    const { body: incident } = await agent.get(`/incidents/${incidentId}`)
       .set('Authorization', `bearer ${ongToken}`)
 
-    expect(expected.name).to.be.equal('Some a name updated')
-    expect(expected.cost).to.be.equal(100)
-    expect(expected.description).to.be.equal('This is a description updated')
+    expect(incident.name).to.be.equal('Some a name updated')
+    expect(incident.cost).to.be.equal(100)
+    expect(incident.description).to.be.equal('This is a description updated')
   })
 
   it('Should be able delete one Incident by Id DELETE (/incidents/:id)', async () => {
     const response = await agent
-      .delete(`/incidents/${incident_id}`)
+      .delete(`/incidents/${incidentId}`)
       .set('Authorization', `bearer ${ongToken}`)
 
-    const expected = response.body
+    const incident = response.body
 
-    expect(expected).to.have.property('id')
-    expect(expected).to.have.property('created_at')
-    expect(expected).to.have.property('updated_at')
+    expect(incident).to.have.property('id')
+    expect(incident).to.have.property('created_at')
+    expect(incident).to.have.property('updated_at')
   })
 
   it('Should be able list non-donated incidents GET (/incidents?donated=false)', async () => {
     await createFakeIncident(agent, {
-      ong_id: ong.id,
+      incidentMock: mocks.incident,
       ongToken
     })
 
@@ -143,27 +152,32 @@ describe('Incidents Routes', () => {
 
     const incidents = response.body
 
-    const nullableDonationsIds = []
+    const donations: Donation[] = []
 
     for (const incident of incidents) {
-      nullableDonationsIds.push(incident.donation_id)
+      for (const donation of incident.donations) {
+        donations.push(donation)
+      }
     }
 
-    const isNonDonatedIncidents = nullableDonationsIds.includes(null)
-
-    expect(isNonDonatedIncidents).to.be.true()
+    const haveDonations = donations.length >= 1
+    expect(haveDonations).to.be.false()
   })
 
   it('Should be able list donated incidents GET (/incidents?donated=true)', async () => {
-    const { id: incident_id } = await createFakeIncident(agent, {
-      ong_id: ong.id,
+    await createFakeIncident(agent, {
+      incidentMock: mocks.incident,
       ongToken
     })
 
-    await createFakeDonor(agent)
+    await createFakeDonor(agent, mocks.donor)
+    const donationMock = {
+      ...mocks.donation,
+      incidentId,
+    }
     await createFakeDonation(agent, {
-      incident_id,
-      donorToken: await loginWithFakeDonor(agent)
+      donationMock,
+      donorToken: await loginWithFakeDonor(agent, mocks.donor)
     })
 
     const response = await agent
@@ -172,14 +186,15 @@ describe('Incidents Routes', () => {
 
     const incidents = response.body
 
-    const nullableDonationsIds = []
+    const donations: Donation[] = []
 
     for (const incident of incidents) {
-      nullableDonationsIds.push(incident.donation_id)
+      for (const donation of incident.donations) {
+        donations.push(donation)
+      }
     }
 
-    const isNonDonatedIncidents = nullableDonationsIds.includes(null)
-
-    expect(isNonDonatedIncidents).to.be.false()
+    const haveDonations = donations.length >= 1
+    expect(haveDonations).to.be.true()
   })
 })

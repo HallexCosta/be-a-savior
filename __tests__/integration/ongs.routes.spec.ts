@@ -5,7 +5,7 @@ import faker from 'faker'
 
 import { app } from '@app'
 
-import { mock, createTestingConnection, createAgent } from './fakes/mocks'
+import { BeASaviorMocks, createMocks, createTestingConnection, createAgent } from './fakes/mocks'
 import { Util } from './util'
 
 faker.locale = 'pt_BR'
@@ -14,15 +14,17 @@ use(dirty)
 
 describe('Ongs Routes', () => {
   let id: string
+  let mocks: BeASaviorMocks
   let agent: SuperTest<Test>
 
   before(async () => {
+    mocks = createMocks()
     await createTestingConnection()
     agent = createAgent(app)
   })
 
   it('Should be able to create new Ong POST (/ongs)', async () => {
-    const response = await agent.post('/ongs').send(mock.ong)
+    const response = await agent.post('/ongs').send(mocks.ong)
 
     const expected = response.body
 
@@ -35,7 +37,7 @@ describe('Ongs Routes', () => {
   })
 
   it('Should be able authenticate ong POST (/ongs/login)', async () => {
-    const { email, password } = mock.ong
+    const { email, password } = mocks.ong
     const response = await agent.post('/ongs/login').send({ email, password })
     const { token } = response.body
 
