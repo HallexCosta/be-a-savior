@@ -14,13 +14,21 @@ export type CreateOngDTO = {
   phone: string
 }
 
+type Providers = {
+  stripe: StripeProvider
+}
+
+export type CreateOngDependencies = {
+  providers: Providers
+}
+
 type CreateOngResponse = Omit<Ong, 'password'>
 
 export class CreateOngService {
-  private readonly provider: StripeProvider
+  private providers: Providers
 
-  public constructor() {
-    this.provider = new StripeProvider()
+  public constructor(deps: CreateOngDependencies) {
+    Object.assign(this, deps)
   }
 
   public async execute({
@@ -64,7 +72,7 @@ export class CreateOngService {
       }
     }
 
-    await this.provider.customers.create(customer)
+    await this.providers.stripe.customers.create(customer)
 
     await usersRepository.save(ong)
 
