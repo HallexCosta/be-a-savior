@@ -4,24 +4,22 @@ import { DonationsRepository } from '@repositories/DonationsRepository'
 
 import { Donation } from '@entities/Donation'
 
+import { Util } from '@common/util'
+
 type ListDonationsDTO = {
-  ongId: string
+  donorId?: string
 }
 
 export class ListDonationsService {
-  public async execute({ ongId }: ListDonationsDTO): Promise<Donation[]> {
-    const donations = await this.getDonations(ongId)
-
-    return donations
-  }
-
-  public async getDonations(ongId?: string): Promise<Donation[]> {
+  public async execute({ donorId }: ListDonationsDTO): Promise<Donation[]> {
     const repository = getCustomRepository(DonationsRepository)
+    console.log(donorId)
 
-    if (ongId) {
-      return await repository.findByOngId(ongId)
+    if (Util.isUUID(donorId)) {
+      console.log('> is uuid')
+      return await repository.findByDonorId(donorId)
     }
 
-    return await repository.findAll()
+    return await repository.findAll() || []
   }
 }

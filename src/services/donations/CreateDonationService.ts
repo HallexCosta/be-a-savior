@@ -1,22 +1,20 @@
-import Stripe from 'stripe'
-
 import { getCustomRepository } from 'typeorm'
 
+import { Donor } from '@entities/Donor'
 import { Donation } from '@entities/Donation'
 
+import { UsersRepository } from '@repositories/UsersRepository'
 import { IncidentsRepository } from '@repositories/IncidentsRepository'
-import { DonorsRepository } from '@repositories/DonorsRepository'
-
 import { DonationsRepository } from '@repositories/DonationsRepository'
 
-import { StripeProvider } from '@providers/StripeProvider'
-import { OngsRepository } from '@repositories/OngsRepository'
+import { StripeProvider, PaymentIntentCreateParams } from '@providers/StripeProvider'
 
 import { configs } from '@common/configs'
 
 type CreateDonationDTO = {
   incidentId: string
   donorId: string
+  amount: number
 }
 
 type Providers = {
@@ -36,22 +34,14 @@ export class CreateDonationService {
 
   public async execute({
     incidentId,
-    donorId
+    donorId,
+    amount
   }: CreateDonationDTO): Promise<Donation> {
     this.checkForFieldIsFilled({
       incidentId,
-      donorId
+      donorId,
+      amount
     })
-
-    const donationsRepository = getCustomRepository(DonationsRepository)
-
-    const donationAlreadyExists = await donationsRepository.findByIncidentId(
-      incidentId
-    )
-
-    if (donationAlreadyExists) {
-      throw new Error('Already was accomplish a donation to this incident')
-    }
 
     const incidentsRepository = getCustomRepository(IncidentsRepository)
 
@@ -61,67 +51,59 @@ export class CreateDonationService {
       throw new Error('Incident not exists')
     }
 
-    const donorsRepository = getCustomRepository(DonorsRepository)
+    const usersRepository = getCustomRepository(UsersRepository)
+    const donor = await usersRepository.findById(donorId)
 
-    const donor = await donorsRepository.findById(donorId)
+    //const {
+    //  data: [customer]
+    //} = await this.providers.stripe.customers.list({
+    //  email: donor.email
+    //})
 
-    if (!donor) {
-      throw new Error('Donor not exists')
-    }
+    //const paymentMethod = await this.providers.stripe.paymentMethods.create({
+    //  type: 'card',
+    //  card: { token: 'tok_mastercard' }
+    //})
 
-    const ongsRepository = getCustomRepository(OngsRepository)
+    //await this.providers.stripe.paymentMethods.attach(paymentMethod.id, {
+    //  customer: customer.id
+    //})
 
-    const { email } = await ongsRepository.findById(incident.ong_id)
-
-    const {
-      data: [customer]
-    } = await this.providers.stripe.customers.list({
-      email
-    })
-
-    const paymentMethod = await this.providers.stripe.paymentMethods.create({
-      type: 'card',
-      card: { token: 'tok_mastercard' }
-    })
-
-    await this.providers.stripe.paymentMethods.attach(paymentMethod.id, {
-      customer: customer.id
-    })
+    const donationsRepository = getCustomRepository(DonationsRepository)
 
     const donation = donationsRepository.create({
       incident_id: incident.id,
-      donor_id: donorId,
-      ong_id: incident.ong_id
+      user_id: donorId,
+      amount
     })
 
-    const amount = this.parseCoastToAmount(incident.cost)
+    //const amount = this.parseCoastToAmount(incident.cost)
 
-    const paymentIntent: Stripe.PaymentIntentCreateParams = {
-      amount,
-      currency: 'brl',
-      payment_method_types: ['card'],
-      payment_method: paymentMethod.id,
-      customer: customer.id,
-      receipt_email: donor.email,
-      metadata: {
-        donation_id: donation.id
-      }
-    }
+    //const paymentIntent: PaymentIntentCreateParams = {
+    //  amount,
+    //  currency: 'brl',
+    //  payment_method_types: ['card'],
+    //  payment_method: paymentMethod.id,
+    //  customer: customer.id,
+    //  receipt_email: donor.email,
+    //  metadata: {
+    //    donation_id: donation.id
+    //  }
+    //}
 
-    if (configs.modes.test) {
-      paymentIntent.confirm = true
-    }
+    //if (configs.modes.test) {
+    //  paymentIntent.confirm = true
+    //}
 
-    await this.providers.stripe.paymentIntents.create(paymentIntent)
+    //await this.providers.stripe.paymentIntents.create(paymentIntent)
 
     await donationsRepository.save(donation)
 
-    await incidentsRepository.updateDonationIdByIncidentId({
-      donation_id: donation.id,
-      incident_id: donation.incident_id
-    })
-
     return donation
+  }
+
+  private paymentIncident(ongId: string, donor: Donor) {
+    // ...
   }
 
   private parseCoastToAmount(cost: number) {
@@ -132,14 +114,20 @@ export class CreateDonationService {
 
   private checkForFieldIsFilled({
     incidentId,
-    donorId
+    donorId,
+    amount
   }: CreateDonationDTO): void {
+    console.log('queryparam', incidentId)
     if (!incidentId) {
       throw new Error("Incident id can't empty")
     }
 
     if (!donorId) {
       throw new Error("Donor id can't empty")
+    }
+
+    if (!amount) {
+      throw new Error("Amount can't empty")
     }
   }
 }
