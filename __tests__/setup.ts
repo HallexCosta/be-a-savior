@@ -1,11 +1,12 @@
 import { Stripe } from 'stripe'
 import { ElephantSQLInstanceProvider } from '@providers/elephant/ElephantSQLInstanceProvider'
 
-import ormconfig from '../ormconfig'
+import { getConnection, createConnection } from 'typeorm'
 
 const apikey = process.env.ELEPHANT_API_KEY
 const instanceName: string = process.env.ELEPHANT_INSTANCE_NAME
 const elephantProvider = new ElephantSQLInstanceProvider(apikey)
+const tableNames = ['donations', 'incidents', 'users', 'migrations']
 
 async function dropTestCustomers() {
   const stripe = new Stripe(process.env.STRIPE_SECRET_API_KEY, {
@@ -31,16 +32,29 @@ async function dropTestCustomers() {
   await dropTestCustomers()
 }
 
-async function dropDatabase(type: string, instanceName: string = null) {
-  if (type === 'postgres') {
-    //await elephantProvider.deleteInstance(instanceName)
+async function dropTables(tableNames: string[]) {
+  const connection = getConnection()
+  const queryRunner = connection.createQueryRunner();
+
+  for (const tableName of tableNames) {
+    const isTable = await queryRunner.hasTable(tableName)
+    if (isTable) {
+      console.log('> drop table: %s', tableName)
+      await queryRunner.dropTable(tableName)
+    }
   }
 }
+
+before(async () => {
+  console.log('> Up migration')
+  const connection = await createConnection()
+  await connection.runMigrations()
+})
 
 after(async () => {
   console.log('> Drop all customers')
   await dropTestCustomers()
 
-  console.log('> Drop database: %s', instanceName)
-  //await dropDatabase(ormconfig.type, instanceName)
+  console.log('> Instance name: %s', instanceName)
+  await dropTables(tableNames)
 })
