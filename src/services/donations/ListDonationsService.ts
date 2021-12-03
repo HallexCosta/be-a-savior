@@ -13,10 +13,8 @@ type ListDonationsDTO = {
 export class ListDonationsService {
   public async execute({ donorId }: ListDonationsDTO): Promise<Donation[]> {
     const repository = getCustomRepository(DonationsRepository)
-    console.log(donorId)
 
     if (Util.isUUID(donorId)) {
-      console.log('> is uuid')
       return await repository.findByDonorId(donorId)
     }
 

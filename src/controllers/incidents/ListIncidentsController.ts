@@ -13,14 +13,9 @@ export class ListIncidentsController {
 
     const service = new ListIncidentsService()
 
-    console.log('queryparam: ', donated)
-    console.log('queryparam: ', ongId)
-
     const parsedDonated = donated ?? null
     const parsedOngId = ongId ?? null
 
-    console.log('queryparsed: ', parsedDonated)
-    console.log('queryparsed: ', parsedOngId)
     const incidents = await service.execute({
       ongId: parsedOngId,
       donated: parsedDonated

@@ -73,7 +73,7 @@ export class CreateDonationService {
 
     const donation = donationsRepository.create({
       incident_id: incident.id,
-      user_id: donorId,
+      user_id: donor.id,
       amount
     })
 
@@ -117,7 +117,6 @@ export class CreateDonationService {
     donorId,
     amount
   }: CreateDonationDTO): void {
-    console.log('queryparam', incidentId)
     if (!incidentId) {
       throw new Error("Incident id can't empty")
     }
