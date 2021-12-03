@@ -101,9 +101,9 @@ async function prepareEnvironment(environment: string = null) {
   seconds = 10
   await sleep(seconds * 1000)
 
-  console.log('> Run migrations...')
-  const connection = await createConnection()
-  await connection.runMigrations()
+  //console.log('> Run migrations...')
+  //const connection = await createConnection()
+  //await connection.runMigrations()
 }
 
 function parseDBConfigs(url: string): Map<string, string> {
