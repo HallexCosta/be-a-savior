@@ -31,13 +31,17 @@ jobs:
 
       - name: Prepare database and run integration tests...
         env:
+          PORT: ${{ secrets.PORT }}
+          EXPRESS_LISTEN_APP_PORT: ${{ secrets.EXPRESS_LISTEN_APP_PORT }}
           STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY_TEST }}
           STRIPE_API_VERSION: ${{ secrets.STRIPE_API_VERSION }}
           ELEPHANT_API_KEY: ${{ secrets.ELEPHANT_API_KEY_TEST }}
         run: |
           docker build -t be-a-savior/server -f Dockerfile.tests . \
+          --build-arg PORT=${{ secrets.PORT }} \
+          --build-arg EXPRESS_LISTEN_APP_PORT=${{ secrets.EXPRESS_LISTEN_APP_PORT }} \
           --build-arg ELEPHANT_API_KEY=${{ secrets.ELEPHANT_API_KEY_TEST }} \
-          --build-arg STRIPE_SECRET_API_KEY=${{ secrets.STRIPE_SECRET_API_KEY }} \
+          --build-arg STRIPE_SECRET_API_KEY=${{ secrets.STRIPE_SECRET_API_KEY_TEST }} \
           --build-arg GITHUB_ACTIONS=$GITHUB_ACTIONS \
           --no-cache
 
