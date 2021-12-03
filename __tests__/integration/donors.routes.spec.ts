@@ -26,8 +26,6 @@ describe('Donors Routes', () => {
   })
 
   it('Should be create new Donor POST (/donors)', async () => {
-    console.log(mocks.ong)
-    console.log(mocks.donor)
     const response = await agent.post('/donors').send(mocks.donor)
     const expected = response.body
 
@@ -43,7 +41,6 @@ describe('Donors Routes', () => {
     const { email, password } = mocks.donor
     const response = await agent.post('/donors/login').send({ email, password })
     const { token } = response.body
-    console.log(token)
 
     const tokenDecrypted = Util.decryptJWTToken(token)
     const tokenParsed = JSON.parse(tokenDecrypted)

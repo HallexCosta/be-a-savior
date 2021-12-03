@@ -29,6 +29,7 @@ describe('Donation Routes', () => {
   let agent: SuperTest<Test>
   let donor: Donor
   let incident: Incident
+  let ongToken: string
   let donorToken: string
 
   before(async () => {
@@ -37,9 +38,10 @@ describe('Donation Routes', () => {
     agent = createAgent(app)
     await createFakeOng(agent, mocks.ong)
     donor = await createFakeDonor(agent, mocks.donor)
+    ongToken = await loginWithFakeOng(agent, mocks.ong)
     incident = await createFakeIncident(agent, {
       incidentMock: mocks.incident,
-      ongToken: await loginWithFakeOng(agent, mocks.ong)
+      ongToken: ongToken
     })
     donorToken = await loginWithFakeDonor(agent, mocks.donor)
   })
@@ -49,8 +51,6 @@ describe('Donation Routes', () => {
       ...mocks.donation,
       incident_id: incident.id,
     }
-    console.log('create new donation post')
-    console.log(body)
 
     const response = await agent
       .post('/donations')
@@ -64,10 +64,20 @@ describe('Donation Routes', () => {
   })
 
   it('Should be able make more than one donate in incident POST (/donations)', async () => {
-    await createFakeDonation(agent, {
-      donationMock: mocks.donation,
-      donorToken
+    const ongToken = await loginWithFakeOng(agent, mocks.ong)
+    const incident = await createFakeIncident(agent, {
+      incidentMock: mocks.incident,
+      ongToken
     })
+
+    const donationMock = {
+      donationMock: {
+        ...mocks.donation,
+        incidentId: incident.id
+      },
+      donorToken
+    }
+    await createFakeDonation(agent, donationMock)
 
     const response = await agent
       .get('/donations')

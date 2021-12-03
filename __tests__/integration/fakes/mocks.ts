@@ -100,16 +100,9 @@ export async function createFakeIncident(
   agent: SuperTest<Test>,
   { incidentMock, ongToken }: CreateFakeIncidentParams
 ): Promise<Incident> {
-  const body = {
-    name: 'Dog',
-    cost: 7470,
-    description: 'Run over the Dog and it dead :(',
-    ...incidentMock
-  }
-
   const response = await agent
     .post('/incidents')
-    .send(body)
+    .send(incidentMock)
     .set('Authorization', `bearer ${ongToken}`)
 
   return response.body
@@ -119,7 +112,6 @@ export async function createFakeDonation(
   agent: SuperTest<Test>,
   { donationMock, donorToken }: CreateFakeDonationParams
 ): Promise<Incident> {
-
   const response = await agent
     .post('/donations')
     .send({

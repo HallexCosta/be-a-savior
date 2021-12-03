@@ -48,7 +48,6 @@ describe('Incidents Routes', () => {
       .set('Authorization', `bearer ${ongToken}`)
 
     const expected = response.body
-    console.log(expected)
 
     incidentId = expected.id
 
@@ -165,7 +164,7 @@ describe('Incidents Routes', () => {
   })
 
   it('Should be able list donated incidents GET (/incidents?donated=true)', async () => {
-    await createFakeIncident(agent, {
+    const incident = await createFakeIncident(agent, {
       incidentMock: mocks.incident,
       ongToken
     })
@@ -173,7 +172,7 @@ describe('Incidents Routes', () => {
     await createFakeDonor(agent, mocks.donor)
     const donationMock = {
       ...mocks.donation,
-      incidentId,
+      incidentId: incident.id,
     }
     await createFakeDonation(agent, {
       donationMock,
