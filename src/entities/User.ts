@@ -1,9 +1,16 @@
-import { Column } from 'typeorm'
+import { Entity, Column } from 'typeorm'
 
 import { Exclude } from 'class-transformer'
 
 import { BaseEntity } from '@entities/BaseEntity'
 
+export type UserData = Omit<
+  User,
+  'id' | 'created_at' | 'updated_at' | 'owner' | 'setOwner'
+>
+
+
+@Entity('users')
 export abstract class User extends BaseEntity {
   @Column()
   public readonly name: string
@@ -17,4 +24,7 @@ export abstract class User extends BaseEntity {
 
   @Column()
   public readonly phone: string
+
+  @Column()
+  public owner: string
 }

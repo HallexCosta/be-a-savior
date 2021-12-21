@@ -25,7 +25,7 @@ export class UpdateIncidentService {
 
     this.checkIncidentExists(incidentAlreadyExists)
 
-    this.checkIncidentBelongsThisOng(ongId, incidentAlreadyExists.ong_id)
+    this.checkIncidentBelongsThisOng(ongId, incidentAlreadyExists.user_id)
 
     const incident = incidentsRepository.create({
       ...incidentAlreadyExists,

@@ -1,6 +1,7 @@
 import moduleAlias from 'module-alias'
 
-if (process.env.NODE_ENV === 'production') {
+const envrionment = process.env.NODE_ENV || 'production'
+if (envrionment === 'production') {
   moduleAlias({ base: process.cwd() })
 }
 

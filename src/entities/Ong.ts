@@ -1,6 +1,10 @@
-import { Entity } from 'typeorm'
+import { User, UserData } from '@entities/User'
 
-import { User } from '@entities/User'
+export class Ong extends User {
+  public readonly owner: string = 'ong'
 
-@Entity('ongs')
-export class Ong extends User {}
+  constructor(ong: UserData) {
+    super()
+    Object.assign(this, ong)
+  }
+}

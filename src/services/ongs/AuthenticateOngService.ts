@@ -2,7 +2,7 @@ import { compare } from 'bcryptjs'
 import { getCustomRepository } from 'typeorm'
 import { sign } from 'jsonwebtoken'
 
-import { OngsRepository } from '@repositories/OngsRepository'
+import { UsersRepository } from '@repositories/UsersRepository'
 
 type AuthenticateOngDTO = {
   email: string
@@ -14,7 +14,7 @@ export class AuthenticateOngService {
     email,
     password
   }: AuthenticateOngDTO): Promise<string> {
-    const repository = getCustomRepository(OngsRepository)
+    const repository = getCustomRepository(UsersRepository)
 
     const ong = await repository.findByEmail(email)
 
@@ -26,6 +26,10 @@ export class AuthenticateOngService {
 
     if (!passwordMatch) {
       throw new Error('Email/password incorrect')
+    }
+
+    if (ong.owner !== 'ong') {
+      throw new Error("This ong not exists")
     }
 
     const token = sign(

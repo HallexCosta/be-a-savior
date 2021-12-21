@@ -5,23 +5,52 @@ import { Application } from 'express'
 import { Connection, ConnectionOptions, createConnection } from 'typeorm'
 
 import { Incident } from '@entities/Incident'
+import { Donor } from '@entities/Donor'
 import { Ong } from '@entities/Ong'
+
+import { Util } from '../util'
 
 import ormconfig from '../../../ormconfig'
 
 faker.locale = 'pt_BR'
 
+type OngMock = UserMock
+type DonorMock = UserMock
+type IncidentMock = {
+  name: string
+  cost: number
+  description: string
+}
+type DonationMock = {
+  incidentId: string
+  amount: number
+}
+
 type CreateFakeIncidentParams = {
-  ong_id: string
+  incidentMock: IncidentMock
   ongToken: string
 }
 
 type CreateFakeDonationParams = {
-  incident_id: string
+  donationMock: DonationMock
   donorToken: string
 }
 
-export const mock = {
+type UserMock = {
+  name: string
+  email: string
+  password: string
+  phone: string
+}
+
+export type BeASaviorMocks = {
+  ong: OngMock
+  donor: DonorMock
+  incident: IncidentMock
+  donation: DonationMock
+}
+
+export const createMocks: () => BeASaviorMocks = () => ({
   ong: {
     name: faker.name.findName(),
     email: faker.internet.email().toLowerCase(),
@@ -38,8 +67,12 @@ export const mock = {
     name: faker.fake('{{animal.dog}}'),
     cost: Number(faker.commerce.price()),
     description: `This animal is type ${faker.fake('{{animal.type}}')}`
+  },
+  donation: {
+    incidentId: 'this is incident_id :/',
+    amount: Number(faker.commerce.price())
   }
-}
+})
 
 export function createAgent(app: Application): SuperTest<Test> {
   return request(app)
@@ -52,32 +85,28 @@ export async function createTestingConnection(name: string = uuid()): Promise<Co
   } as ConnectionOptions)
 }
 
-export async function createFakeOng(agent: SuperTest<Test>): Promise<Ong> {
-  const response = await agent.post('/ongs').send(mock.ong)
+export async function createFakeOng(agent: SuperTest<Test>, ongMock: OngMock): Promise<Ong> {
+  const response = await agent.post('/ongs').send(ongMock)
+
+  Util.customersEmail.push(ongMock.email)
 
   return response.body
 }
 
-export async function createFakeDonor(agent: SuperTest<Test>): Promise<Ong> {
-  const response = await agent.post('/donors').send(mock.donor)
+export async function createFakeDonor(agent: SuperTest<Test>, donorMock: DonorMock): Promise<Donor> {
+  const response = await agent.post('/donors')
+    .send(donorMock)
 
   return response.body
 }
 
 export async function createFakeIncident(
   agent: SuperTest<Test>,
-  { ong_id, ongToken }: CreateFakeIncidentParams
+  { incidentMock, ongToken }: CreateFakeIncidentParams
 ): Promise<Incident> {
-  const body = {
-    name: 'Dog',
-    cost: 74.7,
-    description: 'Run over the Dog and it dead :(',
-    ong_id
-  }
-
   const response = await agent
     .post('/incidents')
-    .send(body)
+    .send(incidentMock)
     .set('Authorization', `bearer ${ongToken}`)
 
   return response.body
@@ -85,24 +114,24 @@ export async function createFakeIncident(
 
 export async function createFakeDonation(
   agent: SuperTest<Test>,
-  { incident_id, donorToken }: CreateFakeDonationParams
+  { donationMock, donorToken }: CreateFakeDonationParams
 ): Promise<Incident> {
-  const body = {
-    incident_id
-  }
-
   const response = await agent
     .post('/donations')
-    .send(body)
+    .send({
+      ...donationMock,
+      incident_id: donationMock.incidentId
+    })
     .set('Authorization', `bearer ${donorToken}`)
 
   return response.body
 }
 
 export async function loginWithFakeOng(
-  agent: SuperTest<Test>
+  agent: SuperTest<Test>,
+  ongMock: OngMock
 ): Promise<string> {
-  const { email, password } = mock.ong
+  const { email, password } = ongMock
 
   const response = await agent.post('/ongs/login').send({
     email,
@@ -113,9 +142,10 @@ export async function loginWithFakeOng(
 }
 
 export async function loginWithFakeDonor(
-  agent: SuperTest<Test>
+  agent: SuperTest<Test>,
+  donorMock: DonorMock
 ): Promise<string> {
-  const { email, password } = mock.donor
+  const { email, password } = donorMock
 
   const response = await agent.post('/donors/login').send({
     email,

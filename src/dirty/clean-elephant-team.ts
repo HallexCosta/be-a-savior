@@ -1,7 +1,7 @@
 import { ElephantSQLInstanceProvider, ElephantListInstance } from '@providers/elephant/ElephantSQLInstanceProvider'
 import axios from 'axios'
 
-const apikey = process.env.ELEPHANT_API_KEY
+const apikey = process.env.ELEPHANT_API_KEY_TEST
 const provider = new ElephantSQLInstanceProvider(apikey)
 
 export const api = axios.create({
@@ -17,12 +17,10 @@ api.interceptors.request.use(configs => {
 })
 
 async function cleanup(useApi = false) {
-  console.log('load apikey', apikey)
-
   if (useApi) {
     const { data: instances } = await api.get<ElephantListInstance[]>('/instances')
     for (const instance of instances) {
-      //await api.delete(`/instances/${instance.id}`)
+      await api.delete(`/instances/${instance.id}`)
       console.log(instance.name, true)
     }
   }
@@ -35,4 +33,5 @@ async function cleanup(useApi = false) {
   }
 }
 
+console.log('load apikey: %s', apikey)
 cleanup()

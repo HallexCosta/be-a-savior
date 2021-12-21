@@ -4,12 +4,12 @@ import { ListDonationsService } from '@services/donations/ListDonationsService'
 
 export class ListDonationsController {
   public async handle(request: Request, response: Response): Promise<Response> {
-    const ongId = request.query.ong_id as string
+    const donorId = request.query.ong_id as string
 
     const service = new ListDonationsService()
 
     const incident = await service.execute({
-      ongId
+      donorId
     })
 
     return response.json(incident)

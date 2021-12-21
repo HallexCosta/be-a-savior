@@ -30,7 +30,7 @@ export class CreateIncidentService {
       name,
       cost,
       description,
-      ong_id: ongId
+      user_id: ongId
     })
 
     await incidentsRepository.save(incident)

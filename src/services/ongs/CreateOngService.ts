@@ -1,12 +1,11 @@
 import { getCustomRepository } from 'typeorm'
+import { classToClass } from 'class-transformer'
 import { hash } from 'bcryptjs'
 
 import { Ong } from '@entities/Ong'
-import { OngsRepository } from '@repositories/OngsRepository'
-import { DonorsRepository } from '@repositories/DonorsRepository'
+import { UsersRepository } from '@repositories/UsersRepository'
 
 import { StripeProvider } from '@providers/StripeProvider'
-import { classToClass } from "class-transformer"
 
 export type CreateOngDTO = {
   name: string
@@ -15,18 +14,21 @@ export type CreateOngDTO = {
   phone: string
 }
 
-type Repositories = {
-  donors: DonorsRepository
-  ongs: OngsRepository
+type Providers = {
+  stripe: StripeProvider
+}
+
+export type CreateOngDependencies = {
+  providers: Providers
 }
 
 type CreateOngResponse = Omit<Ong, 'password'>
 
 export class CreateOngService {
-  private readonly provider: StripeProvider
+  private providers: Providers
 
-  public constructor() {
-    this.provider = new StripeProvider()
+  public constructor(deps: CreateOngDependencies) {
+    Object.assign(this, deps)
   }
 
   public async execute({
@@ -42,22 +44,18 @@ export class CreateOngService {
       phone
     })
 
-    const donorsRepository = getCustomRepository(DonorsRepository)
-    const ongsRepository = getCustomRepository(OngsRepository)
+    const usersRepository = getCustomRepository(UsersRepository)
 
-    await this.checkForUserEmailExists(email, {
-      donors: donorsRepository,
-      ongs: ongsRepository
-    })
+    await this.checkForUserEmailExists(email, usersRepository)
 
     const passwordHash = await this.encryptPassword(password)
 
-    const ong = ongsRepository.create({
+    const ong = usersRepository.create(new Ong({
       name,
       email,
       password: passwordHash,
       phone
-    })
+    }))
 
     const customer = {
       name,
@@ -74,9 +72,9 @@ export class CreateOngService {
       }
     }
 
-    await this.provider.customers.create(customer)
+    await this.providers.stripe.customers.create(customer)
 
-    await ongsRepository.save(ong)
+    await usersRepository.save(ong)
 
     const ongResponse = classToClass<CreateOngResponse>(ong)
 
@@ -85,17 +83,11 @@ export class CreateOngService {
 
   private async checkForUserEmailExists(
     email: string,
-    { donors, ongs }: Repositories
+    usersRepository: UsersRepository
   ) {
-    const donorAlreadyExists = await donors.findByEmail(email)
+    const userAlreadyExists = await usersRepository.findByEmail(email)
 
-    if (donorAlreadyExists) {
-      throw new Error('User already exists, please change your email')
-    }
-
-    const ongAlreadyExists = await ongs.findByEmail(email)
-
-    if (ongAlreadyExists) {
+    if (userAlreadyExists) {
       throw new Error('User already exists, please change your email')
     }
   }

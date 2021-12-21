@@ -7,6 +7,7 @@ export function handleErrors(
   next: NextFunction
 ): Response {
   if (error instanceof Error) {
+    console.error(error)
     return response.status(409).json({
       message: error.message
     })

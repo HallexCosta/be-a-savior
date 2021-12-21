@@ -1,15 +1,16 @@
 import {
   DeleteResult,
   EntityRepository,
-  UpdateResult,
-  Repository
+  Repository,
+  IsNull,
+  SelectQueryBuilder
 } from 'typeorm'
 
 import { Incident } from '@entities/Incident'
 
-type UpdateDonationIdByIncidentIdParams = {
-  incident_id: string
-  donation_id: string
+type FindIncidentsFilter = {
+  ongId: string
+  donated: boolean | 'all'
 }
 
 @EntityRepository(Incident)
@@ -18,36 +19,44 @@ export class IncidentsRepository extends Repository<Incident> {
     return await this.find()
   }
 
-  async findByOngId(ong_id: string): Promise<Incident[]> {
+  async findByOngId(ongId: string): Promise<Incident[]> {
     return await this.find({
-      ong_id
+      where: {
+        ongId
+      }
+    })
+  }
+
+  async findIncidentsByFilter({ ongId = null, donated = 'all' }: FindIncidentsFilter): Promise<Incident[]> {
+    return await this.find({
+      where: (queryBuilder: SelectQueryBuilder<Incident>) => {
+        if (ongId) {
+          const onlyOng = `Incident.user_id = :ongId`
+          queryBuilder
+            .where(onlyOng, { ongId })
+        }
+
+        if (donated !== null) {
+          const onlyDonated = `Incident__donations.incident_id is ${donated ? 'not' : ''} null`
+          queryBuilder
+            .andWhere(onlyDonated)
+        }
+      },
+      relations: ['donations']
     })
   }
 
   async findById(id: string): Promise<Incident> {
     return await this.findOne({
-      id
-    })
-  }
-
-  async findByDonationId(donation_id?: string): Promise<Incident[]> {
-    return await this.find({
-      donation_id
+      where: {
+        id
+      }
     })
   }
 
   async deleteById(id: string): Promise<DeleteResult> {
     return await this.delete({
       id
-    })
-  }
-
-  async updateDonationIdByIncidentId({
-    incident_id,
-    donation_id
-  }: UpdateDonationIdByIncidentIdParams): Promise<UpdateResult> {
-    return await this.update(incident_id, {
-      donation_id
     })
   }
 }

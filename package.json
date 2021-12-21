@@ -11,6 +11,8 @@
     "build": "tsc --project tsconfig.production.json",
     "start": "yarn start:production",
     "debug": "cross-env NODE_ENV=production node --inspect=0.0.0.0 -r dotenv/config -r module-alias/register dist/server.js",
+    "docker:tests": "bash ./run-tests.sh",
+    "docker:up": "bash ./run.sh",
     "install:ci": "yarn install --fronzen-lockfile",
     "test:unit": "cross-env NODE_ENV=test mocha --config .mocharc.unit.js",
     "prepare:test:integration": "cross-env NODE_ENV=test ts-node -r make-promises-safe -r dotenv/config -r tsconfig-paths/register ./src/dirty/prepare-integration-test.ts",
@@ -24,7 +26,7 @@
     "typeorm": "cross-env NODE_ENV=production yarn ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "typeorm:development": "cross-env NODE_ENV=development yarn ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "typeorm:test": "cross-env NODE_ENV=test yarn ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "start:production": "cross-env NODE_ENV=production node -r dotenv/config ./dist/server.js",
+    "start:production": "cross-env NODE_ENV=production node dist/server.js",
     "start:development:watch": "cross-env NODE_ENV=development nodemon -L",
     "postbuild": "link-module-alias",
     "prebuild": "command -v link-module-alias && link-module-alias clean || true"
@@ -38,7 +40,7 @@
     "@services": "./dist/services",
     "@providers": "./dist/providers",
     "@routes": "./dist/routes",
-    "@common/configs": "./dist/common/configs",
+    "@common": "./dist/common",
     "@app": "./dist/app.js"
   },
   "dependencies": {
