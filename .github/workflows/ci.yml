@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node_version: [14.x, 16.x]
+        node_version: [14.x, 16.x, 17.x]
         platform: [ubuntu-latest, windows-latest]
 
     steps:
@@ -71,25 +71,3 @@ jobs:
           ELEPHANT_API_KEY: ${{ secrets.ELEPHANT_API_KEY_TEST }}
         run: |
           yarn clean:elephant:instances:team
-    
-  build:
-    name: Build on Node.js ${{ matrix.node_version }} and platform ${{ matrix.platform }}
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node_version: [12.x, 14.x, 16.x]
-        platform: [ubuntu-latest, mac-lastest, windows-latest]
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Use Node.js ${{ matrix.node_version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node_version }}
-
-      - name: Install dependencies
-        run: yarn install:ci
-
-      - name: Build
-        run: yarn build
