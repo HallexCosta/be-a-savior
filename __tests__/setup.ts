@@ -3,15 +3,18 @@ import { ElephantSQLInstanceProvider } from '@providers/elephant/ElephantSQLInst
 
 import ormconfig from '../ormconfig'
 
-const apikey = process.env.ELEPHANT_API_KEY
-const instanceName: string = process.env.ELEPHANT_INSTANCE_NAME
-const elephantProvider = new ElephantSQLInstanceProvider(apikey)
+const elephantApiKey = process.env.ELEPHANT_API_KEY || process.env.ELEPHANT_API_KEY_TEST
+const instanceName: string = process.env.ELEPHANT_INSTANCE_NAME || process.env.ELEPHANT_INSTANCE_NAME_TEST
+const elephantProvider = new ElephantSQLInstanceProvider(elephantApiKey)
 
 async function dropTestCustomers() {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_API_KEY, {
+  const stripeApiKey = process.env.STRIPE_SECRET_API_KEY || process.env.STRIPE_SECRET_API_KEY_TEST
+  const stripe = new Stripe(stripeApiKey, {
     apiVersion: '2020-08-27'
   })
+
   const { data: customers } = await stripe.customers.list()
+
   if (customers.length === 0) {
     console.log('> All customers were deleted')
     return
@@ -19,6 +22,7 @@ async function dropTestCustomers() {
 
   for (const customer of customers) {
     console.log('> Delete %s', customer.email)
+
     try {
       const alreadyCustomer = await stripe.customers.retrieve(customer.id)
 

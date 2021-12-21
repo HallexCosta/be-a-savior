@@ -51,6 +51,7 @@ describe('Donation Routes', () => {
       .set('Authorization', `bearer ${donorToken}`)
 
     const expected = response.body
+    console.log(expected)
 
     expect(expected).to.not.be.undefined()
     expect(expected).to.have.property('id')

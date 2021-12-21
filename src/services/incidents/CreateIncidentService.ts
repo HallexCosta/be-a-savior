@@ -49,7 +49,7 @@ export class CreateIncidentService {
     }
 
     if (!cost) {
-      throw new Error("Coast can't empty")
+      throw new Error("Cost can't empty")
     }
 
     if (!description) {

@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, OneToMany } from 'typeorm'
 
 import { BaseEntity } from '@entities/BaseEntity'
 import { Ong } from '@entities/Ong'
@@ -22,10 +22,6 @@ export class Incident extends BaseEntity {
   @ManyToOne(() => Ong)
   public readonly ong: Ong
 
-  @Column({ nullable: true })
-  public readonly donation_id: string
-
-  @JoinColumn({ name: 'donation_id' })
-  @OneToOne(() => Donation)
-  public readonly donation: Donation
+  @OneToMany(() => Donation, donation => donation.incident)
+  public readonly donations: Donation[]
 }

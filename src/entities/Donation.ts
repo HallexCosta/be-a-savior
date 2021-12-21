@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm'
+import { Column, Entity, JoinColumn, OneToOne, ManyToOne } from 'typeorm'
 
 import { BaseEntity } from '@entities/BaseEntity'
 import { Incident } from '@entities/Incident'
@@ -11,7 +11,7 @@ export class Donation extends BaseEntity {
   public readonly incident_id: string
 
   @JoinColumn({ name: 'incident_id' })
-  @OneToOne(() => Incident)
+  @ManyToOne(() => Incident, incident => incident.donations)
   public readonly incident: Incident
 
   @Column()
