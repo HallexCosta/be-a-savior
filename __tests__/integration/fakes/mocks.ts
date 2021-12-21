@@ -8,6 +8,8 @@ import { Incident } from '@entities/Incident'
 import { Donor } from '@entities/Donor'
 import { Ong } from '@entities/Ong'
 
+import { Util } from '../util'
+
 import ormconfig from '../../../ormconfig'
 
 faker.locale = 'pt_BR'
@@ -85,6 +87,8 @@ export async function createTestingConnection(name: string = uuid()): Promise<Co
 
 export async function createFakeOng(agent: SuperTest<Test>, ongMock: OngMock): Promise<Ong> {
   const response = await agent.post('/ongs').send(ongMock)
+
+  Util.customersEmail.push(ongMock.email)
 
   return response.body
 }

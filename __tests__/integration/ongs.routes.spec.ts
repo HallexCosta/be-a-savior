@@ -34,6 +34,8 @@ describe('Ongs Routes', () => {
     expect(expected).to.have.property('id')
     expect(expected).to.have.property('created_at')
     expect(expected).to.have.property('updated_at')
+
+    Util.customersEmail.push(mocks.ong.email)
   })
 
   it('Should be able authenticate ong POST (/ongs/login)', async () => {
