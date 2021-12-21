@@ -1,0 +1,62 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    // {
+    //   "type": "node",
+    //   "request": "attach",
+    //   "name": "Docker: Attach to Node",
+    //   "remoteRoot": "/usr/be-a-savior/server",
+    //   "localRoot": "${workspaceFolder}"
+    // }
+    // {
+    //   "name": "Attach",
+    //   "port": 9229,
+    //   "request": "attach",
+    //   "skipFiles": [
+    //     "<node_internals>/**"
+    //   ],
+    //   "type": "pwa-node"
+    // }
+    // TYpescript
+    // {
+    //   "type": "node",
+    //   "request": "launch",
+    //   "name": "Launch Program",
+    //   "skipFiles": [
+    //     "<node_internals>/**"
+    //   ],
+    //   "preLaunchTask": "tsc: build - tsconfig.json",
+    //   "program": "${workspaceFolder}/src/server.ts",
+    //   "outFiles": [
+    //     "${workspaceFolder}/**/*.js"
+    //   ]
+    // }
+    // {
+    //   "type": "node",
+    //   "port": 9229,
+    //   "request": "attach",
+    //   "name": "Typescript",
+    //   "skipFiles": [
+    //     "<node_internals>/**"
+    //   ],
+    //   "preLaunchTask": "tsc: build - tsconfig.production.json",
+    //   "program": "${workspaceFolder}/src/server.ts",
+    //   "remoteRoot": "/usr/be-a-savior/server",
+    //   "outFiles": [
+    //     "${workspaceFolder}/**/*.js"
+    //   ]
+    // },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Heroku",
+      "address": "be-a-savior.herokuapp.com",
+      "port": 9229,
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/usr/be-a-savior/server"
+    }
+  ]
+}

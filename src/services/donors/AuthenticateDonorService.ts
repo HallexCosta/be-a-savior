@@ -2,7 +2,7 @@ import { compare } from 'bcryptjs'
 import { getCustomRepository } from 'typeorm'
 import { sign } from 'jsonwebtoken'
 
-import { DonorsRepository } from '@repositories/DonorsRepository'
+import { UsersRepository } from '@repositories/UsersRepository'
 
 type AuthenticateDonorDTO = {
   email: string
@@ -14,7 +14,7 @@ export class AuthenticateDonorService {
     email,
     password
   }: AuthenticateDonorDTO): Promise<string> {
-    const repository = getCustomRepository(DonorsRepository)
+    const repository = getCustomRepository(UsersRepository)
 
     const donor = await repository.findByEmail(email)
 
@@ -26,6 +26,10 @@ export class AuthenticateDonorService {
 
     if (!passwordMatch) {
       throw new Error('Email/password incorrect')
+    }
+
+    if (donor.owner !== 'donor') {
+      throw new Error("This user isn't a donor")
     }
 
     const token = sign(

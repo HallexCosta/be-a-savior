@@ -1,7 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm'
+import { Column, Entity, JoinColumn, OneToMany, ManyToOne } from 'typeorm'
 
 import { BaseEntity } from '@entities/BaseEntity'
-import { Ong } from '@entities/Ong'
+import { User } from '@entities/User'
 import { Donation } from '@entities/Donation'
 
 @Entity('incidents')
@@ -16,16 +16,14 @@ export class Incident extends BaseEntity {
   public readonly cost: number
 
   @Column()
-  public readonly ong_id: string
+  public readonly user_id: string
 
-  @JoinColumn({ name: 'ong_id' })
-  @ManyToOne(() => Ong)
-  public readonly ong: Ong
+  @JoinColumn({ name: 'user_id' })
+  @ManyToOne(() => User)
 
-  @Column({ nullable: true })
-  public readonly donation_id: string
+  public readonly ong: User
 
   @JoinColumn({ name: 'donation_id' })
-  @OneToOne(() => Donation)
-  public readonly donation: Donation
+  @OneToMany(() => Donation, donation => donation.incident)
+  public readonly donations: Donation[]
 }

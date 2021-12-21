@@ -4,7 +4,7 @@ import { ListIncidentsService } from '@services/incidents/ListIncidentsService'
 
 type QueryParams = {
   ongId?: string
-  donated: boolean
+  donated?: boolean
 }
 
 export class ListIncidentsController {
@@ -13,9 +13,12 @@ export class ListIncidentsController {
 
     const service = new ListIncidentsService()
 
+    const parsedDonated = donated ?? null
+    const parsedOngId = ongId ?? null
+
     const incidents = await service.execute({
-      ongId,
-      donated
+      ongId: parsedOngId,
+      donated: parsedDonated
     })
 
     return response.json(incidents)

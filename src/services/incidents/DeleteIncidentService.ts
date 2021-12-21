@@ -16,7 +16,7 @@ export class DeleteIncidentService {
 
     this.checkIncidentExists(incident)
 
-    this.checkIncidentBelongsThisOng(ongId, incident.ong_id)
+    this.checkIncidentBelongsThisOng(ongId, incident.user_id)
 
     const result = await repository.deleteById(id)
 

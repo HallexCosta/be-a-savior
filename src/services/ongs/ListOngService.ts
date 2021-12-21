@@ -1,8 +1,8 @@
-import { classToClass } from "class-transformer"
+import { classToClass } from 'class-transformer'
 import { getCustomRepository } from 'typeorm'
 
 import { Ong } from '@entities/Ong'
-import { OngsRepository } from '@repositories/OngsRepository'
+import { UsersRepository } from '@repositories/UsersRepository'
 
 type ListOngDTO = {
   id: string
@@ -12,7 +12,7 @@ type ListOngResponse = Omit<Ong, 'password'>
 
 export class ListOngService {
   public async execute({ id }: ListOngDTO): Promise<ListOngResponse> {
-    const ongsRepository = getCustomRepository(OngsRepository)
+    const ongsRepository = getCustomRepository(UsersRepository)
 
     const ong = await ongsRepository.findById(id)
 

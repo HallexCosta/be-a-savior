@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node_version: [12.x, 14.x, 16.x, 17.x]
-        platform: [ubuntu-latest, mac-lastest, windows-latest]
+        node_version: [14.x, 16.x, 17.x]
+        platform: [ubuntu-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@v2
@@ -31,39 +31,16 @@ jobs:
 
       - name: Prepare database and run integration tests...
         env:
+          PORT: ${{ secrets.PORT }}
+          EXPRESS_LISTEN_APP_PORT: ${{ secrets.EXPRESS_LISTEN_APP_PORT }}
           STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY_TEST }}
           STRIPE_API_VERSION: ${{ secrets.STRIPE_API_VERSION }}
           ELEPHANT_API_KEY: ${{ secrets.ELEPHANT_API_KEY_TEST }}
         run: |
-          docker build -t be-a-savior/server . \
+          docker build -t be-a-savior/server -f Dockerfile.tests . \
+          --build-arg PORT=${{ secrets.PORT }} \
+          --build-arg EXPRESS_LISTEN_APP_PORT=${{ secrets.EXPRESS_LISTEN_APP_PORT }} \
           --build-arg ELEPHANT_API_KEY=${{ secrets.ELEPHANT_API_KEY_TEST }} \
-          --build-arg STRIPE_SECRET_API_KEY=${{ secrets.STRIPE_SECRET_API_KEY }} \
+          --build-arg STRIPE_SECRET_API_KEY=${{ secrets.STRIPE_SECRET_API_KEY_TEST }} \
           --build-arg GITHUB_ACTIONS=$GITHUB_ACTIONS \
           --no-cache
-
-  clean:
-    needs: test
-    name: Clean test databases with Node.js ${{ matrix.node_version }} and platform ${{ matrix.platform }}
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node_version: [16.x]
-        platform: [ubuntu-latest]
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Use Node.js ${{ matrix.node_version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node_version }}
-
-      - name: Install dependencies
-        run: yarn install:ci
-
-      - name: Clean test databases
-        env:
-          STRIPE_SECRET_API_KEY: ${{ secrets.STRIPE_SECRET_API_KEY_TEST }}
-          ELEPHANT_API_KEY: ${{ secrets.ELEPHANT_API_KEY_TEST }}
-        run: |
-          yarn clean:elephant:instances:team

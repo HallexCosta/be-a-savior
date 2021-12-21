@@ -16,15 +16,15 @@ export class CreateIncidents1626714881417 implements MigrationInterface {
             type: 'varchar'
           },
           {
-            name: 'cost',
-            type: 'float'
-          },
-          {
             name: 'description',
             type: 'varchar'
           },
           {
-            name: 'ong_id',
+            name: 'cost',
+            type: 'integer'
+          },
+          {
+            name: 'user_id',
             type: 'uuid'
           },
           {
@@ -40,10 +40,10 @@ export class CreateIncidents1626714881417 implements MigrationInterface {
         ],
         foreignKeys: [
           {
-            name: 'FKOngIdIncidents',
-            referencedTableName: 'ongs',
+            name: 'FKUserIdIncidents',
+            referencedTableName: 'users',
             referencedColumnNames: ['id'],
-            columnNames: ['ong_id'],
+            columnNames: ['user_id'],
             onDelete: 'SET NULL',
             onUpdate: 'SET NULL'
           }

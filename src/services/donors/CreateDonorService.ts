@@ -1,10 +1,9 @@
-import { classToClass, classToPlain } from 'class-transformer'
+import { classToClass } from 'class-transformer'
 import { getCustomRepository } from 'typeorm'
 import { hash } from 'bcryptjs'
 
 import { Donor } from '@entities/Donor'
-import { DonorsRepository } from '@repositories/DonorsRepository'
-import { OngsRepository } from '@repositories/OngsRepository'
+import { UsersRepository } from '@repositories/UsersRepository'
 
 type CreateDonorDTO = {
   name: string
@@ -13,27 +12,16 @@ type CreateDonorDTO = {
   phone: string
 }
 
-type Repository = {
-  donors: DonorsRepository
-  ongs: OngsRepository
-}
-
 type CreateDonorResponse = Omit<Donor, 'password'>
 
 export class CreateDonorService {
   private async checkForUserEmailExists(
     email: string,
-    { donors, ongs }: Repository
+    usersRepository: UsersRepository
   ) {
-    const donorAlreadyExists = await donors.findByEmail(email)
+    const userAlreadyExists = await usersRepository.findByEmail(email)
 
-    if (donorAlreadyExists) {
-      throw new Error('User already exists, please change your email')
-    }
-
-    const ongAlreadyExists = await ongs.findByEmail(email)
-
-    if (ongAlreadyExists) {
+    if (userAlreadyExists) {
       throw new Error('User already exists, please change your email')
     }
   }
@@ -51,25 +39,21 @@ export class CreateDonorService {
       phone
     })
 
-    const donorsRepository = getCustomRepository(DonorsRepository)
-    const ongsRepository = getCustomRepository(OngsRepository)
+    const usersRepository = getCustomRepository(UsersRepository)
 
-    await this.checkForUserEmailExists(email, {
-      donors: donorsRepository,
-      ongs: ongsRepository
-    })
+    await this.checkForUserEmailExists(email, usersRepository)
 
     const passwordHash = await this.encryptPassword(password)
 
-    const donor = donorsRepository.create({
+    const donor = usersRepository.create(new Donor({
       name,
       email,
       password: passwordHash,
       phone
-    })
+    }))
 
-    await donorsRepository.save(donor)
-    
+    await usersRepository.save(donor)
+
     const donorResponse = classToClass<CreateDonorResponse>(donor)
 
     return donorResponse

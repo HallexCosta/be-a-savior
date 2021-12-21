@@ -16,11 +16,11 @@ export class DonationsRepository extends Repository<Donation> {
     return await this.findOne({ incident_id })
   }
 
-  public async findByOngId(ong_id: string): Promise<Donation[]> {
-    const donations = await this.find({
-      ong_id
+  public async findByDonorId(donorId: string): Promise<Donation[]> {
+    return await this.find({
+      where: {
+        user_id: donorId
+      }
     })
-
-    return donations
   }
 }

@@ -12,21 +12,25 @@ export class CreateDonations1628301335759 implements MigrationInterface {
             isPrimary: true
           },
           {
+            name: 'user_id',
+            type: 'uuid'
+          },
+          {
             name: 'incident_id',
             type: 'uuid'
           },
           {
-            name: 'donor_id',
-            type: 'uuid'
+            name: 'amount',
+            type: 'integer'
           },
           {
             name: 'created_at',
-            type: 'date',
+            type: 'timestamp',
             default: 'now()'
           },
           {
             name: 'updated_at',
-            type: 'date',
+            type: 'timestamp',
             default: 'now()'
           }
         ],
@@ -40,10 +44,10 @@ export class CreateDonations1628301335759 implements MigrationInterface {
             onUpdate: 'SET NULL'
           },
           {
-            name: 'FKDonorIdDonations',
-            referencedTableName: 'donors',
+            name: 'FKUserIdDonations',
+            referencedTableName: 'users',
             referencedColumnNames: ['id'],
-            columnNames: ['donor_id'],
+            columnNames: ['user_id'],
             onDelete: 'SET NULL',
             onUpdate: 'SET NULL'
           }
