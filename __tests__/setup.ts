@@ -1,26 +1,25 @@
 import { Stripe } from 'stripe'
-import { ElephantSQLInstanceProvider } from '@providers/elephant/ElephantSQLInstanceProvider'
 
 import { getConnection, createConnection } from 'typeorm'
 
-const apikey = process.env.ELEPHANT_API_KEY
+import { Util } from './integration/util'
+
 const instanceName: string = process.env.ELEPHANT_INSTANCE_NAME
-const elephantProvider = new ElephantSQLInstanceProvider(apikey)
 const tableNames = ['donations', 'incidents', 'users', 'migrations']
 
 async function dropTestCustomers() {
   const stripe = new Stripe(process.env.STRIPE_SECRET_API_KEY, {
     apiVersion: '2020-08-27'
   })
-  const { data: customers } = await stripe.customers.list()
-  if (customers.length === 0) {
-    console.log('> All customers were deleted')
-    return
-  }
 
-  for (const customer of customers) {
-    console.log('> Delete %s', customer.email)
+  for (const email of Util.customersEmail) {
+    console.log('> Delete %s', email)
+
     try {
+      const { data: [customer] } = await stripe.customers.list({
+        email
+      })
+
       const alreadyCustomer = await stripe.customers.retrieve(customer.id)
 
       if (!alreadyCustomer.deleted) {
@@ -28,8 +27,6 @@ async function dropTestCustomers() {
       }
     } catch (e) { }
   }
-
-  await dropTestCustomers()
 }
 
 async function dropTables(tableNames: string[]) {
