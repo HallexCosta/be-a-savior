@@ -7,7 +7,7 @@ import { UsersRepository } from '@repositories/UsersRepository'
 import { IncidentsRepository } from '@repositories/IncidentsRepository'
 import { DonationsRepository } from '@repositories/DonationsRepository'
 
-import { StripeProvider, PaymentIntentCreateParams } from '@providers/StripeProvider'
+import { StripeProvider } from '@providers/StripeProvider'
 
 import { configs } from '@common/configs'
 
