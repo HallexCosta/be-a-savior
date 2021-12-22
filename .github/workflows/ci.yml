@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node_version: [14.x, 16.x, 17.x]
+        node_version: [12.x, 14.x, 16.x, 17.x]
         platform: [ubuntu-latest, windows-latest]
 
     steps:
@@ -44,3 +44,26 @@ jobs:
           --build-arg STRIPE_SECRET_API_KEY=${{ secrets.STRIPE_SECRET_API_KEY_TEST }} \
           --build-arg GITHUB_ACTIONS=$GITHUB_ACTIONS \
           --no-cache
+
+  build:
+    name: Build on Node.js ${{ matrix.node_version }} and platform ${{ matrix.platform }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node_version: [12.x, 14.x, 16.x, 17.x]
+        platform: [ubuntu-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node_version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node_version }}
+
+      - name: Install dependencies
+        run: yarn install:ci
+
+      - name: Build
+        run: yarn build
+
