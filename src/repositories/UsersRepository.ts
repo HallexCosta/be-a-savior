@@ -33,7 +33,8 @@ export class UsersRepository extends Repository<Ong | Donor> {
     return await this.find({
       where: {
         owner
-      }
+      },
+      relations: ['donations']
     })
   }
 }
