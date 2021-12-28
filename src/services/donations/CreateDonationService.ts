@@ -51,6 +51,9 @@ export class CreateDonationService {
       throw new Error('Incident not exists')
     }
 
+    const amountDonations = incident.donations.map(donation => donation.amount)
+    this.checkIncidentReachedLimitDonation(incident.cost, amountDonations)
+
     const usersRepository = getCustomRepository(UsersRepository)
     const donor = await usersRepository.findById(donorId)
 
@@ -100,6 +103,16 @@ export class CreateDonationService {
     await donationsRepository.save(donation)
 
     return donation
+  }
+
+  private checkIncidentReachedLimitDonation(costIncident: number, amountDonations: number[]): void {
+    const amounts = amountDonations.reduce((prev, curr) => prev + curr, 0)
+
+    const isReachedLimit = amounts >= costIncident
+
+    if (isReachedLimit) {
+      throw new Error('Ops.. this incident already reached limit of donations')
+    }
   }
 
   private paymentIncident(ongId: string, donor: Donor) {
