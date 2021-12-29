@@ -34,11 +34,13 @@ export class UpdateIncidentService {
       description
     })
 
+    const { donations, ...incidentUpdated } = incident
+
     await incidentsRepository.update(
       {
         id
       },
-      incident
+      incidentUpdated
     )
 
     return incident

@@ -63,6 +63,24 @@ describe('Donation Routes', () => {
     expect(donation).to.have.property('id')
   })
 
+  it('Should be throw error if donated incident recached limit of donations POST (/donations)', async () => {
+    const body = {
+      amount: 99999,
+      incident_id: incident.id
+    }
+
+    const response = await agent
+      .post('/donations')
+      .send(body)
+      .set('Authorization', `bearer ${donorToken}`)
+
+    const donation = response.body
+
+    expect(donation).to.not.be.undefined()
+    expect(donation).to.have.property('message')
+  })
+
+
   it('Should be able make more than one donate in incident POST (/donations)', async () => {
     const ongToken = await loginWithFakeOng(agent, mocks.ong)
     const incident = await createFakeIncident(agent, {

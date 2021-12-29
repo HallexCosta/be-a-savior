@@ -50,7 +50,8 @@ export class IncidentsRepository extends Repository<Incident> {
     return await this.findOne({
       where: {
         id
-      }
+      },
+      relations: ['donations']
     })
   }
 

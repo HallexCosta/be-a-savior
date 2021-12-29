@@ -1,8 +1,9 @@
-import { Entity, Column } from 'typeorm'
+import { Entity, Column, JoinColumn, OneToMany } from 'typeorm'
 
 import { Exclude } from 'class-transformer'
 
 import { BaseEntity } from '@entities/BaseEntity'
+import { Donation } from '@entities/Donation'
 
 export type UserData = Omit<
   User,
@@ -27,4 +28,8 @@ export abstract class User extends BaseEntity {
 
   @Column()
   public owner: string
+
+  @JoinColumn({ name: 'donation_id' })
+  @OneToMany(() => Donation, donation => donation.donor)
+  public donations?: Donation[]
 }

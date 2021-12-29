@@ -20,10 +20,8 @@ export class Incident extends BaseEntity {
 
   @JoinColumn({ name: 'user_id' })
   @ManyToOne(() => User)
-
   public readonly ong: User
 
-  @JoinColumn({ name: 'donation_id' })
   @OneToMany(() => Donation, donation => donation.incident)
   public readonly donations: Donation[]
 }
