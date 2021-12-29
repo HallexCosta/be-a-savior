@@ -40,7 +40,10 @@ describe('Donation Routes', () => {
     donor = await createFakeDonor(agent, mocks.donor)
     ongToken = await loginWithFakeOng(agent, mocks.ong)
     incident = await createFakeIncident(agent, {
-      incidentMock: mocks.incident,
+      incidentMock: {
+        ...mocks.incident,
+        cost: 1010
+      },
       ongToken: ongToken
     })
     donorToken = await loginWithFakeDonor(agent, mocks.donor)
@@ -49,6 +52,7 @@ describe('Donation Routes', () => {
   it('Should be create new Donation POST (/donations)', async () => {
     const body = {
       ...mocks.donation,
+      amount: 1010,
       incident_id: incident.id,
     }
 
@@ -65,7 +69,7 @@ describe('Donation Routes', () => {
 
   it('Should be throw error if donated incident recached limit of donations POST (/donations)', async () => {
     const body = {
-      amount: 99999,
+      amount: 999999999,
       incident_id: incident.id
     }
 
