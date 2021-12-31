@@ -6,8 +6,8 @@ import faker from 'faker'
 
 import { app } from '@app'
 
-import { BeASaviorMocks, createMocks, createTestingConnection, createAgent } from './fakes/mocks'
-import { Util } from './util'
+import { BeASaviorMocks, createMocks, createTestingConnection, createAgent } from '@tests/fakes/mocks'
+import { Util } from '@tests/util'
 
 faker.locale = 'pt_BR'
 

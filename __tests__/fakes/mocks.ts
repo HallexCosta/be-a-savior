@@ -8,9 +8,9 @@ import { Incident } from '@entities/Incident'
 import { Donor } from '@entities/Donor'
 import { Ong } from '@entities/Ong'
 
-import { Util } from '../util'
+import { Util } from '@tests/util'
 
-import ormconfig from '../../../ormconfig'
+import ormconfig from '@root/ormconfig'
 
 faker.locale = 'pt_BR'
 
