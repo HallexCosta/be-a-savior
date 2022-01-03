@@ -7,11 +7,14 @@ import { UsersRepository } from '@repositories/UsersRepository'
 
 import { StripeProvider } from '@providers/StripeProvider'
 
+import { CreateUserService } from '@services/users/CreateUserService'
+
 export type CreateOngDTO = {
   name: string
   email: string
   password: string
   phone: string
+  owner: string
 }
 
 type Providers = {
@@ -24,10 +27,24 @@ export type CreateOngDependencies = {
 
 type CreateOngResponse = Omit<Ong, 'password'>
 
-export class CreateOngService {
+type CreateCustomersParams = {
+  name: string
+  email: string
+  address: {
+    line1: string
+    line2: string
+    city: string
+    state: string
+    postal_code: string
+  }
+  metadata: {}
+}
+
+export class CreateOngService extends CreateUserService {
   private providers: Providers
 
   public constructor(deps: CreateOngDependencies) {
+    super()
     Object.assign(this, deps)
   }
 
@@ -35,27 +52,18 @@ export class CreateOngService {
     name,
     email,
     password,
-    phone
+    phone,
+    owner
   }: CreateOngDTO): Promise<CreateOngResponse> {
-    this.checkForFieldIsFilled({
-      name,
-      email,
-      password,
-      phone
+    const ong = await super.execute({
+      dto: {
+        name,
+        email,
+        password,
+        phone,
+        owner
+      }
     })
-
-    const usersRepository = getCustomRepository(UsersRepository)
-
-    await this.checkForUserEmailExists(email, usersRepository)
-
-    const passwordHash = await this.encryptPassword(password)
-
-    const ong = usersRepository.create(new Ong({
-      name,
-      email,
-      password: passwordHash,
-      phone
-    }))
 
     const customer = {
       name,
@@ -72,52 +80,17 @@ export class CreateOngService {
       }
     }
 
-    await this.providers.stripe.customers.create(customer)
-
-    await usersRepository.save(ong)
+    await this.createCustomer(customer)
 
     const ongResponse = classToClass<CreateOngResponse>(ong)
 
     return ongResponse
   }
 
-  private async checkForUserEmailExists(
-    email: string,
-    usersRepository: UsersRepository
-  ) {
-    const userAlreadyExists = await usersRepository.findByEmail(email)
-
-    if (userAlreadyExists) {
-      throw new Error('User already exists, please change your email')
-    }
-  }
-
-  private async encryptPassword(password: string): Promise<string> {
-    const passwordHash = await hash(password, 8)
-
-    return passwordHash
-  }
-
-  private checkForFieldIsFilled({
-    name,
-    email,
-    password,
-    phone
-  }: CreateOngDTO): void {
-    if (!name) {
-      throw new Error("Name can't empty")
-    }
-
-    if (!email) {
-      throw new Error("Email can't empty")
-    }
-
-    if (!password) {
-      throw new Error("Password can't empty")
-    }
-
-    if (!phone) {
-      throw new Error("Phone can't empty")
-    }
+  private async createCustomer({ customer, metadata }: CreateCustomerParams) {
+    await this.providers.stripe.customers.create({
+      ...customer,
+      metadata
+    })
   }
 }
