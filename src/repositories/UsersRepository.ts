@@ -20,7 +20,7 @@ export class UsersRepository extends Repository<Ong | Donor> {
     })
   }
 
-  async findOwnerById(id: string, owner: 'ong' | 'donor'): Promise<Ong | Donor> {
+  async findOwnerById(id: string, owner: string): Promise<Ong | Donor> {
     return await this.findOne({
       where: {
         id,
