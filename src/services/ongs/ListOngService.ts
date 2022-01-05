@@ -1,4 +1,8 @@
-import { ListUserService, ListUserResponse } from '@services/users/ListUserService'
+import {
+  ListUserService,
+  ListUserResponse,
+  ListUserParams
+} from '@services/users/ListUserService'
 
 type ListOngDTO = {
   id: string
@@ -6,6 +10,10 @@ type ListOngDTO = {
 }
 
 export class ListOngService extends ListUserService {
+  public constructor(listOngParams: ListUserParams) {
+    super(listOngParams)
+  }
+
   public async execute({ id, owner }: ListOngDTO): Promise<ListUserResponse> {
     return await super.executeUser({
       dto: {
