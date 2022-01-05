@@ -52,25 +52,39 @@ export type BeASaviorMocks = {
 
 export const createMocks: () => BeASaviorMocks = () => ({
   ong: {
+    id: uuid(),
     name: faker.name.findName(),
     email: faker.internet.email().toLowerCase(),
     password: 'somepassword123',
-    phone: faker.phone.phoneFormats()
+    phone: faker.phone.phoneFormats(),
+    owner: 'ong',
+    created_at: new Date(),
+    updated_at: new Date()
   },
   donor: {
+    id: uuid(),
     name: faker.name.findName(),
     email: faker.internet.email().toLowerCase(),
     password: 'somepassword123',
-    phone: faker.phone.phoneFormats()
+    phone: faker.phone.phoneFormats(),
+    owner: 'donor',
+    created_at: new Date(),
+    updated_at: new Date()
   },
   incident: {
+    id: uuid(),
     name: faker.fake('{{animal.dog}}'),
     cost: Number(faker.commerce.price()),
-    description: `This animal is type ${faker.fake('{{animal.type}}')}`
+    description: `This animal is type ${faker.fake('{{animal.type}}')}`,
+    created_at: new Date(),
+    updated_at: new Date()
   },
   donation: {
+    uuid: uuid(),
     incidentId: 'this is incident_id :/',
-    amount: Number(faker.commerce.price())
+    amount: Number(faker.commerce.price()),
+    created_at: new Date(),
+    updated_at: new Date()
   }
 })
 
