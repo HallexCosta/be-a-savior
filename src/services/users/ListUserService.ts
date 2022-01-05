@@ -1,26 +1,50 @@
 import { classToClass } from 'class-transformer'
-import { getCustomRepository } from 'typeorm'
 
 import { User } from '@entities/User'
 import { UsersRepository } from '@repositories/UsersRepository'
+
+import { StripeProvider } from '@providers/StripeProvider'
+import { ElephantSQLInstanceProvider } from '@providers/elephant/ElephantSQLInstanceProvider'
 
 type ListUserDTO = {
   id: string
   owner: string
 }
-type ListUserParams = {
+
+type Repositories = {
+  users?: UsersRepository
+}
+
+type Providers = {
+  stripe?: StripeProvider
+  elephantSQL?: ElephantSQLInstanceProvider
+}
+
+export type ListUserParams = {
+  repositories?: Repositories
+  providers?: Providers
+}
+
+export type ListUserExecuteParams = {
   dto: ListUserDTO
 }
 
 interface UserService {
-  executeUser(userExecute: ListUserParams): Promise<ListUserResponse>
+  executeUser(listUserExecute: ListUserExecuteParams): Promise<ListUserResponse>
 }
 
 export type ListUserResponse = Omit<User, 'password'>
 
 export abstract class ListUserService implements UserService {
-  public async executeUser({ dto: { id, owner } }: ListUserParams): Promise<ListUserResponse> {
-    const usersRepository = getCustomRepository(UsersRepository)
+  public repositories: Repositories
+  public providers: Providers
+
+  public constructor(listUserParams: ListUserParams) {
+    Object.assign(this, listUserParams)
+  }
+
+  public async executeUser({ dto: { id, owner } }: ListUserExecuteParams): Promise<ListUserResponse> {
+    const usersRepository = this.repositories.users
 
     const user = await usersRepository.findOwnerById(id, owner)
 
