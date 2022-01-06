@@ -1,48 +1,29 @@
-import { compare } from 'bcryptjs'
-import { getCustomRepository } from 'typeorm'
-import { sign } from 'jsonwebtoken'
-
-import { UsersRepository } from '@repositories/UsersRepository'
+import { AuthenticateUserService, AuthenticateUserParams } from '@services/users/AuthenticateUserService'
 
 type AuthenticateOngDTO = {
   email: string
   password: string
+  owner: string
 }
 
-export class AuthenticateOngService {
+type AuthenticateOngParams = AuthenticateUserParams & {}
+
+export class AuthenticateOngService extends AuthenticateUserService {
+  public constructor(authenticateOngParams: AuthenticateOngParams) {
+    super(authenticateOngParams)
+  }
+
   public async execute({
     email,
-    password
+    password,
+    owner
   }: AuthenticateOngDTO): Promise<string> {
-    const repository = getCustomRepository(UsersRepository)
-
-    const ong = await repository.findByEmail(email)
-
-    if (!ong) {
-      throw new Error('Email/password incorrect')
-    }
-
-    const passwordMatch = await compare(password, ong.password)
-
-    if (!passwordMatch) {
-      throw new Error('Email/password incorrect')
-    }
-
-    if (ong.owner !== 'ong') {
-      throw new Error("This ong not exists")
-    }
-
-    const token = sign(
-      {
-        email: ong.email
-      },
-      '47285efa5d652f00fe0371c2e6bdcd0b',
-      {
-        subject: ong.id,
-        expiresIn: '1d'
+    return await super.executeUser({
+      dto: {
+        email,
+        password,
+        owner
       }
-    )
-
-    return token
+    })
   }
 }
