@@ -14,8 +14,21 @@ import ormconfig from '@root/ormconfig'
 
 faker.locale = 'pt_BR'
 
+type UserMock = {
+  id: string
+  name: string
+  email: string
+  password: string
+  phone: string
+  owner: string
+  created_at: Date
+  updated_at: Date
+}
+
 type OngMock = UserMock
+
 type DonorMock = UserMock
+
 type IncidentMock = {
   name: string
   cost: number
@@ -36,14 +49,8 @@ type CreateFakeDonationParams = {
   donorToken: string
 }
 
-type UserMock = {
-  name: string
-  email: string
-  password: string
-  phone: string
-}
-
 export type BeASaviorMocks = {
+  user: UserMock
   ong: OngMock
   donor: DonorMock
   incident: IncidentMock
@@ -51,6 +58,16 @@ export type BeASaviorMocks = {
 }
 
 export const createMocks: () => BeASaviorMocks = () => ({
+  user: {
+    id: uuid(),
+    name: faker.name.findName(),
+    email: faker.internet.email().toLowerCase(),
+    password: 'somepassword123',
+    phone: faker.phone.phoneFormats(),
+    owner: 'mock',
+    created_at: new Date(),
+    updated_at: new Date()
+  },
   ong: {
     id: uuid(),
     name: faker.name.findName(),
