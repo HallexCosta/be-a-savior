@@ -1,7 +1,6 @@
 import { compare } from 'bcryptjs'
 import { sign } from 'jsonwebtoken'
 
-import { User } from '@entities/User'
 import { UsersRepository } from '@repositories/UsersRepository'
 
 import { BaseUserService } from '@services/users/BaseUserService'
