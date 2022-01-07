@@ -8,12 +8,12 @@ import { createMocks, BeASaviorMocks } from '@tests/fakes/mocks'
 import { CreateUserService, CreateUserDTO } from '@services/users/CreateUserService'
 import { UsersRepository } from '@repositories/UsersRepository'
 
-describe('Create User Service', () => {
+describe('@CreateUserService', () => {
   let mocks: BeASaviorMocks
   let sandbox: sinon.SinonSandbox
-  let defaultFunction = () => {}
+  let defaultFunction = () => { }
   let createUserServiceMock: CreateUserService
-  
+
   describe('#constructor', () => {
     beforeEach(() => {
       mocks = createMocks()
@@ -22,7 +22,7 @@ describe('Create User Service', () => {
     afterEach(() => sandbox.restore())
 
     it('should be extend abstract create user service and instance new object', async () => {
-      class CreateUserServiceMock extends CreateUserService {}
+      class CreateUserServiceMock extends CreateUserService { }
       createUserServiceMock = new CreateUserServiceMock()
       expect(createUserServiceMock).to.be.instanceOf(CreateUserService)
     })
@@ -58,7 +58,7 @@ describe('Create User Service', () => {
     it('should be throw error if user email already in use', async () => {
       const usersRepository = {
         findByEmail: defaultFunction
-      } 
+      }
       sandbox.stub(usersRepository, 'findByEmail').resolves(mocks.ong)
 
       const toThrow = async () => {
@@ -71,7 +71,7 @@ describe('Create User Service', () => {
     it('do not do anything if user not use this email ', async () => {
       const usersRepository = {
         findByEmail: defaultFunction
-      } 
+      }
       const checkForUserEmailExistsStub = sandbox.stub(usersRepository, 'findByEmail').resolves()
 
       await createUserServiceMock.checkForUserEmailExists(mocks.ong.email, usersRepository)
