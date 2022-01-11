@@ -11,13 +11,10 @@ import {
 
 export class CreateOngController extends CreateUserController {
   public async handle(request: Request, response: Response): Promise<Response> {
-    const { name, email, password, phone } = request.body
     request.owner = 'ong'
 
-    const service = new CreateOngService(this.dependencies())
-
-    return await super.handle({
-      service,
+    return await super.handleUser({
+      service: new CreateOngService(this.dependencies()),
       http: {
         request,
         response

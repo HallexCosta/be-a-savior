@@ -7,7 +7,6 @@ import { ListUsersController } from '@controllers/users/ListUsersController'
 
 import { ListOngsService } from '@services/ongs/ListOngsService'
 
-
 export class ListOngsController extends ListUsersController {
   public async handle(request: Request, response: Response): Promise<Response> {
     request.owner = 'ong'
