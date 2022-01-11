@@ -1,20 +1,40 @@
 import { Request, Response } from 'express'
+import { getCustomRepository } from 'typeorm'
 
 import { CreateDonorService } from '@services/donors/CreateDonorService'
 
-export class CreateDonorController {
+import { CreateUserController } from '@controllers/users/CreateUserController'
+
+import { UsersRepository } from '@repositories/UsersRepository'
+
+type CreateDonorRepositories = {
+  users: UsersRepository
+}
+
+type Dependencies = {
+  repositories: CreateDonorRepositories
+}
+
+export class CreateDonorController extends CreateUserController {
   public async handle(request: Request, response: Response): Promise<Response> {
-    const { name, email, password, phone } = request.body
+    request.owner = 'donor'
 
-    const service = new CreateDonorService()
-
-    const donor = await service.execute({
-      name,
-      email,
-      password,
-      phone
+    return await super.handleUser({
+      service: new CreateDonorService(),
+      http: {
+        request,
+        response
+      }
     })
+  }
 
-    return response.status(201).json(donor)
+  public createDonorServiceDependencies() {
+    const dependencies = {
+      repositories: {
+        users: getCustomRepository(UsersRepository)
+      }
+    }
+
+    return dependencies
   }
 }
