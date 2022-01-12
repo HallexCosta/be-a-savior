@@ -8,14 +8,27 @@ import { Incident } from '@entities/Incident'
 import { Donor } from '@entities/Donor'
 import { Ong } from '@entities/Ong'
 
-import { Util } from '../util'
+import { Util } from '@tests/util'
 
-import ormconfig from '../../../ormconfig'
+import ormconfig from '@root/ormconfig'
 
 faker.locale = 'pt_BR'
 
+type UserMock = {
+  id: string
+  name: string
+  email: string
+  password: string
+  phone: string
+  owner: string
+  created_at: Date
+  updated_at: Date
+}
+
 type OngMock = UserMock
+
 type DonorMock = UserMock
+
 type IncidentMock = {
   name: string
   cost: number
@@ -36,14 +49,8 @@ type CreateFakeDonationParams = {
   donorToken: string
 }
 
-type UserMock = {
-  name: string
-  email: string
-  password: string
-  phone: string
-}
-
 export type BeASaviorMocks = {
+  user: UserMock
   ong: OngMock
   donor: DonorMock
   incident: IncidentMock
@@ -51,26 +58,50 @@ export type BeASaviorMocks = {
 }
 
 export const createMocks: () => BeASaviorMocks = () => ({
-  ong: {
+  user: {
+    id: uuid(),
     name: faker.name.findName(),
     email: faker.internet.email().toLowerCase(),
     password: 'somepassword123',
-    phone: faker.phone.phoneFormats()
+    phone: faker.phone.phoneFormats(),
+    owner: 'mock',
+    created_at: new Date(),
+    updated_at: new Date()
+  },
+  ong: {
+    id: uuid(),
+    name: faker.name.findName(),
+    email: faker.internet.email().toLowerCase(),
+    password: 'somepassword123',
+    phone: faker.phone.phoneFormats(),
+    owner: 'ong',
+    created_at: new Date(),
+    updated_at: new Date()
   },
   donor: {
+    id: uuid(),
     name: faker.name.findName(),
     email: faker.internet.email().toLowerCase(),
     password: 'somepassword123',
-    phone: faker.phone.phoneFormats()
+    phone: faker.phone.phoneFormats(),
+    owner: 'donor',
+    created_at: new Date(),
+    updated_at: new Date()
   },
   incident: {
+    id: uuid(),
     name: faker.fake('{{animal.dog}}'),
     cost: Number(faker.commerce.price()),
-    description: `This animal is type ${faker.fake('{{animal.type}}')}`
+    description: `This animal is type ${faker.fake('{{animal.type}}')}`,
+    created_at: new Date(),
+    updated_at: new Date()
   },
   donation: {
+    uuid: uuid(),
     incidentId: 'this is incident_id :/',
-    amount: Number(faker.commerce.price())
+    amount: Number(faker.commerce.price()),
+    created_at: new Date(),
+    updated_at: new Date()
   }
 })
 

@@ -2,7 +2,7 @@ import { Stripe } from 'stripe'
 
 import { getConnection, createConnection } from 'typeorm'
 
-import { Util } from './integration/util'
+import { Util } from '@tests/util'
 
 const instanceName: string = process.env.ELEPHANT_INSTANCE_NAME
 const tableNames = ['donations', 'incidents', 'users', 'migrations']

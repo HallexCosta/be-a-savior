@@ -47,7 +47,7 @@ const mockInstances = new Map<string, InstanceDetail>([
 ])
 
 
-describe('#ElephantSQLInstanceProvider', () => {
+describe('@ElephantSQLInstanceProvider', () => {
   let sandbox: sinon.SinonSandbox
   let defaultElephantParam = null
 

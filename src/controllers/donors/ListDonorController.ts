@@ -1,15 +1,34 @@
 import { Request, Response } from 'express'
+import { getCustomRepository } from 'typeorm'
 
 import { ListDonorService } from '@services/donors/ListDonorService'
 
-export class ListDonorController {
+import { ListUserController } from '@controllers/users/ListUserController'
+
+import { UsersRepository } from '@repositories/UsersRepository'
+
+export class ListDonorController extends ListUserController {
   public async handle(request: Request, response: Response): Promise<Response> {
-    const { id } = request.params
+    request.owner = 'donor'
 
-    const service = new ListDonorService()
+    return await super.handleUser({
+      service: new ListDonorService(
+        this.listDonorServiceDependencies()
+      ),
+      http: {
+        request,
+        response
+      }
+    })
+  }
 
-    const donor = await service.execute({ id })
+  public listDonorServiceDependencies() {
+    const dependencies = {
+      repositories: {
+        users: getCustomRepository(UsersRepository)
+      }
+    }
 
-    return response.json(donor)
+    return dependencies
   }
 }

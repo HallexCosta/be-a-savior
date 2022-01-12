@@ -20,7 +20,7 @@ import {
   createFakeDonor,
   loginWithFakeOng,
   createFakeDonation
-} from './fakes/mocks'
+} from '@tests/fakes/mocks'
 
 use(dirty)
 

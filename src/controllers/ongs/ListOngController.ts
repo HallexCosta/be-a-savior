@@ -1,15 +1,41 @@
 import { Request, Response } from 'express'
 
 import { ListOngService } from '@services/ongs/ListOngService'
+import { ListUserController } from '@controllers/users/ListUserController'
 
-export class ListOngController {
+import { getCustomRepository } from 'typeorm'
+import { UsersRepository } from '@repositories/UsersRepository'
+
+export class ListOngController extends ListUserController {
+  public constructor() {
+    super()
+  }
+
   public async handle(request: Request, response: Response): Promise<Response> {
-    const { id } = request.params
+    request.owner = 'ong'
 
-    const service = new ListOngService()
+    const service = new ListOngService(
+      this.listOngServiceDependencies()
+    )
 
-    const ong = await service.execute({ id })
+    return await super.handleUser({
+      service,
+      http: {
+        request,
+        response
+      }
+    })
+  }
 
-    return response.json(ong)
+  public listOngServiceDependencies() {
+    const usersRepository = getCustomRepository(UsersRepository)
+
+    const depedencies = {
+      repositories: {
+        users: usersRepository
+      }
+    }
+
+    return depedencies
   }
 }

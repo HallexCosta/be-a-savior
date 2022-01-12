@@ -1,20 +1,36 @@
 import { Request, Response } from 'express'
+import { getCustomRepository } from 'typeorm'
+
+import { UsersRepository } from '@repositories/UsersRepository'
+
+import { AuthenticateUserController } from '@controllers/users/AuthenticateUserController'
 
 import { AuthenticateOngService } from '@services/ongs/AuthenticateOngService'
 
-export class AuthenticateOngController {
+export class AuthenticateOngController extends AuthenticateUserController {
   public async handle(request: Request, response: Response): Promise<Response> {
-    const { email, password } = request.body
+    request.owner = 'ong'
 
-    const service = new AuthenticateOngService()
-
-    const token = await service.execute({
-      email,
-      password
+    return await super.handleUser({
+      service: new AuthenticateOngService(
+        this.authenticateOngServiceDependencies()
+      ),
+      http: {
+        request,
+        response
+      }
     })
+  }
 
-    return response.json({
-      token
-    })
+  public authenticateOngServiceDependencies() {
+    const usersRepository = getCustomRepository(UsersRepository)
+
+    const depedencies = {
+      repositories: {
+        users: usersRepository
+      }
+    }
+
+    return depedencies
   }
 }

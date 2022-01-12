@@ -18,7 +18,7 @@ import {
   loginWithFakeDonor,
   loginWithFakeOng,
   createFakeIncident
-} from './fakes/mocks'
+} from '@tests/fakes/mocks'
 
 use(dirty)
 
