@@ -12,8 +12,14 @@ type CreateUserHandleParams = {
   }
 }
 
+type CreateUserResponse = Response
+
+interface UserController {
+  handleUser(userHandle: CreateUserHandleParams): Promise<CreateUserResponse>
+}
+
 export abstract class CreateUserController {
-  public async handle({ service, http: { request, response } }: CreateUserHandleParams): Promise<Response> {
+  public async handleUser({ service, http: { request, response } }: CreateUserHandleParams): Promise<Response> {
     const { name, email, password, phone } = request.body
     const { owner } = request
 
