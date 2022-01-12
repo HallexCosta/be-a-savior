@@ -7,20 +7,14 @@ import { CreateUserController } from '@controllers/users/CreateUserController'
 
 import { UsersRepository } from '@repositories/UsersRepository'
 
-type CreateDonorRepositories = {
-  users: UsersRepository
-}
-
-type Dependencies = {
-  repositories: CreateDonorRepositories
-}
-
 export class CreateDonorController extends CreateUserController {
   public async handle(request: Request, response: Response): Promise<Response> {
     request.owner = 'donor'
 
     return await super.handleUser({
-      service: new CreateDonorService(),
+      service: new CreateDonorService(
+        this.createDonorServiceDependencies()
+      ),
       http: {
         request,
         response
