@@ -20,6 +20,14 @@ export class UsersRepository extends Repository<Ong | Donor> {
     })
   }
 
+  async findByPhone(phone: string): Promise<Ong | Donor> {
+    return await this.findOne({
+      where: {
+        phone
+      }
+    })
+  }
+
   async findOwnerById(id: string, owner: string): Promise<Ong | Donor> {
     return await this.findOne({
       where: {
