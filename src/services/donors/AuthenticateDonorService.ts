@@ -1,48 +1,35 @@
-import { compare } from 'bcryptjs'
-import { getCustomRepository } from 'typeorm'
-import { sign } from 'jsonwebtoken'
-
 import { UsersRepository } from '@repositories/UsersRepository'
+
+import { AuthenticateUserService } from '@services/users/AuthenticateUserService'
 
 type AuthenticateDonorDTO = {
   email: string
   password: string
+  owner: string
 }
 
-export class AuthenticateDonorService {
+type AuthenticateDonorDependencies = {
+  repositories: {
+    users: UsersRepository
+  }
+}
+
+export class AuthenticateDonorService extends AuthenticateUserService {
+  public constructor(authenticateDonorDependencies: AuthenticateDonorDependencies) {
+    super(authenticateDonorDependencies)
+  }
+
   public async execute({
     email,
-    password
+    password,
+    owner
   }: AuthenticateDonorDTO): Promise<string> {
-    const repository = getCustomRepository(UsersRepository)
-
-    const donor = await repository.findByEmail(email)
-
-    if (!donor) {
-      throw new Error('Email/password incorrect')
-    }
-
-    const passwordMatch = await compare(password, donor.password)
-
-    if (!passwordMatch) {
-      throw new Error('Email/password incorrect')
-    }
-
-    if (donor.owner !== 'donor') {
-      throw new Error("This user isn't a donor")
-    }
-
-    const token = sign(
-      {
-        email: donor.email
-      },
-      '47285efa5d652f00fe0371c2e6bdcd0b',
-      {
-        subject: donor.id,
-        expiresIn: '1d'
+    return await super.executeUser({
+      dto: {
+        email,
+        password,
+        owner
       }
-    )
-
-    return token
+    })
   }
 }

@@ -1,90 +1,45 @@
-import { classToClass } from 'class-transformer'
-import { getCustomRepository } from 'typeorm'
-import { hash } from 'bcryptjs'
-
 import { Donor } from '@entities/Donor'
 import { UsersRepository } from '@repositories/UsersRepository'
+
+import { CreateUserService } from '@services/users/CreateUserService'
 
 type CreateDonorDTO = {
   name: string
   email: string
   password: string
   phone: string
+  owner: string
 }
 
 type CreateDonorResponse = Omit<Donor, 'password'>
 
-export class CreateDonorService {
-  private async checkForUserEmailExists(
-    email: string,
-    usersRepository: UsersRepository
-  ) {
-    const userAlreadyExists = await usersRepository.findByEmail(email)
+type CreateDonorDependencies = {
+  repositories: {
+    users: UsersRepository
+  }
+}
 
-    if (userAlreadyExists) {
-      throw new Error('User already exists, please change your email')
-    }
+export class CreateDonorService extends CreateUserService {
+  public constructor(createDonorDependencies: CreateDonorDependencies) {
+    super()
+    Object.assign(this, createDonorDependencies)
   }
 
   public async execute({
     name,
     email,
     password,
-    phone
+    phone,
+    owner
   }: CreateDonorDTO): Promise<CreateDonorResponse> {
-    this.checkForFieldIsFilled({
-      name,
-      email,
-      password,
-      phone
+    return await super.executeUser({
+      dto: {
+        name,
+        email,
+        password,
+        phone,
+        owner
+      }
     })
-
-    const usersRepository = getCustomRepository(UsersRepository)
-
-    await this.checkForUserEmailExists(email, usersRepository)
-
-    const passwordHash = await this.encryptPassword(password)
-
-    const donor = usersRepository.create(new Donor({
-      name,
-      email,
-      password: passwordHash,
-      phone
-    }))
-
-    await usersRepository.save(donor)
-
-    const donorResponse = classToClass<CreateDonorResponse>(donor)
-
-    return donorResponse
-  }
-
-  private async encryptPassword(password: string) {
-    const passwordHash = await hash(password, 8)
-
-    return passwordHash
-  }
-
-  private checkForFieldIsFilled({
-    name,
-    email,
-    password,
-    phone
-  }: CreateDonorDTO) {
-    if (!name) {
-      throw new Error("Name can't empty")
-    }
-
-    if (!email) {
-      throw new Error("Email can't empty")
-    }
-
-    if (!password) {
-      throw new Error("Password can't empty")
-    }
-
-    if (!phone) {
-      throw new Error("Phone can't empty")
-    }
   }
 }

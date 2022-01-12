@@ -1,19 +1,30 @@
-import { classToClass } from "class-transformer"
-import { getCustomRepository } from 'typeorm'
-
 import { Donor } from '@entities/Donor'
 import { UsersRepository } from '@repositories/UsersRepository'
 
+import { ListUsersService } from '@services/users/ListUsersService'
+
+type ListDonorsDTO = {
+  owner: string
+}
+
 type ListDonorsResponse = Omit<Donor, 'password'>[]
 
-export class ListDonorsService {
-  public async execute(): Promise<ListDonorsResponse> {
-    const usersRepository = getCustomRepository(UsersRepository)
+type ListDonorsDependencies = {
+  repositories: {
+    users: UsersRepository
+  }
+}
 
-    const donors = await usersRepository.findByOwner('donor')
+export class ListDonorsService extends ListUsersService {
+  public constructor(listDonorsDependencies: ListDonorsDependencies) {
+    super(listDonorsDependencies)
+  }
 
-    const donorsResponse = classToClass<ListDonorsResponse>(donors)
-
-    return donorsResponse
+  public async execute({ owner }: ListDonorsDTO): Promise<ListDonorsResponse> {
+    return await super.executeUser({
+      dto: {
+        owner
+      }
+    })
   }
 }
