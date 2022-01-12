@@ -1,9 +1,6 @@
-import { getCustomRepository } from 'typeorm'
 import { classToClass } from 'class-transformer'
-import { hash } from 'bcryptjs'
 
 import { Ong } from '@entities/Ong'
-import { UsersRepository } from '@repositories/UsersRepository'
 
 import { StripeProvider } from '@providers/StripeProvider'
 
@@ -27,7 +24,7 @@ export type CreateOngDependencies = {
 
 type CreateOngResponse = Omit<Ong, 'password'>
 
-type CreateCustomersParams = {
+type CreateCustomerParams = {
   name: string
   email: string
   address: {
@@ -37,7 +34,9 @@ type CreateCustomersParams = {
     state: string
     postal_code: string
   }
-  metadata: {}
+  metadata: {
+    [key: string]: string
+  }
 }
 
 export class CreateOngService extends CreateUserService {
@@ -55,7 +54,7 @@ export class CreateOngService extends CreateUserService {
     phone,
     owner
   }: CreateOngDTO): Promise<CreateOngResponse> {
-    const ong = await super.execute({
+    const ong = await super.executeUser({
       dto: {
         name,
         email,
@@ -87,10 +86,7 @@ export class CreateOngService extends CreateUserService {
     return ongResponse
   }
 
-  private async createCustomer({ customer, metadata }: CreateCustomerParams) {
-    await this.providers.stripe.customers.create({
-      ...customer,
-      metadata
-    })
+  private async createCustomer(customer: CreateCustomerParams) {
+    await this.providers.stripe.customers.create(customer)
   }
 }

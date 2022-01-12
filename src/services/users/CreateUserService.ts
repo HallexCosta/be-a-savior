@@ -31,7 +31,7 @@ export abstract class CreateUserService {
     }
   }
 
-  public async execute({
+  public async executeUser({
     dto
   }: CreateUserParams): Promise<CreateUserResponse> {
     this.checkForFieldIsFilled(dto)
