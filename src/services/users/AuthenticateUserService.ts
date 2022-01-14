@@ -1,6 +1,8 @@
 import { compare } from 'bcryptjs'
 import { sign } from 'jsonwebtoken'
 
+import { User } from '@entities/User'
+
 import { UsersRepository } from '@repositories/UsersRepository'
 
 import { BaseUserService } from '@services/users/BaseUserService'
@@ -35,11 +37,9 @@ export abstract class AuthenticateUserService extends BaseUserService {
   }: AuthenticateUserExecuteParams): Promise<AuthenticateUserResponse> {
     const usersRepository = this.repositories.users
 
-    const user = await usersRepository.findByEmail(email)
+    const user = await usersRepository.findByEmail(email) || await usersRepository.findByPhone(email)
 
-    if (!user) {
-      throw new Error('Email/password incorrect')
-    }
+    this.checkUserExists(user)
 
     const passwordMatch = await compare(
       password,
@@ -54,9 +54,21 @@ export abstract class AuthenticateUserService extends BaseUserService {
       throw new Error(`This user isn't a ${owner}`)
     }
 
+    return this.signToken<AuthenticateUserResponse>(user)
+  }
+
+  public checkUserExists(user: User) {
+    if (!user) {
+      throw new Error('Email/password incorrect')
+    }
+  }
+
+  public signToken<AuthenticateUserResponse>(user: User): AuthenticateUserResponse {
+    const { password, ...userWithoutPassword } = user
+
     const token = sign(
       {
-        email: user.email
+        ...userWithoutPassword
       },
       '47285efa5d652f00fe0371c2e6bdcd0b',
       {
