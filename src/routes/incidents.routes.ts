@@ -6,6 +6,9 @@ import { ListIncidentController } from '@controllers/incidents/ListIncidentContr
 import { UpdateIncidentController } from '@controllers/incidents/UpdateIncidentController'
 import { DeleteIncidentController } from '@controllers/incidents/DeleteIncidentController'
 
+import { ensureAuthenticateOng } from '@middlewares/ensureAuthenticateOng'
+import { ensureOng } from '@middlewares/ensureOng'
+
 const createIncidentController = new CreateIncidentController()
 const listIncidentsController = new ListIncidentsController()
 const listIncidentController = new ListIncidentController()
@@ -14,15 +17,19 @@ const deleteIncidentController = new DeleteIncidentController()
 
 const routes = Router()
 
-routes.post('/', createIncidentController.handle.bind(createIncidentController))
+routes.post('/', ensureAuthenticateOng, ensureOng, createIncidentController.handle.bind(createIncidentController))
 routes.get('/', listIncidentsController.handle.bind(listIncidentsController))
-routes.get('/:id', listIncidentController.handle.bind(listIncidentController))
+routes.get('/:id', ensureAuthenticateOng, ensureOng, listIncidentController.handle.bind(listIncidentController))
 routes.patch(
   '/:id',
+  ensureAuthenticateOng,
+  ensureOng,
   updateIncidentController.handle.bind(updateIncidentController)
 )
 routes.delete(
   '/:id',
+  ensureAuthenticateOng,
+  ensureOng,
   deleteIncidentController.handle.bind(deleteIncidentController)
 )
 
