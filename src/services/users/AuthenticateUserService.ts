@@ -41,20 +41,24 @@ export abstract class AuthenticateUserService extends BaseUserService {
 
     this.checkUserExists(user)
 
-    const passwordMatch = await compare(
-      password,
-      user.password
-    )
-
-    if (!passwordMatch) {
-      throw new Error('Email/password incorrect')
-    }
+    await this.checkUserPasswordIsValid(password, user.password)
 
     if (user.owner !== owner) {
       throw new Error(`This user isn't a ${owner}`)
     }
 
     return this.signToken<AuthenticateUserResponse>(user)
+  }
+
+  public async checkUserPasswordIsValid(password: string, comparePassword: string) {
+    const passwordMatch = await compare(
+      password,
+      comparePassword
+    )
+
+    if (!passwordMatch) {
+      throw new Error('Email/password incorrect')
+    }
   }
 
   public checkUserExists(user: User) {
