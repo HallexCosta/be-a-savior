@@ -70,19 +70,36 @@ describe('@AuthenticateUserService', () => {
 
   describe('#checkUserExists', () => {
     it('should be able throw error if not find user', async () => {
-      //const findByPhoneStub = sandbox.stub(authenticateUserServiceMock.repositories.users, 'findByPhone').resolves({
-      //  ...mocks.user,
-      //  email: 'user@example.com',
-      //  phone: '123456'
-      //})
-
       const toThrow = () => {
         const user = undefined
         authenticateUserServiceMock.checkUserExists(user)
       }
 
       expect(toThrow).to.throw(/incorrect/gi)
-      //expect(findByPhoneStub.calledOnce).to.be.false()
+    })
+
+    it('should be able not throw error if user exists', () => {
+      const toThrow = () => {
+        authenticateUserServiceMock.checkUserExists(mocks.user)
+      }
+
+      expect(toThrow).not.to.throw()
+    })
+  })
+
+  describe('#checkUserPasswordIsValid', () => {
+    it('should be able throw error if user password is invalid', async () => {
+      const toThrow = async () => {
+        const userRepositoryPasswordMocked = '$2a$08$lrkeJHykB/qfgKjHUz85We.zcahLZGu.XF5FzmxhYyUcIbxvKbTaG'
+        const userPasswordMocked = 'hallex123'
+
+        await authenticateUserServiceMock.checkUserPasswordIsValid(
+          userPasswordMocked,
+          userRepositoryPasswordMocked
+        )
+      }
+
+      await expect(toThrow()).to.rejectedWith(/incorrect/gi)
     })
   })
 })
