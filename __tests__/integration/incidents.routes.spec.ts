@@ -65,7 +65,6 @@ describe('Incidents Routes', () => {
 
     const response = await agent
       .get('/incidents')
-      .set('Authorization', `bearer ${ongToken}`)
 
     const incidents = response.body
 
