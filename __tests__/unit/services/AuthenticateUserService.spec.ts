@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcryptjs'
 import * as typeorm from 'typeorm'
 import { expect } from 'chai'
 import sinon from 'sinon'
@@ -69,7 +70,7 @@ describe('@AuthenticateUserService', () => {
   })
 
   describe('#checkUserExists', () => {
-    it('should be able throw error if not find user', async () => {
+    it('should be able throw error if not find user', () => {
       const toThrow = () => {
         const user = undefined
         authenticateUserServiceMock.checkUserExists(user)
@@ -89,10 +90,10 @@ describe('@AuthenticateUserService', () => {
 
   describe('#checkUserPasswordIsValid', () => {
     it('should be able throw error if user password is invalid', async () => {
-      const toThrow = async () => {
-        const userRepositoryPasswordMocked = '$2a$08$lrkeJHykB/qfgKjHUz85We.zcahLZGu.XF5FzmxhYyUcIbxvKbTaG'
-        const userPasswordMocked = 'hallex123'
+      const userRepositoryPasswordMocked = '$2a$08$lrkeJHykB/qfgKjHUz85We.zcahLZGu.XF5FzmxhYyUcIbxvKbTaG'
+      const userPasswordMocked = 'hallex123'
 
+      const toThrow = async () => {
         await authenticateUserServiceMock.checkUserPasswordIsValid(
           userPasswordMocked,
           userRepositoryPasswordMocked
