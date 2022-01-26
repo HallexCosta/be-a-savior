@@ -6,6 +6,8 @@ import { StripeProvider } from '@providers/StripeProvider'
 
 import { CreateUserService } from '@services/users/CreateUserService'
 
+import { UsersRepository } from '@repositories/UsersRepository'
+
 export type CreateOngDTO = {
   name: string
   email: string
@@ -14,12 +16,13 @@ export type CreateOngDTO = {
   owner: string
 }
 
-type Providers = {
-  stripe: StripeProvider
-}
-
 export type CreateOngDependencies = {
-  providers: Providers
+  providers: {
+    stripe: StripeProvider
+  }
+  repositories: {
+    users: UsersRepository
+  }
 }
 
 type CreateOngResponse = Omit<Ong, 'password'>
@@ -40,11 +43,8 @@ type CreateCustomerParams = {
 }
 
 export class CreateOngService extends CreateUserService {
-  private providers: Providers
-
-  public constructor(deps: CreateOngDependencies) {
-    super()
-    Object.assign(this, deps)
+  public constructor(createOngDependencies: CreateOngDependencies) {
+    super(createOngDependencies)
   }
 
   public async execute({
