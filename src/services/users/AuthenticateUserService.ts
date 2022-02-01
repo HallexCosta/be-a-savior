@@ -28,13 +28,13 @@ export abstract class AuthenticateUserService extends BaseUserService {
     super(authenticateUserParams)
   }
 
-  public async executeUser<AuthenticateUserResponse>({
+  public async executeUser({
     dto: {
       email,
       password,
       owner
     }
-  }: AuthenticateUserExecuteParams): Promise<AuthenticateUserResponse> {
+  }: AuthenticateUserExecuteParams): Promise<string> {
     const usersRepository = this.repositories.users
 
     const user = await usersRepository.findByEmail(email) || await usersRepository.findByPhone(email)
@@ -43,11 +43,15 @@ export abstract class AuthenticateUserService extends BaseUserService {
 
     await this.checkUserPasswordIsValid(password, user.password)
 
-    if (user.owner !== owner) {
+    this.checkUserHaveAccessThisOwner(user.owner, owner)
+
+    return this.signToken(user)
+  }
+
+  public checkUserHaveAccessThisOwner(userOwner: string, owner: string) {
+    if (userOwner !== owner) {
       throw new Error(`This user isn't a ${owner}`)
     }
-
-    return this.signToken<AuthenticateUserResponse>(user)
   }
 
   public async checkUserPasswordIsValid(password: string, comparePassword: string) {
@@ -67,7 +71,7 @@ export abstract class AuthenticateUserService extends BaseUserService {
     }
   }
 
-  public signToken<AuthenticateUserResponse>(user: User): AuthenticateUserResponse {
+  public signToken(user: User): string {
     const { password, ...userWithoutPassword } = user
 
     const token = sign(
@@ -81,6 +85,6 @@ export abstract class AuthenticateUserService extends BaseUserService {
       }
     )
 
-    return token as unknown as AuthenticateUserResponse
+    return token
   }
 }
