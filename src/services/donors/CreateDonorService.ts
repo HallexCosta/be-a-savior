@@ -21,8 +21,7 @@ type CreateDonorDependencies = {
 
 export class CreateDonorService extends CreateUserService {
   public constructor(createDonorDependencies: CreateDonorDependencies) {
-    super()
-    Object.assign(this, createDonorDependencies)
+    super(createDonorDependencies)
   }
 
   public async execute({
