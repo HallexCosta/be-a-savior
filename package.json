@@ -8,7 +8,7 @@
   "author": "HallexCosta <hallex.costa@hotmail.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=17.3.0"
+    "node": ">=12.22.9"
   },
   "scripts": {
     "build": "tsc --project tsconfig.production.json",
