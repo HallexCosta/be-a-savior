@@ -5,3 +5,6 @@ dist/
 
 src/database/database.sqlite
 src/database/database.sqlite-test
+
+.nyc_output/
+coverage/

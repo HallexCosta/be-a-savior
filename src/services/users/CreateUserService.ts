@@ -1,9 +1,11 @@
 import { classToClass } from 'class-transformer'
-import { getCustomRepository } from 'typeorm'
 import { hash } from 'bcryptjs'
 
 import { User } from '@entities/User'
 import { UsersRepository } from '@repositories/UsersRepository'
+
+import { StripeProvider } from '@providers/StripeProvider'
+import { ElephantSQLInstanceProvider } from '@providers/elephant/ElephantSQLInstanceProvider'
 
 export type CreateUserDTO = {
   name: string
@@ -13,14 +15,35 @@ export type CreateUserDTO = {
   owner: string
 }
 
-type CreateUserParams = {
+type Repositories = {
+  users?: UsersRepository
+}
+
+type Providers = {
+  stripe?: StripeProvider
+  elephantSQL?: ElephantSQLInstanceProvider
+}
+
+export type CreateUserParams = {
+  repositories?: Repositories
+  providers?: Providers
+}
+
+type CreateUserExecuteParams = {
   dto: CreateUserDTO
 }
 
 type CreateUserResponse = Omit<User, 'password'>
 
 export abstract class CreateUserService {
-  private async checkForUserEmailExists(
+  public repositories: Repositories
+  public providers: Providers
+
+  public constructor(createUserParams: CreateUserParams) {
+    Object.assign(this, createUserParams)
+  }
+
+  public async checkForUserEmailExists(
     email: string,
     usersRepository: UsersRepository
   ) {
@@ -33,10 +56,10 @@ export abstract class CreateUserService {
 
   public async executeUser({
     dto
-  }: CreateUserParams): Promise<CreateUserResponse> {
+  }: CreateUserExecuteParams): Promise<CreateUserResponse> {
     this.checkForFieldIsFilled(dto)
 
-    const usersRepository = getCustomRepository(UsersRepository)
+    const usersRepository = this.repositories.users
 
     await this.checkForUserEmailExists(dto.email, usersRepository)
 
@@ -49,18 +72,20 @@ export abstract class CreateUserService {
 
     await usersRepository.save(user)
 
-    const userResponse = classToClass<CreateUserResponse>(user)
+    const { password, ...userWithoutPassword } = user
+
+    const userResponse = classToClass<CreateUserResponse>(userWithoutPassword)
 
     return userResponse
   }
 
-  private async encryptPassword(password: string) {
+  public async encryptPassword(password: string) {
     const passwordHash = await hash(password, 8)
 
     return passwordHash
   }
 
-  private checkForFieldIsFilled({
+  public checkForFieldIsFilled({
     name,
     email,
     password,

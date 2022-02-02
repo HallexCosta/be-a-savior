@@ -1,6 +1,5 @@
+import { getCustomRepository } from 'typeorm'
 import { Request, Response } from 'express'
-
-import { StripeProvider } from '@providers/StripeProvider'
 
 import { CreateUserController } from '@controllers/users/CreateUserController'
 
@@ -9,12 +8,17 @@ import {
   CreateOngService
 } from '@services/ongs/CreateOngService'
 
+import { StripeProvider } from '@providers/StripeProvider'
+import { UsersRepository } from '@repositories/UsersRepository'
+
 export class CreateOngController extends CreateUserController {
   public async handle(request: Request, response: Response): Promise<Response> {
     request.owner = 'ong'
 
     return await super.handleUser({
-      service: new CreateOngService(this.dependencies()),
+      service: new CreateOngService(
+        this.createOngServiceDependencies()
+      ),
       http: {
         request,
         response
@@ -22,17 +26,14 @@ export class CreateOngController extends CreateUserController {
     })
   }
 
-  public dependencies(): CreateOngDependencies {
-    const stripe = new StripeProvider()
-
-    const providers = {
-      stripe
+  public createOngServiceDependencies(): CreateOngDependencies {
+    return {
+      repositories: {
+        users: getCustomRepository(UsersRepository)
+      },
+      providers: {
+        stripe: new StripeProvider()
+      }
     }
-
-    const dependencies = {
-      providers
-    }
-
-    return dependencies
   }
 }

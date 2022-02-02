@@ -27,7 +27,7 @@ export type UserExecuteParams = {
 }
 
 interface UserService {
-  executeUser<UserResponse>(userExecute: UserExecuteParams): Promise<UserResponse>
+  executeUser(userExecute: UserExecuteParams): Promise<string>
 }
 
 export abstract class BaseUserService implements UserService {
@@ -38,5 +38,5 @@ export abstract class BaseUserService implements UserService {
     Object.assign(this, userParams)
   }
 
-  public abstract executeUser<UserResponse>(userExecute: UserExecuteParams): Promise<UserResponse>
+  public abstract executeUser(userExecute: UserExecuteParams): Promise<string>
 }

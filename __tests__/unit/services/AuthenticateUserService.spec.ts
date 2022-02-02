@@ -13,6 +13,7 @@ import {
 import { UsersRepository } from '@repositories/UsersRepository'
 
 describe('@AuthenticateUserService', () => {
+  const defaultFunction = () => { }
   let mocks = createMocks()
   let sandbox: sinon.SinonSandbox
   let authenticateUserServiceMock: AuthenticateUserService
@@ -31,9 +32,9 @@ describe('@AuthenticateUserService', () => {
       }
 
       const usersRepository = {
-        findOwnerById: () => { },
-        findByEmail: () => { },
-        findByPhone: () => { }
+        findOwnerById: defaultFunction,
+        findByEmail: defaultFunction,
+        findByPhone: defaultFunction
       }
 
       sandbox.stub(typeorm, 'getCustomRepository').returns(usersRepository)
@@ -49,11 +50,128 @@ describe('@AuthenticateUserService', () => {
     })
   })
 
+  describe('#executeUser', () => {
+    beforeEach(() => {
+      sandbox = sinon.createSandbox()
+    })
+    afterEach(() => sandbox.restore())
+
+    it('should authenticate user by email and return token signed', async () => {
+      const findByEmailStub = sandbox
+        .stub(authenticateUserServiceMock.repositories.users, 'findByEmail')
+        .resolves({
+          ...mocks.user,
+          password: 'hallex123'
+        })
+
+      const findByPhoneStub = sandbox
+        .stub(authenticateUserServiceMock.repositories.users, 'findByPhone')
+        .resolves()
+
+      const tokenMock = '$2a$08$WsGdl5YnDjMhobv1VUGX4uSUE.GTe4BrhmdgJqBLGu.CjuuIVxeZK'
+      const signTokenStub = sandbox
+        .stub(authenticateUserServiceMock, 'signToken')
+        .returns(tokenMock)
+
+      const checkUserExistsStub = sandbox
+        .stub(authenticateUserServiceMock, 'checkUserExists')
+        .callsFake(defaultFunction)
+
+      const checkUserPasswordIsValidStub = sandbox
+        .stub(authenticateUserServiceMock, 'checkUserPasswordIsValid')
+        .callsFake(async (..._: string[]) => { })
+
+      const checkUserHaveAccessThisOwnerStub = sandbox
+        .stub(authenticateUserServiceMock, 'checkUserHaveAccessThisOwner')
+        .callsFake(defaultFunction)
+
+      const token = await authenticateUserServiceMock.executeUser({
+        dto: mocks.user
+      })
+
+      expect(findByEmailStub.calledOnce).to.be.true()
+      expect(findByPhoneStub.calledOnce).to.be.false()
+      expect(checkUserExistsStub.calledOnce).to.be.true()
+      expect(checkUserPasswordIsValidStub.calledOnce).to.be.true()
+      expect(checkUserHaveAccessThisOwnerStub.calledOnce).to.be.true()
+      expect(signTokenStub.calledOnce).to.be.true()
+      expect(token.length).to.be.greaterThanOrEqual(10)
+    })
+
+
+    it('should authenticate user by phone and return token signed', async () => {
+      const findByEmailStub = sandbox
+        .stub(authenticateUserServiceMock.repositories.users, 'findByEmail')
+        .resolves()
+
+      const findByPhoneStub = sandbox
+        .stub(authenticateUserServiceMock.repositories.users, 'findByPhone')
+        .resolves({
+          ...mocks.user,
+          password: 'hallex123'
+        })
+
+      const tokenMock = '$2a$08$WsGdl5YnDjMhobv1VUGX4uSUE.GTe4BrhmdgJqBLGu.CjuuIVxeZK'
+      const signTokenStub = sandbox
+        .stub(authenticateUserServiceMock, 'signToken')
+        .returns(tokenMock)
+
+      const checkUserExistsStub = sandbox
+        .stub(authenticateUserServiceMock, 'checkUserExists')
+        .callsFake(defaultFunction)
+
+      const checkUserPasswordIsValidStub = sandbox
+        .stub(authenticateUserServiceMock, 'checkUserPasswordIsValid')
+        .callsFake(async (..._: string[]) => { })
+
+      const checkUserHaveAccessThisOwnerStub = sandbox
+        .stub(authenticateUserServiceMock, 'checkUserHaveAccessThisOwner')
+        .callsFake(defaultFunction)
+
+      const token = await authenticateUserServiceMock.executeUser({
+        dto: mocks.user
+      })
+
+      expect(findByEmailStub.calledOnce).to.be.true()
+      expect(findByPhoneStub.calledOnce).to.be.true()
+      expect(checkUserExistsStub.calledOnce).to.be.true()
+      expect(checkUserPasswordIsValidStub.calledOnce).to.be.true()
+      expect(checkUserHaveAccessThisOwnerStub.calledOnce).to.be.true()
+      expect(signTokenStub.calledOnce).to.be.true()
+      expect(token.length).to.be.greaterThanOrEqual(10)
+    })
+  })
+
+  describe('#checkUserHaveAccessThisOwner', () => {
+    it("should be throw an error if user haven't owner request by service", () => {
+      const toThrow = () => {
+        authenticateUserServiceMock
+          .checkUserHaveAccessThisOwner('ong', 'donor')
+      }
+
+      expect(toThrow).to.throw(/This user/gi)
+    })
+
+    it('Should not do anything if the user has the owner request for the service', () => {
+      const toThrow = () => {
+        authenticateUserServiceMock
+          .checkUserHaveAccessThisOwner('ong', 'ong')
+      }
+
+      expect(toThrow).not.to.throw()
+    })
+  })
+
   describe('#signToken', () => {
+    beforeEach(() => {
+      sandbox = sinon.createSandbox()
+    })
+    afterEach(() => sandbox.restore())
+
     it('should be sign and return token with user', () => {
       const { user } = mocks
 
-      const token = authenticateUserServiceMock.signToken<string>(user)
+      const token = authenticateUserServiceMock.signToken(user)
       const tokenDecrypted = Util.decryptJWTToken(token)
 
       const tokenParsed = JSON.parse(tokenDecrypted)
@@ -69,7 +187,12 @@ describe('@AuthenticateUserService', () => {
   })
 
   describe('#checkUserExists', () => {
-    it('should be able throw error if not find user', async () => {
+    beforeEach(() => {
+      sandbox = sinon.createSandbox()
+    })
+    afterEach(() => sandbox.restore())
+
+    it('should be able throw error if not find user', () => {
       const toThrow = () => {
         const user = undefined
         authenticateUserServiceMock.checkUserExists(user)
@@ -88,11 +211,16 @@ describe('@AuthenticateUserService', () => {
   })
 
   describe('#checkUserPasswordIsValid', () => {
-    it('should be able throw error if user password is invalid', async () => {
-      const toThrow = async () => {
-        const userRepositoryPasswordMocked = '$2a$08$lrkeJHykB/qfgKjHUz85We.zcahLZGu.XF5FzmxhYyUcIbxvKbTaG'
-        const userPasswordMocked = 'hallex123'
+    beforeEach(() => {
+      sandbox = sinon.createSandbox()
+    })
+    afterEach(() => sandbox.restore())
 
+    it('should be able throw error if user password is invalid', async () => {
+      const userRepositoryPasswordMocked = '$2a$08$lrkeJHykB/qfgKjHUz85We.zcahLZGu.XF5FzmxhYyUcIbxvKbTaG'
+      const userPasswordMocked = 'hallex123'
+
+      const toThrow = async () => {
         await authenticateUserServiceMock.checkUserPasswordIsValid(
           userPasswordMocked,
           userRepositoryPasswordMocked

@@ -7,6 +7,9 @@
   "repository": "git@github.com:HallexCosta/be-a-savior-server.git",
   "author": "HallexCosta <hallex.costa@hotmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": ">=12.22.9"
+  },
   "scripts": {
     "build": "tsc --project tsconfig.production.json",
     "start": "yarn start:production",
@@ -18,6 +21,7 @@
     "prepare:test:integration": "cross-env NODE_ENV=test ts-node -r make-promises-safe -r dotenv/config -r tsconfig-paths/register ./src/dirty/prepare-integration-test.ts",
     "test:integration": "cross-env NODE_ENV=test mocha --config .mocharc.integration.js",
     "test:unit:watch": "cross-env NODE_ENV=test yarn test:unit --watch",
+    "test:coverage": "nyc yarn test:unit",
     "clean:elephant:instances:team": "cross-env NODE_ENV=development ts-node -r dotenv/config -r tsconfig-paths/register src/dirty/clean-elephant-team.ts",
     "clean": "rimraf dist",
     "clean:database:postgres": "cross-env NODE_ENV=development yarn ts-node -r dotenv/config -r tsconfig-paths/register ./src/dirty/clean-elephant-team.ts",
@@ -62,6 +66,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@types/bcryptjs": "^2.4.2",
     "@types/chai": "^4.2.21",
     "@types/chai-as-promised": "^7.1.4",
@@ -96,6 +101,7 @@
     "faker": "^5.5.3",
     "mocha": "^9.0.2",
     "nodemon": "^2.0.12",
+    "nyc": "^15.1.0",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
     "sinon": "^11.1.2",

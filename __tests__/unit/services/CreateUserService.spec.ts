@@ -1,5 +1,4 @@
 import bcrypt from 'bcryptjs'
-import { getCustomRepository } from 'typeorm'
 import { expect } from 'chai'
 import sinon from 'sinon'
 
@@ -7,6 +6,8 @@ import { Util } from '@tests/util'
 import { createMocks, BeASaviorMocks } from '@tests/fakes/mocks'
 import { CreateUserService, CreateUserDTO } from '@services/users/CreateUserService'
 import { UsersRepository } from '@repositories/UsersRepository'
+
+import { User } from '@entities/User'
 
 describe('@CreateUserService', () => {
   let mocks: BeASaviorMocks
@@ -21,10 +22,54 @@ describe('@CreateUserService', () => {
     })
     afterEach(() => sandbox.restore())
 
-    it('should be extend abstract create user service and instance new object', async () => {
+    it('should be extend abstract create user service and instance new object', () => {
       class CreateUserServiceMock extends CreateUserService { }
-      createUserServiceMock = new CreateUserServiceMock()
+
+      const usersRepository = {
+        save: defaultFunction,
+        create: () => mocks.user,
+        findByEmail: defaultFunction,
+        checkForUserEmailExists: defaultFunction,
+        encryptPassword: defaultFunction
+      } as unknown as UsersRepository
+
+      createUserServiceMock = new CreateUserServiceMock({
+        repositories: {
+          users: usersRepository
+        }
+      })
+
       expect(createUserServiceMock).to.be.instanceOf(CreateUserService)
+    })
+  })
+
+  describe('#executeUser', () => {
+    beforeEach(() => {
+      mocks = createMocks()
+      sandbox = sinon.createSandbox()
+    })
+    afterEach(() => sandbox.restore())
+
+    it('should be create user and save in database and return user data', async () => {
+      const checkForUserEmailExistsMock = sandbox.stub(createUserServiceMock, 'checkForUserEmailExists').resolves()
+      const checkForFieldIsFilledMock = sandbox.stub(createUserServiceMock, 'checkForFieldIsFilled').resolves()
+      const encryptPasswordMock = sandbox.stub(createUserServiceMock, 'encryptPassword').resolves()
+
+      const user = await createUserServiceMock.executeUser({
+        dto: mocks.user
+      })
+
+      expect(checkForUserEmailExistsMock.calledOnce).to.be.true()
+      expect(checkForFieldIsFilledMock.calledOnce).to.be.true()
+      expect(encryptPasswordMock.calledOnce).to.be.true()
+
+      expect(user).to.not.have.property('password')
+      expect(user).to.have.property('id')
+      expect(user).to.have.property('name')
+      expect(user).to.have.property('email')
+      expect(user).to.have.property('phone')
+      expect(user).to.have.property('created_at')
+      expect(user).to.have.property('updated_at')
     })
   })
 
