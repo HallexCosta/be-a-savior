@@ -7,6 +7,8 @@ import { UsersRepository } from '@repositories/UsersRepository'
 
 export class ListDonorsController extends ListUsersController {
   public async handle(request: Request, response: Response): Promise<Response> {
+    request.owner = 'donor'
+
     return await super.handleUser({
       service: new ListDonorsService(
         this.listDonorsServiceDependencies()
