@@ -68,6 +68,7 @@ describe('Incidents Routes', () => {
 
     const incidents = response.body
 
+    expect(response.headers).to.have.property('x-total')
     expect(incidents[0]).to.have.property('id')
     expect(incidents[0]).to.have.property('name')
     expect(incidents[0]).to.have.property('description')

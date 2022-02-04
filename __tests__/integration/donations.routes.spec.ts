@@ -95,10 +95,11 @@ describe('Donation Routes', () => {
     const donationMock = {
       donationMock: {
         ...mocks.donation,
-        incidentId: incident.id
+        incident_id: incident.id
       },
       donorToken
     }
+
     await createFakeDonation(agent, donationMock)
 
     const response = await agent
