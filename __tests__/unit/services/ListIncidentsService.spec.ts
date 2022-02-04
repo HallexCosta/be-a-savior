@@ -1,6 +1,5 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
-import { randomUUID } from 'crypto'
 
 import { createMocks } from '@tests/fakes/mocks'
 
@@ -43,7 +42,12 @@ describe('@ListIncidentsService', () => {
 
       const actual = listIncidentsService.totalIncidentsAndDonations(incidents as unknown as Incident[])
 
-      const expected = '{"totalIncidents":20,"totalDonations":35,"totalIncidentsDonated":7,"totalIncidentsNonDonated":13}'
+      const expected = {
+        totalIncidents: 20,
+        totalDonations: 35,
+        totalIncidentsDonated: 7,
+        totalIncidentsNonDonated: 13
+      }
 
       expect(actual).to.deep.equal(expected)
     })
