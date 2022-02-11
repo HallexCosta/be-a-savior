@@ -80,8 +80,7 @@ export abstract class AuthenticateUserService extends BaseUserService {
       },
       '47285efa5d652f00fe0371c2e6bdcd0b',
       {
-        subject: user.id,
-        expiresIn: '1d'
+        subject: user.id
       }
     )
 
