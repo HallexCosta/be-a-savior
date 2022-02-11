@@ -145,5 +145,4 @@ orm.subscribe(new Production)
 
 orm.notify()
 
-console.log(orm.config())
 module.exports = orm.config()
