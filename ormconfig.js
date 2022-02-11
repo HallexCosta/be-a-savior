@@ -2,19 +2,6 @@ class DB {
   constructor(environment) {
     environment = environment.toUpperCase()
 
-    if (environment === 'TEST') {
-      this.config = {
-        type: process.env.DB_TYPE_TEST,
-        host: process.env.DB_HOST_TEST,
-        port: process.env.DB_PORT_TEST,
-        username: process.env.DB_USERNAME_TEST,
-        password: process.env.DB_PASSWORD_TEST,
-        database: process.env.DB_NAME_TEST,
-      }
-
-      return 
-    }
-
     this.config = {
       type: process.env.DB_TYPE,
       host: process.env.DB_HOST,
@@ -158,4 +145,5 @@ orm.subscribe(new Production)
 
 orm.notify()
 
+console.log(orm.config())
 module.exports = orm.config()
