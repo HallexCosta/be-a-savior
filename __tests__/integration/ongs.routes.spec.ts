@@ -47,7 +47,8 @@ describe('Ongs Routes', () => {
     const tokenParsed = JSON.parse(tokenDecrypted)
 
     expect(tokenParsed.email).to.be.equal(email)
-    expect(tokenParsed).to.have.property('exp')
+    expect(tokenParsed).to.have.property('sub')
+    expect(tokenParsed).to.have.property('iat')
   })
 
   it('Should be able list Ongs GET (/ongs)', async () => {
