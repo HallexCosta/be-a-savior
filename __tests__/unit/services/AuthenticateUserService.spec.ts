@@ -14,7 +14,11 @@ import { UsersRepository } from '@repositories/UsersRepository'
 
 describe('@AuthenticateUserService', () => {
   const defaultFunction = () => { }
-  let mocks = createMocks()
+  let mocks = createMocks({
+    pureMock: {
+      user: true
+    }
+  })
   let sandbox: sinon.SinonSandbox
   let authenticateUserServiceMock: AuthenticateUserService
 
