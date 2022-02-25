@@ -1,6 +1,9 @@
 import { Request, Response } from 'express'
+import { getCustomRepository } from 'typeorm'
 
-import { DeleteIncidentService } from '@services/incidents/DeleteIncidentService'
+import { DeleteIncidentService, DeleteIncidentDependencies } from '@services/incidents/DeleteIncidentService'
+
+import { IncidentsRepository } from '@repositories/IncidentsRepository'
 
 export class DeleteIncidentController {
   public async handle(request: Request, response: Response): Promise<Response> {
@@ -8,10 +11,20 @@ export class DeleteIncidentController {
 
     const { id } = request.params
 
-    const service = new DeleteIncidentService()
+    const service = new DeleteIncidentService(
+      this.deleteIncidentDependencies()
+    )
 
     const incident = await service.execute({ id, ongId })
 
     return response.json(incident)
+  }
+
+  public deleteIncidentDependencies(): DeleteIncidentDependencies {
+    return {
+      repositories: {
+        incidents: getCustomRepository(IncidentsRepository)
+      }
+    }
   }
 }
