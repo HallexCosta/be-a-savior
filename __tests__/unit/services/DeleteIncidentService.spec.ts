@@ -1,7 +1,12 @@
 import sinon from 'sinon'
 import { expect } from 'chai'
 
-import { stubInterface, stubObject, StubbedInstance } from 'ts-sinon'
+import {
+  stubInterface,
+  stubObject,
+  StubbedInstance
+} from 'ts-sinon'
+
 import { mock, when } from 'ts-mockito'
 
 import {
@@ -34,7 +39,7 @@ describe('@DeleteIncidentService', () => {
   afterEach(() => sandbox.restore())
 
   describe('#checkIncidentsHaveDonations', () => {
-    it('should be return true if have one or more donations vinculated in a incidents', () => {
+    it('should be throw a error if user try delete incident that have some donation', () => {
       when(dependenciesMock.repositories.incidents.findById('')).thenResolve(mocks.incident)
 
       mocks
@@ -49,24 +54,12 @@ describe('@DeleteIncidentService', () => {
       const deleteIncidentService = new DeleteIncidentService(
         stubInterface<DeleteIncidentDependencies>()
       )
-      const actual = deleteIncidentService
-        .checkIncidentsHaveDonations(mocks.incident)
+      const toThrow = () => {
+        deleteIncidentService
+          .checkIncidentsHaveDonations(mocks.incident)
+      }
 
-      expect(actual).to.be.true()
-    })
-
-    it("should be return false if haven't nothing donations to the incident", () => {
-      when(dependenciesMock.repositories.incidents.findById('')).thenResolve(mocks.incident)
-
-      sandbox.stub(
-        dependenciesMock.repositories.incidents,
-        'findById'
-      ).resolves(mocks.incident)
-
-      const deleteIncidentService = new DeleteIncidentService(dependenciesMock)
-      const actual = deleteIncidentService.checkIncidentsHaveDonations(mocks.incident)
-
-      expect(actual).to.be.false()
+      expect(toThrow).to.throw()
     })
   })
 })
