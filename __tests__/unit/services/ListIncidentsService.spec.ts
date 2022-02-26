@@ -28,7 +28,7 @@ describe('@ListIncidentsService', () => {
   })
 
   describe('#totalIncidentsAndDonations', () => {
-    it('should be return total of incidents, incidents donated and incidents non-donated', async () => {
+    it('should be return total of incidents, incidents donated and incidents non-donated', () => {
       const incidentsDonated = Array.from({ length: 7 }, _ => ({
         ...createMocks().incident,
         donations: Array.from({ length: 5 }, _ => createMocks().donation)

@@ -1,3 +1,5 @@
+import fs from 'fs/promises'
+
 import { Stripe } from 'stripe'
 
 import { getConnection, createConnection } from 'typeorm'
@@ -5,7 +7,6 @@ import { getConnection, createConnection } from 'typeorm'
 import { Util } from '@tests/util'
 
 const instanceName: string = process.env.ELEPHANT_INSTANCE_NAME
-const tableNames = ['donations', 'incidents', 'users', 'migrations']
 
 async function dropTestCustomers() {
   const stripeApiKey = process.env.STRIPE_SECRET_API_KEY || process.env.STRIPE_SECRET_API_KEY_TEST
@@ -30,12 +31,34 @@ async function dropTestCustomers() {
   }
 }
 
+async function getTableNames(): Promise<string[]> {
+  const directory = './src/database/migrations'
+  const files = await fs.readdir(directory)
+
+  return files.map(file => {
+    // split CamelCase word, ex: CreateIncidents -> ['Create', 'Incidents']
+    const frags = file.split(/(?=[A-Z])/g)
+    const filename = frags.pop().split('.')
+    const tableName = filename.shift().toLowerCase()
+    return tableName
+  })
+}
+
 async function dropTables(tableNames: string[]) {
   const connection = getConnection()
   const queryRunner = connection.createQueryRunner();
 
   for (const tableName of tableNames) {
     const isTable = await queryRunner.hasTable(tableName)
+    const haveMigrationsTable = await queryRunner
+      .hasTable('migrations')
+
+    const mainTable = 'migrations'
+    if (haveMigrationsTable) {
+      console.log('> drop main table:', mainTable)
+      await queryRunner.dropTable('migrations')
+    }
+
     if (isTable) {
       console.log('> drop table: %s', tableName)
       await queryRunner.dropTable(tableName)
@@ -44,8 +67,13 @@ async function dropTables(tableNames: string[]) {
 }
 
 before(async () => {
-  console.log('> Up migration')
   const connection = await createConnection()
+
+  console.log('> Drop exists tables')
+  const tableNames = await getTableNames()
+  await dropTables(tableNames.reverse())
+
+  console.log('> Up migration')
   await connection.runMigrations()
 })
 
@@ -54,5 +82,6 @@ after(async () => {
   await dropTestCustomers()
 
   console.log('> Instance name: %s', instanceName)
-  await dropTables(tableNames)
+  const tableNames = await getTableNames()
+  await dropTables(tableNames.reverse())
 })

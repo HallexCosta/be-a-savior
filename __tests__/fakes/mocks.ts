@@ -1,4 +1,5 @@
 import request, { SuperTest, Test } from 'supertest'
+import { stubObject } from 'ts-sinon'
 import faker from 'faker'
 import { v4 as uuid } from 'uuid'
 import { randomUUID } from 'crypto'
@@ -6,11 +7,12 @@ import { randomUUID } from 'crypto'
 import { Application } from 'express'
 import { Connection, ConnectionOptions, createConnection } from 'typeorm'
 
-import { Donation } from '@entities/Donation'
-import { Incident } from '@entities/Incident'
+import { BaseEntity } from '@entities/BaseEntity'
 import { User } from '@entities/User'
 import { Donor } from '@entities/Donor'
 import { Ong } from '@entities/Ong'
+import { Incident } from '@entities/Incident'
+import { Donation } from '@entities/Donation'
 
 import { Util } from '@tests/util'
 
@@ -18,41 +20,28 @@ import ormconfig from '@root/ormconfig'
 
 faker.locale = 'pt_BR'
 
-type BaseMock = {
-  id: string
-  created_at: Date
-  updated_at: Date
+export type Mock<T> = {
+  [P in keyof T]: T[P] extends Function ? T[P] : Mock<T[P]>
 }
 
-type UserMock = BaseMock & {
-  name: string
-  email: string
-  password: string
-  phone: string
-  owner: string
-}
+export type BaseMock = Mock<BaseEntity>
 
-type OngMock = UserMock
+export type UserMock = BaseMock & Mock<User>
 
-type DonorMock = UserMock
+export type OngMock = UserMock & Mock<Ong>
 
-type IncidentMock = BaseMock & {
-  name: string
-  cost: number
-  description: string
-}
-type DonationMock = BaseMock & {
-  id: string
-  incident_id: string
-  amount: number
-}
+export type DonorMock = UserMock & Mock<Donor>
 
-type CreateFakeIncidentParams = {
+export type IncidentMock = Mock<Incident>
+
+export type DonationMock = Mock<Donation>
+
+export type CreateFakeIncidentParams = {
   incidentMock: IncidentMock
   ongToken: string
 }
 
-type CreateFakeDonationParams = {
+export type CreateFakeDonationParams = {
   donationMock: DonationMock
   donorToken: string
 }
@@ -65,8 +54,31 @@ export type BeASaviorMocks = {
   donation: DonationMock
 }
 
-export const createMocks: () => BeASaviorMocks = () => {
-  const user: User = {
+type PureMock = {
+  user?: boolean
+  ong?: boolean
+  donor?: boolean
+  incident?: boolean
+  donation?: boolean
+}
+type CreateMocksParams = {
+  pureMock: PureMock
+}
+
+const defaultPureMockParams = {
+  pureMock: {
+    user: false,
+    ong: false,
+    donor: false,
+    incident: false,
+    donation: false
+  }
+}
+
+export function createMocks({
+  pureMock
+}: CreateMocksParams = defaultPureMockParams): BeASaviorMocks {
+  let user = {
     id: randomUUID(),
     name: faker.name.findName(),
     email: faker.internet.email().toLowerCase(),
@@ -76,7 +88,7 @@ export const createMocks: () => BeASaviorMocks = () => {
     created_at: new Date(),
     updated_at: new Date()
   }
-  const ong: Ong = {
+  let ong = {
     id: randomUUID(),
     name: faker.name.findName(),
     email: faker.internet.email().toLowerCase(),
@@ -86,7 +98,7 @@ export const createMocks: () => BeASaviorMocks = () => {
     created_at: new Date(),
     updated_at: new Date()
   }
-  const donor: Donor = {
+  let donor = {
     id: randomUUID(),
     name: faker.name.findName(),
     email: faker.internet.email().toLowerCase(),
@@ -96,7 +108,7 @@ export const createMocks: () => BeASaviorMocks = () => {
     created_at: new Date(),
     updated_at: new Date()
   }
-  const incident: Incident = {
+  let incident = {
     id: randomUUID(),
     name: faker.fake('{{animal.dog}}'),
     cost: Number(faker.commerce.price()),
@@ -107,7 +119,7 @@ export const createMocks: () => BeASaviorMocks = () => {
     ong,
     donations: []
   }
-  const donation: Donation = {
+  let donation = {
     id: randomUUID(),
     incident_id: randomUUID(),
     user_id: randomUUID(),
@@ -117,6 +129,23 @@ export const createMocks: () => BeASaviorMocks = () => {
     incident,
     donor
   }
+
+  if (!pureMock.user) {
+    user = stubObject<UserMock>(user)
+  }
+  if (!pureMock.ong) {
+    ong = stubObject<OngMock>(ong)
+  }
+  if (!pureMock.donor) {
+    donor = stubObject<DonorMock>(donor)
+  }
+  if (!pureMock.incident) {
+    incident = stubObject<IncidentMock>(incident)
+  }
+  if (!pureMock.donation) {
+    donation = stubObject<DonationMock>(donation)
+  }
+
   return {
     user,
     ong,

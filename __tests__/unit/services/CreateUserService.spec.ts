@@ -2,12 +2,9 @@ import bcrypt from 'bcryptjs'
 import { expect } from 'chai'
 import sinon from 'sinon'
 
-import { Util } from '@tests/util'
 import { createMocks, BeASaviorMocks } from '@tests/fakes/mocks'
 import { CreateUserService, CreateUserDTO } from '@services/users/CreateUserService'
 import { UsersRepository } from '@repositories/UsersRepository'
-
-import { User } from '@entities/User'
 
 describe('@CreateUserService', () => {
   let mocks: BeASaviorMocks

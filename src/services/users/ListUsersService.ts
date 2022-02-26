@@ -6,7 +6,7 @@ import { UsersRepository } from '@repositories/UsersRepository'
 
 import { BaseUserService } from '@services/users/BaseUserService'
 
-type ListUsersServiceDependencies = {
+export type ListUsersServiceDependencies = {
   repositories: {
     users: UsersRepository
   }
