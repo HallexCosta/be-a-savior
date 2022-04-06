@@ -1,25 +1,29 @@
 import pino from 'pino'
 import pretty from 'pino-pretty'
 
+export interface Logger {
+  info(message: string): void
+  error(message: string): void
+  warn(messagE: string): void
+}
+
 type PrettyLoggerOptions = {
   colorize: boolean
   ignore: string
 }
 
-interface ConsoleLogger {
+interface LoggerBuild {
   start(): void
 }
 
-class Logger implements ConsoleLogger {
+class ConsoleLogger implements LoggerBuild {
   constructor(
     private readonly options: PrettyLoggerOptions
-  ) {
-    Object.assign(this, options)
-  }
+  ) {}
 
   private prepare(
     options: Partial<PrettyLoggerOptions>
-  ) {
+  )  {
     const stream = pretty(options)
 
     return pino(stream)
@@ -30,7 +34,7 @@ class Logger implements ConsoleLogger {
   }
 }
 
-const logger = new Logger({
+const logger = new ConsoleLogger({
   colorize: true,
   ignore: 'pid,hostname'
 })
