@@ -1,36 +1,37 @@
 import { Router } from 'express'
 
+import logger from '@common/logger'
+
 import { CreateIncidentController } from '@controllers/incidents/CreateIncidentController'
 import { ListIncidentsController } from '@controllers/incidents/ListIncidentsController'
 import { ListIncidentController } from '@controllers/incidents/ListIncidentController'
 import { UpdateIncidentController } from '@controllers/incidents/UpdateIncidentController'
-import { DeleteIncidentController } from '@controllers/incidents/DeleteIncidentController'
+import DeleteIncidentController from '@controllers/incidents/DeleteIncidentController'
 
-import { ensureAuthenticateOng } from '@middlewares/ensureAuthenticateOng'
-import { ensureOng } from '@middlewares/ensureOng'
+const incidentRouter = Router()
 
-const createIncidentController = new CreateIncidentController()
-const listIncidentsController = new ListIncidentsController()
-const listIncidentController = new ListIncidentController()
-const updateIncidentController = new UpdateIncidentController()
-const deleteIncidentController = new DeleteIncidentController()
-
-const routes = Router()
-
-routes.post('/', ensureAuthenticateOng, ensureOng, createIncidentController.handle.bind(createIncidentController))
-routes.get('/', listIncidentsController.handle.bind(listIncidentsController))
-routes.get('/:id', ensureAuthenticateOng, ensureOng, listIncidentController.handle.bind(listIncidentController))
-routes.patch(
-  '/:id',
-  ensureAuthenticateOng,
-  ensureOng,
-  updateIncidentController.handle.bind(updateIncidentController)
+new CreateIncidentController(
+  logger,
+  incidentRouter
 )
-routes.delete(
-  '/:id',
-  ensureAuthenticateOng,
-  ensureOng,
-  deleteIncidentController.handle.bind(deleteIncidentController)
+new ListIncidentsController(
+  logger,
+  incidentRouter
+)
+new ListIncidentController(
+  logger,
+  incidentRouter
+)
+new UpdateIncidentController(
+  logger,
+  incidentRouter
+)
+new DeleteIncidentController(
+  logger,
+  incidentRouter
 )
 
-export { routes as incidents }
+export default {
+  group: '/incidents',
+  routes: incidentRouter
+}

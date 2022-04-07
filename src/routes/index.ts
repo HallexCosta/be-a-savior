@@ -1,16 +1,20 @@
 import { Router } from 'express'
 
-import { donors } from '@routes/donors.routes'
-import { ongs } from '@routes/ongs.routes'
-import { incidents } from '@routes/incidents.routes'
-import { donations } from '@routes/donations.routes'
+import logger from '@common/logger'
+import donors from '@routes/donors.routes'
+import ongs from '@routes/ongs.routes'
+import incidents from '@routes/incidents.routes'
+import donations from '@routes/donations.routes'
 
 const routes = Router()
 
-routes.get('/', (_, response) => response.end("I'm alive!"))
-routes.use('/donors', donors)
-routes.use('/ongs', ongs)
-routes.use('/incidents', incidents)
-routes.use('/donations', donations)
+routes.get('/', (_, response) => {
+  logger.info('> Accessing Endpoint GET "/"')
+  return response.end("I'm alive!")
+})
+routes.use(donors.group, donors.routes)
+routes.use(ongs.group, ongs.routes)
+routes.use(incidents.group, incidents.routes)
+routes.use(donations.group, donations.routes)
 
 export { routes }
