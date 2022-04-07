@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 
+import BaseController from '@controllers/BaseController'
 import { CreateOngService } from '@services/ongs/CreateOngService'
 import { CreateDonorService } from '@services/donors/CreateDonorService'
 
@@ -17,7 +18,7 @@ interface UserController {
   handleUser(userHandle: CreateUserHandleParams): Promise<CreateUserResponse>
 }
 
-export abstract class CreateUserController implements UserController {
+export abstract class CreateUserController extends BaseController implements UserController {
   public async handleUser({ service, http: { request, response } }: CreateUserHandleParams): Promise<Response> {
     const { name, email, password, phone } = request.body
     const { owner } = request

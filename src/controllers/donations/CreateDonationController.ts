@@ -1,4 +1,8 @@
-import { Request, Response } from 'express'
+import { IRouter, Request, Response } from 'express'
+
+import { Logger } from '@common/logger'
+
+import BaseController from '@controllers/BaseController'
 
 import { StripeProvider } from '@providers/StripeProvider'
 
@@ -7,9 +11,40 @@ import {
   CreateDonationService
 } from '@services/donations/CreateDonationService'
 
-export class CreateDonationController {
+import { ensureDonor } from '@middlewares/ensureDonor'
+import { ensureAuthenticateDonor } from '@middlewares/ensureAuthenticateDonor'
+
+export class CreateDonationController
+extends BaseController {
+  protected readonly group: string = '/donations'
+  protected readonly path: string = '/'
+  protected readonly method: string = 'POST'
+
+  public constructor(
+    logger: Logger,
+    routes: IRouter
+  ) {
+    super(logger, routes)
+    this.setMiddlewares([
+      ensureAuthenticateDonor,
+      ensureDonor
+    ])
+    this.subscribe({
+      group: this.group,
+      path: this.path,
+      method: this.method,
+      handler: this.handle.bind(this)
+    })
+  }
+
   public async handle(request: Request, response: Response): Promise<Response> {
     const { donor_id: donorId } = request
+
+    this.endpointAccessLog(
+      this.method,
+      this.group.concat('', this.path),
+      donorId
+    )
 
     const { incident_id: incidentId, amount } = request.body
 

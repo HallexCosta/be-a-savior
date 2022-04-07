@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 
 import { AuthenticateOngService } from '@services/ongs/AuthenticateOngService'
 import { AuthenticateDonorService } from '@services/donors/AuthenticateDonorService'
+import BaseController from '@controllers/BaseController'
 
 type AuthenticateUserHandleParams = {
   service: AuthenticateOngService | AuthenticateDonorService
@@ -15,7 +16,7 @@ interface UserController {
   handleUser(userHandle: AuthenticateUserHandleParams): Promise<Response>
 }
 
-export abstract class AuthenticateUserController implements UserController {
+export abstract class AuthenticateUserController extends BaseController implements UserController {
   public async handleUser({
     service,
     http: {
