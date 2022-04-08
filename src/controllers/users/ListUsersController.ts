@@ -17,7 +17,7 @@ interface UsersController {
   handleUser(usersHandle: ListUsersHandleParams): Promise<Response>
 }
 
-export class ListUsersController extends BaseController implements UsersController {
+export abstract class ListUsersController extends BaseController implements UsersController {
   public async handleUser({
     service,
     http: {
