@@ -1,6 +1,8 @@
+import { IRouter, Request, Response } from 'express'
 import { getCustomRepository } from 'typeorm'
-import { Request, Response } from 'express'
 
+import { Logger } from '@common/logger'
+import BaseController from '@controllers/BaseController'
 import { ListIncidentsService } from '@services/incidents/ListIncidentsService'
 
 import { UsersRepository } from '@repositories/UsersRepository'
@@ -10,9 +12,33 @@ type QueryParams = {
   donated?: boolean
 }
 
-export class ListIncidentsController {
+export class ListIncidentsController
+extends BaseController {
+  protected readonly group: string = '/incidents'  
+  protected readonly path: string = '/'  
+  protected readonly method: string = 'GET'
+
+  public constructor(
+    logger: Logger,
+    routes: IRouter
+  ) {
+   super(logger, routes)
+   this.subscribe({
+     group: this.group,
+     path: this.path,
+     method: this.method,
+     handler: this.handle.bind(this)
+   })
+  }
+  
   public async handle(request: Request, response: Response): Promise<Response> {
     const { ongId, donated } = this.queryParams(request.query)
+
+    //this.endpointAccessLog(
+    //  this.method,
+    //  this.group.concat('', this.path),
+    //  ongId
+    //)
 
     const service = new ListIncidentsService(
       this.listIncidentsServiceDependencies()

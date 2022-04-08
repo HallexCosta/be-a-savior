@@ -1,23 +1,32 @@
 import { Router } from 'express'
 
+import logger from '@common/logger'
+
 import { CreateOngController } from '@controllers/ongs/CreateOngController'
 import { ListOngsController } from '@controllers/ongs/ListOngsController'
 import { ListOngController } from '@controllers/ongs/ListOngController'
 import { AuthenticateOngController } from '@controllers/ongs/AuthenticateOngController'
 
-const authenticateOngController = new AuthenticateOngController()
-const createOngController = new CreateOngController()
-const listOngsController = new ListOngsController()
-const listOngController = new ListOngController()
+const ongRouter = Router()
 
-const routes = Router()
-
-routes.post(
-  '/login',
-  authenticateOngController.handle.bind(authenticateOngController)
+new AuthenticateOngController(
+  logger,
+  ongRouter
 )
-routes.post('/', createOngController.handle.bind(createOngController))
-routes.get('/', listOngsController.handle.bind(listOngsController))
-routes.get('/:id', listOngController.handle.bind(listOngController))
+new CreateOngController(
+  logger, 
+  ongRouter
+)
+new ListOngsController(
+  logger,
+  ongRouter
+)
+new ListOngController(
+  logger,
+  ongRouter
+)
 
-export { routes as ongs }
+export default {
+  group: '/ongs',
+  routes: ongRouter
+}

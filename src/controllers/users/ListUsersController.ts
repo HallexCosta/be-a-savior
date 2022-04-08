@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 
+import BaseController from '@controllers/BaseController'
 import { ListOngsService } from '@services/ongs/ListOngsService'
 import { ListDonorsService } from '@services/donors/ListDonorsService'
 
@@ -16,7 +17,7 @@ interface UsersController {
   handleUser(usersHandle: ListUsersHandleParams): Promise<Response>
 }
 
-export class ListUsersController implements UsersController {
+export abstract class ListUsersController extends BaseController implements UsersController {
   public async handleUser({
     service,
     http: {

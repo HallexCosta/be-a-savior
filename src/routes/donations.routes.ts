@@ -1,22 +1,22 @@
 import { Router } from 'express'
 
+import logger from '@common/logger'
 import { CreateDonationController } from '@controllers/donations/CreateDonationController'
 import { ListDonationsController } from '@controllers/donations/ListDonationsController'
 
-import { ensureDonor } from '@middlewares/ensureDonor'
-import { ensureAuthenticateDonor } from '@middlewares/ensureAuthenticateDonor'
+const donationRouter = Router()
 
-const createDonationController = new CreateDonationController()
-const listDonationsController = new ListDonationsController()
-
-const routes = Router()
-
-routes.get('/', listDonationsController.handle.bind(listDonationsController))
-routes.post(
-  '/',
-  ensureAuthenticateDonor,
-  ensureDonor,
-  createDonationController.handle.bind(createDonationController)
+new CreateDonationController(
+  logger,
+  donationRouter
+)
+new ListDonationsController(
+  logger,
+  donationRouter
 )
 
-export { routes as donations }
+export default {
+  group: '/donations',
+  routes: donationRouter
+}
+
