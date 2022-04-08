@@ -1,7 +1,7 @@
-import { Request, Response, IRouter } from "express";
-import { Logger } from "@common/logger";
+import { Request, Response } from 'express'
+import { Logger } from '@common/logger'
 
-type EndpointHandler = (request: Request, response: Response) => Promise<Response> | Response
+export type EndpointHandler = (request: Request, response: Response) => Promise<Response> | Response
 
 type SubscribeEndpointParams = {
   method: string
@@ -16,12 +16,20 @@ interface Controller {
   endpointAccessLog(method: string, path: string, userId: string): void
 }
 
+export interface Router {
+  post(path: string, handler: (request: Request, response: Response) => Response): Router
+  delete(path: string, handler: (request: Request, response: Response) => Response): Router
+  get(path: string, handler: (request: Request, response: Response) => Response): Router
+  put(path: string, handler: (request: Request, response: Response) => Response): Router
+  patch(path: string, handler: (request: Request, response: Response) => Response): Router
+}
+
 export default abstract class BaseController implements Controller {
   private readonly middlewares: Function[] = []
 
   public constructor(
     protected readonly logger: Logger,
-    protected readonly routes: IRouter
+    protected readonly routes: Router
   ) {}
 
   subscribe({
