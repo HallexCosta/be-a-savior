@@ -4,8 +4,9 @@ import sinon from 'sinon'
 import * as typeorm from 'typeorm'
 
 import { createMocks } from '@tests/fakes/mocks'
-import { ListUsersService, ListUsersServiceDependencies } from '@services/users/ListUsersService'
+import { ListUsersService } from '@services/users/ListUsersService'
 import { UsersRepository } from '@repositories/UsersRepository'
+import { ServiceDependencies } from '@services/BaseService'
 
 describe('@ListUsersService', () => {
   let sandbox: sinon.SinonSandbox
@@ -19,8 +20,8 @@ describe('@ListUsersService', () => {
 
     it('should be extend abstract list users service and instance new object', () => {
       class ListUsersServiceMock extends ListUsersService {
-        constructor(mockDependencies: ListUsersServiceDependencies) {
-          super(mockDependencies)
+        constructor({ repositories, providers }: ServiceDependencies) {
+          super(repositories, providers)
         }
       }
 

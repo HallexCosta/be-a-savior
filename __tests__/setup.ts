@@ -2,9 +2,10 @@ import fs from 'fs/promises'
 
 import { Stripe } from 'stripe'
 
-import { getConnection, createConnection } from 'typeorm'
+import { getConnection, createConnection, ConnectionOptions } from 'typeorm'
 
 import { Util } from '@tests/util'
+import ormconfig from '@root/ormconfig'
 
 const instanceName: string = process.env.ELEPHANT_INSTANCE_NAME
 
@@ -45,7 +46,7 @@ async function getTableNames(): Promise<string[]> {
 }
 
 async function dropTables(tableNames: string[]) {
-  const connection = getConnection()
+  const connection = Util.getConnectionAdapter(process.pid.toString())
   const queryRunner = connection.createQueryRunner();
 
   for (const tableName of tableNames) {
@@ -67,7 +68,7 @@ async function dropTables(tableNames: string[]) {
 }
 
 before(async () => {
-  const connection = await createConnection()
+  const connection = await createConnection(ormconfig as ConnectionOptions)
 
   console.log('> Drop exists tables')
   const tableNames = await getTableNames()

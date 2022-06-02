@@ -40,12 +40,10 @@ describe('@ListUserService', () => {
 
       sandbox.stub(typeorm, 'getCustomRepository').returns(usersRepository)
 
-      const dependencies = {
-        repositories: {
-          users: typeorm.getCustomRepository(UsersRepository)
-        }
+      const repositories = {
+        users: typeorm.getCustomRepository(UsersRepository)
       }
-      listUserServiceMock = new ListUserServiceMock(dependencies)
+      listUserServiceMock = new ListUserServiceMock(repositories)
 
       expect(listUserServiceMock).to.be.instanceOf(ListUserServiceMock)
     })
