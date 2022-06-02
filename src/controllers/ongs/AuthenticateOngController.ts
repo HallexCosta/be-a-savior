@@ -1,5 +1,4 @@
 import { Request, Response, IRouter } from 'express'
-import { getCustomRepository } from 'typeorm'
 
 import { Logger } from '@common/logger'
 import { UsersRepository } from '@repositories/UsersRepository'
@@ -7,6 +6,7 @@ import { UsersRepository } from '@repositories/UsersRepository'
 import { AuthenticateUserController } from '@controllers/users/AuthenticateUserController'
 
 import { AuthenticateOngService } from '@services/ongs/AuthenticateOngService'
+import { ConnectionPlugin } from '@database/ConnectionAdapter'
 
 export class AuthenticateOngController 
 extends AuthenticateUserController {
@@ -16,9 +16,10 @@ extends AuthenticateUserController {
 
   public constructor(
     logger: Logger,
-    routes: IRouter
+    routes: IRouter,
+    connectionAdapter: ConnectionPlugin
   ) {
-    super(logger, routes)
+    super(logger, routes, connectionAdapter)
     this.subscribe({
       group: this.group,
       path: this.path,
@@ -48,7 +49,8 @@ extends AuthenticateUserController {
   }
 
   public authenticateOngServiceDependencies() {
-    const usersRepository = getCustomRepository(UsersRepository)
+    const connection = this.connectionPlugin.connect()
+    const usersRepository = connection.getCustomRepository(UsersRepository)
 
     const depedencies = {
       repositories: {

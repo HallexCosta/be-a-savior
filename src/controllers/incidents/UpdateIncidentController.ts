@@ -6,6 +6,9 @@ import { UpdateIncidentService } from '@services/incidents/UpdateIncidentService
 
 import { ensureAuthenticateOng } from '@middlewares/ensureAuthenticateOng'
 import { ensureOng } from '@middlewares/ensureOng'
+import { ConnectionPlugin } from '@database/ConnectionAdapter'
+import { IncidentsRepository } from '@repositories/IncidentsRepository'
+import { ServiceDependencies } from '@services/BaseService'
 
 export class UpdateIncidentController
 extends BaseController {
@@ -15,9 +18,10 @@ extends BaseController {
 
   public constructor(
     logger: Logger,
-    routes: IRouter
+    routes: IRouter,
+    connectionAdapter: ConnectionPlugin
   ) {
-   super(logger, routes)
+   super(logger, routes, connectionAdapter)
    this.setMiddlewares([
       ensureAuthenticateOng,
       ensureOng
@@ -43,7 +47,9 @@ extends BaseController {
 
     const { name, cost, description } = request.body
 
-    const service = new UpdateIncidentService()
+    const service = new UpdateIncidentService(
+      this.updateIncidentServiceDependencies()
+    )
 
     const incident = await service.execute({
       id,
@@ -54,5 +60,14 @@ extends BaseController {
     })
 
     return response.json(incident)
+  }
+
+  public updateIncidentServiceDependencies(): ServiceDependencies {
+    const connection = this.connectionPlugin.connect()
+    return {
+      repositories: {
+        incidents: connection.getCustomRepository(IncidentsRepository)
+      }
+    }
   }
 }

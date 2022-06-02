@@ -3,9 +3,12 @@ import { IRouter, Request, Response } from 'express'
 import { Logger } from '@common/logger'
 import BaseController from '@controllers/BaseController'
 import { ListIncidentService } from '@services/incidents/ListIncidentService'
+import { ConnectionPlugin } from '@database/ConnectionAdapter'
+import { IncidentsRepository } from '@repositories/IncidentsRepository'
 
 import { ensureAuthenticateOng } from '@middlewares/ensureAuthenticateOng'
 import { ensureOng } from '@middlewares/ensureOng'
+import { ServiceDependencies } from '@services/BaseService'
 
 export class ListIncidentController
 extends BaseController {
@@ -15,9 +18,10 @@ extends BaseController {
 
   public constructor(
     logger: Logger,
-    routes: IRouter
+    routes: IRouter,
+    connectionAdapter: ConnectionPlugin
   ) {
-   super(logger, routes)
+   super(logger, routes, connectionAdapter)
    this.setMiddlewares([
       ensureAuthenticateOng,
       ensureOng
@@ -39,10 +43,21 @@ extends BaseController {
       id
     )
 
-    const service = new ListIncidentService()
+    const service = new ListIncidentService(
+      this.listIncidentServiceDependencies()
+    )
 
     const incident = await service.execute({ id })
 
     return response.json(incident)
+  }
+
+  public listIncidentServiceDependencies(): ServiceDependencies {
+    const connection = this.connectionPlugin.connect()
+    return {
+      repositories: {
+        incidents: connection.getCustomRepository(IncidentsRepository)
+      }
+    }
   }
 }

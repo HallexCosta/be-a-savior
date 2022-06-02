@@ -6,13 +6,18 @@ import BaseController from '@controllers/BaseController'
 
 import { StripeProvider } from '@providers/StripeProvider'
 
+import { ConnectionPlugin } from '@database/ConnectionAdapter'
+import { DonationsRepository } from '@repositories/DonationsRepository'
+import { UsersRepository } from '@repositories/UsersRepository'
+import { IncidentsRepository } from '@repositories/IncidentsRepository'
+
 import {
-  CreateDonationDependencies,
   CreateDonationService
 } from '@services/donations/CreateDonationService'
 
 import { ensureDonor } from '@middlewares/ensureDonor'
 import { ensureAuthenticateDonor } from '@middlewares/ensureAuthenticateDonor'
+import { ServiceDependencies } from '@services/BaseService'
 
 export class CreateDonationController
 extends BaseController {
@@ -22,9 +27,10 @@ extends BaseController {
 
   public constructor(
     logger: Logger,
-    routes: IRouter
+    routes: IRouter,
+    connectionAdapter: ConnectionPlugin
   ) {
-    super(logger, routes)
+    super(logger, routes, connectionAdapter)
     this.setMiddlewares([
       ensureAuthenticateDonor,
       ensureDonor
@@ -59,17 +65,18 @@ extends BaseController {
     return response.status(201).json(donate)
   }
 
-  public dependencies(): CreateDonationDependencies {
-    const stripe = new StripeProvider()
-
-    const providers = {
-      stripe
+  public dependencies(): ServiceDependencies {
+    const connection = this.connectionPlugin.connect()
+    const dependencies: ServiceDependencies = {
+      providers: {
+        stripe: new StripeProvider()
+      },
+      repositories: {
+        users: connection.getCustomRepository(UsersRepository),
+        incidents: connection.getCustomRepository(IncidentsRepository),
+        donations: connection.getCustomRepository(DonationsRepository)
+      }
     }
-
-    const dependencies = {
-      providers
-    }
-
     return dependencies
   }
 }

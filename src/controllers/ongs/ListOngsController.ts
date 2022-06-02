@@ -7,6 +7,7 @@ import { UsersRepository } from '@repositories/UsersRepository'
 import { ListUsersController } from '@controllers/users/ListUsersController'
 
 import { ListOngsService } from '@services/ongs/ListOngsService'
+import { ConnectionPlugin } from '@database/ConnectionAdapter'
 
 export class ListOngsController extends ListUsersController {
   protected readonly group: string = '/ongs'
@@ -15,9 +16,10 @@ export class ListOngsController extends ListUsersController {
 
   public constructor(
     logger: Logger,
-    routes: IRouter
+    routes: IRouter,
+    connectionAdapter: ConnectionPlugin
   ) {
-    super(logger, routes)
+    super(logger, routes, connectionAdapter)
     this.subscribe({
       group: this.group,
       path: this.path,
@@ -46,9 +48,10 @@ export class ListOngsController extends ListUsersController {
   }
 
   public listOngsServiceDependencies() {
+    const connection = this.connectionPlugin.connect()
     const dependencies = {
       repositories: {
-        users: getCustomRepository(UsersRepository)
+        users: connection.getCustomRepository(UsersRepository)
       }
     }
 

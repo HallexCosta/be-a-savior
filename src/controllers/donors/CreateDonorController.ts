@@ -1,7 +1,7 @@
 import { Request, Response, IRouter } from 'express'
-import { getCustomRepository } from 'typeorm'
 
 import { Logger } from '@common/logger'
+import { ConnectionPlugin } from '@database/ConnectionAdapter'
 import { CreateDonorService } from '@services/donors/CreateDonorService'
 
 import { CreateUserController } from '@controllers/users/CreateUserController'
@@ -15,9 +15,10 @@ export class CreateDonorController extends CreateUserController {
 
   public constructor(
     logger: Logger,
-    routes: IRouter
+    routes: IRouter,
+    connectionAdapter: ConnectionPlugin
   ) {
-    super(logger, routes)
+    super(logger, routes, connectionAdapter)
     this.subscribe({
       group: this.group,
       path: this.path,
@@ -47,9 +48,10 @@ export class CreateDonorController extends CreateUserController {
   }
 
   public createDonorServiceDependencies() {
+    const connection = this.connectionPlugin.connect()
     const dependencies = {
       repositories: {
-        users: getCustomRepository(UsersRepository)
+        users: connection.getCustomRepository(UsersRepository)
       }
     }
 
