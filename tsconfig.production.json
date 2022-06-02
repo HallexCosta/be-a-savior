@@ -34,7 +34,6 @@
       "@routes": ["./src/routes/index.ts"],
       "@common/*": ["./src/common/*.ts"],
       "@common/configs": ["./src/common/configs/index.ts"],
-      "@root/*": ["./*.ts", "./*.js", "./*.json"],
       "@app": ["./src/app.ts"],
     },
     "typeRoots": ["node_modules/@types", "./src/@types"]

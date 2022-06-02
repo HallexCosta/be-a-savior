@@ -1,5 +1,5 @@
 import { ConnectionOptions, createConnection } from 'typeorm'
 
-import ormconfig from '@root/ormconfig'
+import ormConfig from '@common/configs/typeorm'
 
-createConnection(ormconfig as ConnectionOptions)
+createConnection(ormConfig as ConnectionOptions)

@@ -37,7 +37,7 @@
     "start:development:cluster": "cross-env NODE_ENV=development ts-node -r tsconfig-paths/register -r dotenv/config --transpile-only ./src/cluster.ts",
     "start:development:watch": "cross-env NODE_ENV=development nodemon -L",
     "postbuild": "link-module-alias",
-    "prebuild": "command -v link-module-alias && link-module-alias clean || true"
+    "prebuild": "rimraf ./dist && command -v link-module-alias && link-module-alias clean || true"
   },
   "_moduleAliasIgnoreWarning": true,
   "_moduleAliases": {
@@ -50,7 +50,6 @@
     "@providers": "./dist/providers",
     "@routes": "./dist/routes",
     "@common": "./dist/common",
-    "@root": "./",
     "@app": "./dist/app.js"
   },
   "dependencies": {
