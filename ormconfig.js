@@ -3,6 +3,7 @@ class DB {
     environment = environment.toUpperCase()
 
     this.config = {
+      name: process.pid.toString(),
       type: process.env.DB_TYPE,
       host: process.env.DB_HOST,
       port: process.env.DB_PORT,
