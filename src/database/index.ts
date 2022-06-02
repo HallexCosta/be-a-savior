@@ -1,3 +1,5 @@
-import { createConnection } from 'typeorm'
+import { ConnectionOptions, createConnection } from 'typeorm'
 
-createConnection()
+import ormconfig from '@root/ormconfig'
+
+createConnection(ormconfig as ConnectionOptions)
