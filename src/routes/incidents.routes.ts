@@ -7,28 +7,36 @@ import { ListIncidentsController } from '@controllers/incidents/ListIncidentsCon
 import { ListIncidentController } from '@controllers/incidents/ListIncidentController'
 import { UpdateIncidentController } from '@controllers/incidents/UpdateIncidentController'
 import DeleteIncidentController from '@controllers/incidents/DeleteIncidentController'
+import ConnectionAdapter from '../database/ConnectionAdapter'
 
 const incidentRouter = Router()
+const connectionName = process.pid.toString()
+const connectionAdapter = new ConnectionAdapter(connectionName)
 
 new CreateIncidentController(
   logger,
-  incidentRouter
+  incidentRouter,
+  connectionAdapter
 )
 new ListIncidentsController(
   logger,
-  incidentRouter
+  incidentRouter,
+  connectionAdapter
 )
 new ListIncidentController(
   logger,
-  incidentRouter
+  incidentRouter,
+  connectionAdapter
 )
 new UpdateIncidentController(
   logger,
-  incidentRouter
+  incidentRouter,
+  connectionAdapter
 )
 new DeleteIncidentController(
   logger,
-  incidentRouter
+  incidentRouter,
+  connectionAdapter
 )
 
 export default {

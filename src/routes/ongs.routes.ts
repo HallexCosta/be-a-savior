@@ -6,24 +6,31 @@ import { CreateOngController } from '@controllers/ongs/CreateOngController'
 import { ListOngsController } from '@controllers/ongs/ListOngsController'
 import { ListOngController } from '@controllers/ongs/ListOngController'
 import { AuthenticateOngController } from '@controllers/ongs/AuthenticateOngController'
+import ConnectionAdapter from '@database/ConnectionAdapter'
 
+const processId = process.pid.toString()
 const ongRouter = Router()
+const connectionAdapter = new ConnectionAdapter(processId)
 
 new AuthenticateOngController(
   logger,
-  ongRouter
+  ongRouter,
+  connectionAdapter
 )
 new CreateOngController(
   logger, 
-  ongRouter
+  ongRouter,
+  connectionAdapter
 )
 new ListOngsController(
   logger,
-  ongRouter
+  ongRouter,
+  connectionAdapter
 )
 new ListOngController(
   logger,
-  ongRouter
+  ongRouter,
+  connectionAdapter
 )
 
 export default {
