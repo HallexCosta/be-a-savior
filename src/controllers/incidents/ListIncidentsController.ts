@@ -1,11 +1,11 @@
 import { IRouter, Request, Response } from 'express'
-import { getCustomRepository } from 'typeorm'
 
 import { Logger } from '@common/logger'
 import BaseController from '@controllers/BaseController'
 import { ListIncidentsService } from '@services/incidents/ListIncidentsService'
 
-import { UsersRepository } from '@repositories/UsersRepository'
+import { ConnectionPlugin } from '@database/ConnectionAdapter'
+import { IncidentsRepository } from '@repositories/IncidentsRepository'
 
 type QueryParams = {
   ongId?: string
@@ -20,9 +20,10 @@ extends BaseController {
 
   public constructor(
     logger: Logger,
-    routes: IRouter
+    routes: IRouter,
+    connectionAdapter: ConnectionPlugin
   ) {
-   super(logger, routes)
+   super(logger, routes, connectionAdapter)
    this.subscribe({
      group: this.group,
      path: this.path,
@@ -71,9 +72,10 @@ extends BaseController {
   }
 
   public listIncidentsServiceDependencies() {
+    const connection = this.connectionPlugin.connect()
     return {
       repositories: {
-        users: getCustomRepository(UsersRepository)
+        incidents: connection.getCustomRepository(IncidentsRepository),
       }
     }
   }

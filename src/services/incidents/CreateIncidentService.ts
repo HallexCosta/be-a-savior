@@ -1,7 +1,5 @@
-import { getCustomRepository } from 'typeorm'
-
 import { Incident } from '@entities/Incident'
-import { IncidentsRepository } from '@repositories/IncidentsRepository'
+import BaseService, { ServiceDependencies } from '@services/BaseService'
 
 type CreateIncidentDTO = {
   name: string
@@ -10,14 +8,18 @@ type CreateIncidentDTO = {
   ongId: string
 }
 
-export class CreateIncidentService {
+export class CreateIncidentService extends BaseService {
+  public constructor({ repositories, providers }: ServiceDependencies) {
+    super(repositories, providers)
+  }
+
   public async execute({
     name,
     cost,
     description,
     ongId
   }: CreateIncidentDTO): Promise<Incident> {
-    const incidentsRepository = getCustomRepository(IncidentsRepository)
+    const incidentsRepository = this.repositories.incidents
 
     this.checkForFieldIsFilled({
       name,

@@ -7,6 +7,7 @@ import { StripeProvider } from '@providers/StripeProvider'
 import { CreateUserService } from '@services/users/CreateUserService'
 
 import { UsersRepository } from '@repositories/UsersRepository'
+import { ServiceDependencies } from '@services/BaseService'
 
 export type CreateOngDTO = {
   name: string
@@ -43,8 +44,8 @@ type CreateCustomerParams = {
 }
 
 export class CreateOngService extends CreateUserService {
-  public constructor(createOngDependencies: CreateOngDependencies) {
-    super(createOngDependencies)
+  public constructor({ repositories, providers }: ServiceDependencies) {
+    super(repositories, providers)
   }
 
   public async execute({

@@ -9,8 +9,15 @@ import { app } from '@app'
 
 import { configs } from '@common/configs'
 
-const port = configs.express.LISTEN_APP_PORT || 5000
+const processId = process.pid
+const port = configs.express.LISTEN_APP_PORT || 3333
 
-app.listen(port, () =>
-  console.log(`Listening on port ${port}`)
+const server = app.listen(port, () =>
+  console.log(`Listening on port ${port} and start in process ${processId}`)
 )
+
+// info case: when app is unexpectedly exited
+process.on('SIGTERM', () => {
+  console.log('server ending', new Date().toISOString())
+  server.close(() => process.exit(1))
+})

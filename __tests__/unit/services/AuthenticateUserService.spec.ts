@@ -11,6 +11,7 @@ import {
 } from '@services/users/AuthenticateUserService'
 
 import { UsersRepository } from '@repositories/UsersRepository'
+import { ServiceDependencies } from '@services/BaseService'
 
 describe('@AuthenticateUserService', () => {
   const defaultFunction = () => { }
@@ -30,8 +31,8 @@ describe('@AuthenticateUserService', () => {
 
     it('should be extend abstract authenticate user service and instance new object', () => {
       class AuthenticateUserServiceMock extends AuthenticateUserService {
-        public constructor(authenticateUserParams: AuthenticateUserParams) {
-          super(authenticateUserParams)
+        public constructor({ repositories, providers }: ServiceDependencies) {
+          super(repositories, providers)
         }
       }
 
@@ -49,6 +50,7 @@ describe('@AuthenticateUserService', () => {
         }
       }
       authenticateUserServiceMock = new AuthenticateUserServiceMock(dependencies)
+      console.log(authenticateUserServiceMock)
 
       expect(authenticateUserServiceMock).to.be.instanceOf(AuthenticateUserServiceMock)
     })

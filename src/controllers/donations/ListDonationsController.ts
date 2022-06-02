@@ -5,6 +5,9 @@ import { Logger } from '@common/logger'
 import BaseController from '@controllers/BaseController'
 
 import { ListDonationsService } from '@services/donations/ListDonationsService'
+import { ConnectionPlugin } from '@database/ConnectionAdapter'
+import { DonationsRepository } from '@repositories/DonationsRepository'
+import { ServiceDependencies } from '@services/BaseService'
 
 export class ListDonationsController
 extends BaseController {
@@ -14,9 +17,10 @@ extends BaseController {
 
   public constructor(
     logger: Logger,
-    routes: IRouter
+    routes: IRouter,
+    connectionAdapter: ConnectionPlugin
   ) {
-    super(logger, routes)
+    super(logger, routes, connectionAdapter)
     this.subscribe({
       path: this.path,
       method: this.method,
@@ -32,12 +36,23 @@ extends BaseController {
       'guest'
     )
 
-    const service = new ListDonationsService()
+    const service = new ListDonationsService(
+      this.listDonationsServiceDependencies()
+    )
 
     const incident = await service.execute({
       donorId
     })
 
     return response.json(incident)
+  }
+
+  public listDonationsServiceDependencies(): ServiceDependencies {
+    const connection = this.connectionPlugin.connect()
+    return {
+      repositories: {
+        donations: connection.getCustomRepository(DonationsRepository),
+      }
+    }
   }
 }

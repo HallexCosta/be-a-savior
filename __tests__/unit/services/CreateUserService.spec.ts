@@ -30,11 +30,10 @@ describe('@CreateUserService', () => {
         encryptPassword: defaultFunction
       } as unknown as UsersRepository
 
-      createUserServiceMock = new CreateUserServiceMock({
-        repositories: {
-          users: usersRepository
-        }
-      })
+      const repositories = {
+        users: usersRepository
+      }
+      createUserServiceMock = new CreateUserServiceMock(repositories )
 
       expect(createUserServiceMock).to.be.instanceOf(CreateUserService)
     })

@@ -1,4 +1,5 @@
-import { AuthenticateUserService, AuthenticateUserParams } from '@services/users/AuthenticateUserService'
+import { ServiceDependencies } from '@services/BaseService'
+import { AuthenticateUserService } from '@services/users/AuthenticateUserService'
 
 type AuthenticateOngDTO = {
   email: string
@@ -6,11 +7,9 @@ type AuthenticateOngDTO = {
   owner: string
 }
 
-type AuthenticateOngParams = AuthenticateUserParams & {}
-
 export class AuthenticateOngService extends AuthenticateUserService {
-  public constructor(authenticateOngParams: AuthenticateOngParams) {
-    super(authenticateOngParams)
+  public constructor({ repositories, providers }: ServiceDependencies) {
+    super(repositories, providers)
   }
 
   public async execute({

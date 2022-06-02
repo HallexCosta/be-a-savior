@@ -1,5 +1,4 @@
 import { Request, Response, IRouter } from 'express'
-import { getCustomRepository } from 'typeorm'
 
 import { Logger } from '@common/logger'
 import { CreateUserController } from '@controllers/users/CreateUserController'
@@ -11,6 +10,7 @@ import {
 
 import { StripeProvider } from '@providers/StripeProvider'
 import { UsersRepository } from '@repositories/UsersRepository'
+import { ConnectionPlugin } from '@database/ConnectionAdapter'
 
 export class CreateOngController
 extends CreateUserController {
@@ -20,9 +20,10 @@ extends CreateUserController {
 
   public constructor(
     logger: Logger,
-    routes: IRouter
+    routes: IRouter,
+    connectionAdapter: ConnectionPlugin
   ) {
-   super(logger, routes)
+   super(logger, routes, connectionAdapter)
    this.subscribe({
      group: this.group,
      path: this.path,
@@ -51,9 +52,10 @@ extends CreateUserController {
   }
 
   public createOngServiceDependencies(): CreateOngDependencies {
+    const connection = this.connectionPlugin.connect()
     return {
       repositories: {
-        users: getCustomRepository(UsersRepository)
+        users: connection.getCustomRepository(UsersRepository)
       },
       providers: {
         stripe: new StripeProvider()

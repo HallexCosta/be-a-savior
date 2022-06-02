@@ -1,12 +1,11 @@
 import { IRouter, Request, Response } from 'express'
-import { getCustomRepository } from 'typeorm'
 
 import { Logger } from '@common/logger'
+import { ConnectionPlugin } from '@database/ConnectionAdapter'
 
 import BaseController from '@controllers/BaseController'
 import { 
   DeleteIncidentService,
-  DeleteIncidentDependencies
 } from '@services/incidents/DeleteIncidentService'
 
 import { IncidentsRepository } from '@repositories/IncidentsRepository'
@@ -22,9 +21,10 @@ extends BaseController {
 
   public constructor(
     logger: Logger,
-    routes: IRouter
+    routes: IRouter,
+    connectionAdapter: ConnectionPlugin
   ) {
-   super(logger, routes)
+   super(logger, routes, connectionAdapter)
    this.setMiddlewares([
       ensureAuthenticateOng,
       ensureOng
@@ -57,10 +57,11 @@ extends BaseController {
     return response.json(incident)
   }
 
-  public deleteIncidentDependencies(): DeleteIncidentDependencies {
+  public deleteIncidentDependencies() {
+    const connection = this.connectionPlugin.connect()
     return {
       repositories: {
-        incidents: getCustomRepository(IncidentsRepository)
+        incidents: connection.getCustomRepository(IncidentsRepository)
       }
     }
   }

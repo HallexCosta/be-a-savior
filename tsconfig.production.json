@@ -26,6 +26,7 @@
       "@middlewares/*": ["./src/middlewares/*.ts"],
       "@entities/*": ["./src/entities/*.ts"],
       "@repositories/*": ["./src/repositories/*.ts"],
+      "@database/*": ["./src/database/*.ts"],
       "@controllers/*": ["./src/controllers/*.ts"],
       "@services/*": ["./src/services/*.ts"],
       "@providers/*": ["./src/providers/*.ts"],

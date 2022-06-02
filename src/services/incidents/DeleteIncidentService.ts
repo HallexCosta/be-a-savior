@@ -1,26 +1,16 @@
 import { DeleteResult } from 'typeorm'
 
 import { Incident } from '@entities/Incident'
-import { IncidentsRepository } from '@repositories/IncidentsRepository'
+import BaseService, { ServiceDependencies } from '@services/BaseService'
 
 type DeleteIncidentDTO = {
   id: string
   ongId: string
 }
 
-export type DeleteIncidentRepositories = {
-  incidents: IncidentsRepository
-}
-
-export type DeleteIncidentDependencies = {
-  repositories: DeleteIncidentRepositories
-}
-
-export class DeleteIncidentService {
-  private readonly repositories: DeleteIncidentRepositories
-
-  public constructor(deleteIncidentDependencies: DeleteIncidentDependencies) {
-    Object.assign(this, deleteIncidentDependencies)
+export class DeleteIncidentService extends BaseService {
+  public constructor({ repositories, providers }: ServiceDependencies) {
+    super(repositories, providers)
   }
 
   public async execute({ id, ongId }: DeleteIncidentDTO): Promise<Incident> {

@@ -3,8 +3,6 @@ import express from 'express'
 import 'express-async-errors'
 import logger from '@common/logger'
 
-import './database'
-
 import { handleErrors } from '@middlewares/handleErrors'
 
 import { routes } from '@routes'

@@ -1,4 +1,4 @@
-import { UsersRepository } from '@repositories/UsersRepository'
+import { ServiceDependencies } from '@services/BaseService'
 
 import { AuthenticateUserService } from '@services/users/AuthenticateUserService'
 
@@ -8,15 +8,9 @@ type AuthenticateDonorDTO = {
   owner: string
 }
 
-type AuthenticateDonorDependencies = {
-  repositories: {
-    users: UsersRepository
-  }
-}
-
 export class AuthenticateDonorService extends AuthenticateUserService {
-  public constructor(authenticateDonorDependencies: AuthenticateDonorDependencies) {
-    super(authenticateDonorDependencies)
+  public constructor({ repositories, providers }: ServiceDependencies) {
+    super(repositories, providers)
   }
 
   public async execute({

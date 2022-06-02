@@ -6,6 +6,7 @@ import { UsersRepository } from '@repositories/UsersRepository'
 
 import { StripeProvider } from '@providers/StripeProvider'
 import { ElephantSQLInstanceProvider } from '@providers/elephant/ElephantSQLInstanceProvider'
+import BaseService from '@services/BaseService'
 
 export type CreateUserDTO = {
   name: string
@@ -35,14 +36,7 @@ type CreateUserExecuteParams = {
 
 type CreateUserResponse = Omit<User, 'password'>
 
-export abstract class CreateUserService {
-  public repositories: Repositories
-  public providers: Providers
-
-  public constructor(createUserParams: CreateUserParams) {
-    Object.assign(this, createUserParams)
-  }
-
+export abstract class CreateUserService extends BaseService {
   public async checkForUserEmailExists(
     email: string,
     usersRepository: UsersRepository

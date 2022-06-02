@@ -1,9 +1,7 @@
-import { getCustomRepository } from 'typeorm'
-
 import { Incident } from '@entities/Incident'
 
 import { IncidentsRepository } from '@repositories/IncidentsRepository'
-import { UsersRepository } from '@repositories/UsersRepository'
+import BaseService, { ServiceDependencies } from '@services/BaseService'
 
 type ListIncidentsDTO = {
   ongId?: string
@@ -11,7 +9,7 @@ type ListIncidentsDTO = {
 }
 
 type Repositories = {
-  users: UsersRepository
+  incidents: IncidentsRepository
 }
 
 export type ListIncidentsDependencies = {
@@ -30,18 +28,16 @@ type ListIncidentsResponse = {
   incidents: Incident[]
 }
 
-export class ListIncidentsService {
-  public readonly repositories: Repositories
-
-  public constructor(listIncidentsDependencies: ListIncidentsDependencies) {
-    Object.assign(this, listIncidentsDependencies)
+export class ListIncidentsService extends BaseService {
+  public constructor({ repositories, providers }: ServiceDependencies) {
+    super(repositories, providers)
   }
 
   public async execute({
     ongId,
     donated
   }: ListIncidentsDTO): Promise<ListIncidentsResponse> {
-    const incidentsRepository = getCustomRepository(IncidentsRepository)
+    const incidentsRepository = this.repositories.incidents
 
     const incidents = await incidentsRepository.findIncidentsByFilter({
       donated,

@@ -1,15 +1,9 @@
-import { getCustomRepository } from 'typeorm'
-
 import { Donor } from '@entities/Donor'
 import { Donation } from '@entities/Donation'
 
-import { UsersRepository } from '@repositories/UsersRepository'
-import { IncidentsRepository } from '@repositories/IncidentsRepository'
-import { DonationsRepository } from '@repositories/DonationsRepository'
-
 import { StripeProvider } from '@providers/StripeProvider'
 
-import { configs } from '@common/configs'
+import BaseService, { ServiceDependencies } from '@services/BaseService'
 
 type CreateDonationDTO = {
   incidentId: string
@@ -25,11 +19,9 @@ export type CreateDonationDependencies = {
   providers: Providers
 }
 
-export class CreateDonationService {
-  private providers: Providers
-
-  public constructor(deps: CreateDonationDependencies) {
-    Object.assign(this, deps)
+export class CreateDonationService extends BaseService {
+  public constructor({ repositories, providers }: ServiceDependencies) {
+    super(repositories, providers)
   }
 
   public async execute({
@@ -43,7 +35,7 @@ export class CreateDonationService {
       amount
     })
 
-    const incidentsRepository = getCustomRepository(IncidentsRepository)
+    const incidentsRepository = this.repositories.incidents
 
     const incident = await incidentsRepository.findById(incidentId)
 
@@ -54,7 +46,7 @@ export class CreateDonationService {
     const amountDonations = incident.donations.map(donation => donation.amount)
     this.checkIncidentReachedLimitDonation(incident.cost, amountDonations)
 
-    const usersRepository = getCustomRepository(UsersRepository)
+    const usersRepository = this.repositories.users
     const donor = await usersRepository.findById(donorId)
 
     //const {
@@ -72,7 +64,7 @@ export class CreateDonationService {
     //  customer: customer.id
     //})
 
-    const donationsRepository = getCustomRepository(DonationsRepository)
+    const donationsRepository = this.repositories.donations
 
     const donation = donationsRepository.create({
       incident_id: incident.id,

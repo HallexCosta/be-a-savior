@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import { Logger } from '@common/logger'
+import { ConnectionPlugin } from '@database/ConnectionAdapter'
 
 export type EndpointHandler = (request: Request, response: Response) => Promise<Response> | Response
 
@@ -29,7 +30,8 @@ export default abstract class BaseController implements Controller {
 
   public constructor(
     protected readonly logger: Logger,
-    protected readonly routes: Router
+    protected readonly routes: Router,
+    protected readonly connectionPlugin: ConnectionPlugin
   ) {}
 
   subscribe({

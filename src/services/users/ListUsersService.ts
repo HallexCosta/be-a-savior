@@ -21,10 +21,6 @@ type ListUsersExecuteParams = {
 }
 
 export abstract class ListUsersService extends BaseUserService {
-  public constructor(listUsersServiceDependencies: ListUsersServiceDependencies) {
-    super(listUsersServiceDependencies)
-  }
-
   public async executeUser<ListUsersResponse = User>({
     dto: {
       owner

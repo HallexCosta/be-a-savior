@@ -1,10 +1,10 @@
 import { IRouter, Request, Response } from 'express'
-import { getCustomRepository } from 'typeorm'
 
 import { Logger } from '@common/logger'
 import { ListUsersController } from '@controllers/users/ListUsersController'
 import { ListDonorsService } from '@services/donors/ListDonorsService'
 import { UsersRepository } from '@repositories/UsersRepository'
+import { ConnectionPlugin } from '@database/ConnectionAdapter'
 
 export class ListDonorsController extends ListUsersController {
   protected readonly group: string = 'donors'
@@ -13,9 +13,10 @@ export class ListDonorsController extends ListUsersController {
 
   public constructor(
     logger: Logger,
-    routes: IRouter
+    routes: IRouter,
+    connectionAdapter: ConnectionPlugin
   ) {
-    super(logger, routes)
+    super(logger, routes, connectionAdapter)
     this.subscribe({
       group: this.group,
       path: this.path,
@@ -44,9 +45,10 @@ export class ListDonorsController extends ListUsersController {
   }
 
   public listDonorsServiceDependencies() {
+    const connection = this.connectionPlugin.connect()
     const dependencies = {
       repositories: {
-        users: getCustomRepository(UsersRepository)
+        users: connection.getCustomRepository(UsersRepository)
       }
     }
 

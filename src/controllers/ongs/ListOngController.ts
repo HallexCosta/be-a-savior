@@ -4,8 +4,8 @@ import { Logger } from '@common/logger'
 import { ListOngService } from '@services/ongs/ListOngService'
 import { ListUserController } from '@controllers/users/ListUserController'
 
-import { getCustomRepository } from 'typeorm'
 import { UsersRepository } from '@repositories/UsersRepository'
+import { ConnectionPlugin } from '@database/ConnectionAdapter'
 
 export class ListOngController extends ListUserController {
   protected readonly group: string = '/ongs'  
@@ -14,9 +14,10 @@ export class ListOngController extends ListUserController {
 
   public constructor(
     logger: Logger,
-    routes: IRouter
+    routes: IRouter,
+    connectionAdapter: ConnectionPlugin
   ) {
-    super(logger, routes)
+    super(logger, routes, connectionAdapter)
     this.subscribe({
       group: this.group,
       path: this.path,
@@ -48,7 +49,8 @@ export class ListOngController extends ListUserController {
   }
 
   public listOngServiceDependencies() {
-    const usersRepository = getCustomRepository(UsersRepository)
+    const connection = this.connectionPlugin.connect()
+    const usersRepository = connection.getCustomRepository(UsersRepository)
 
     const depedencies = {
       repositories: {

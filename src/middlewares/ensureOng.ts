@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
-import { getCustomRepository } from 'typeorm'
 
 import { UsersRepository } from '@repositories/UsersRepository'
+import ConnectionAdapter from '@database/ConnectionAdapter'
 
 export async function ensureOng(
   request: Request,
@@ -10,7 +10,10 @@ export async function ensureOng(
 ): Promise<Response | void> {
   const { ong_id } = request
 
-  const repository = getCustomRepository(UsersRepository)
+  const processId = process.pid.toString()
+  const connectionAdapter = new ConnectionAdapter(processId)
+  const connection = connectionAdapter.connect()
+  const repository = connection.getCustomRepository(UsersRepository)
 
   const ong = await repository.findOwnerById(ong_id, 'ong')
 
