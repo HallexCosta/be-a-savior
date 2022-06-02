@@ -5,6 +5,7 @@ import { UsersRepository } from '@repositories/UsersRepository'
 
 import { StripeProvider } from '@providers/StripeProvider'
 import { ElephantSQLInstanceProvider } from '@providers/elephant/ElephantSQLInstanceProvider'
+import BaseService from '@services/BaseService'
 
 type ListUserDTO = {
   id: string
@@ -35,14 +36,7 @@ interface UserService {
 
 export type ListUserResponse = Omit<User, 'password'>
 
-export abstract class ListUserService implements UserService {
-  public repositories: Repositories
-  public providers: Providers
-
-  public constructor(listUserParams: ListUserParams) {
-    Object.assign(this, listUserParams)
-  }
-
+export abstract class ListUserService extends BaseService implements UserService {
   public async executeUser({ dto: { id, owner } }: ListUserExecuteParams): Promise<ListUserResponse> {
     const usersRepository = this.repositories.users
 

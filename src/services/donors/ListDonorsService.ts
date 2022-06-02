@@ -1,5 +1,5 @@
 import { Donor } from '@entities/Donor'
-import { UsersRepository } from '@repositories/UsersRepository'
+import { ServiceDependencies } from '@services/BaseService'
 
 import { ListUsersService } from '@services/users/ListUsersService'
 
@@ -9,15 +9,9 @@ type ListDonorsDTO = {
 
 type ListDonorsResponse = Omit<Donor, 'password'>[]
 
-type ListDonorsDependencies = {
-  repositories: {
-    users: UsersRepository
-  }
-}
-
 export class ListDonorsService extends ListUsersService {
-  public constructor(listDonorsDependencies: ListDonorsDependencies) {
-    super(listDonorsDependencies)
+  public constructor({ repositories, providers }: ServiceDependencies) {
+    super(repositories, providers)
   }
 
   public async execute({ owner }: ListDonorsDTO): Promise<ListDonorsResponse> {

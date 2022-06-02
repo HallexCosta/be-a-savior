@@ -24,10 +24,6 @@ export type AuthenticateUserParams = {
 }
 
 export abstract class AuthenticateUserService extends BaseUserService {
-  public constructor(authenticateUserParams: AuthenticateUserParams) {
-    super(authenticateUserParams)
-  }
-
   public async executeUser({
     dto: {
       email,

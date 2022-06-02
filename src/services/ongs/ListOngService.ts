@@ -1,7 +1,7 @@
+import { ServiceDependencies } from '@services/BaseService'
 import {
   ListUserService,
-  ListUserResponse,
-  ListUserParams
+  ListUserResponse
 } from '@services/users/ListUserService'
 
 type ListOngDTO = {
@@ -10,8 +10,8 @@ type ListOngDTO = {
 }
 
 export class ListOngService extends ListUserService {
-  public constructor(listOngParams: ListUserParams) {
-    super(listOngParams)
+  public constructor({ repositories, providers }: ServiceDependencies) {
+    super(repositories, providers)
   }
 
   public async execute({ id, owner }: ListOngDTO): Promise<ListUserResponse> {
