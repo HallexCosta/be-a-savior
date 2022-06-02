@@ -19,7 +19,8 @@
     "install:ci": "yarn install --fronzen-lockfile",
     "test:unit": "cross-env NODE_ENV=test mocha --config .mocharc.unit.js",
     "prepare:test:integration": "cross-env NODE_ENV=test ts-node -r make-promises-safe -r dotenv/config -r tsconfig-paths/register ./src/dirty/prepare-integration-test.ts",
-    "test:charge": "autocannon -c 500 -d 30 --workers 10 renderStatusCode --latency --warup [ -c 1 -d 2 ] localhost:5000",
+    "test:charge:development": "autocannon -c 500 -d 30 --workers 10 renderStatusCode --latency --warup [ -c 1 -d 2 ] localhost:3333",
+    "test:charge:production": "autocannon -c 500 -d 30 --workers 10 renderStatusCode --latency --warup [ -c 1 -d 2 ] localhost:3333",
     "test:integration": "cross-env NODE_ENV=test mocha --config .mocharc.integration.js",
     "test:unit:watch": "cross-env NODE_ENV=test yarn test:unit --watch",
     "test:coverage": "nyc yarn test:unit",
@@ -33,6 +34,7 @@
     "typeorm:test": "cross-env NODE_ENV=test yarn ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "start:production": "cross-env NODE_ENV=production node dist/server.js",
     "start:production:cluster": "cross-env NODE_ENV=production node dist/cluster.js",
+    "start:development:cluster": "cross-env NODE_ENV=development ts-node -r tsconfig-paths/register -r dotenv/config --transpile-only ./src/cluster.ts",
     "start:development:watch": "cross-env NODE_ENV=development nodemon -L",
     "postbuild": "link-module-alias",
     "prebuild": "command -v link-module-alias && link-module-alias clean || true"
@@ -42,11 +44,13 @@
     "@middlewares": "./dist/middlewares",
     "@entities": "./dist/entities",
     "@repositories": "./dist/repositories",
+    "@database": "./dist/database",
     "@controllers": "./dist/controllers",
     "@services": "./dist/services",
     "@providers": "./dist/providers",
     "@routes": "./dist/routes",
     "@common": "./dist/common",
+    "@root": "./",
     "@app": "./dist/app.js"
   },
   "dependencies": {
