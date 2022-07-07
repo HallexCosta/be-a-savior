@@ -13,9 +13,9 @@ type QueryParams = {
 }
 
 export class ListIncidentsController
-extends BaseController {
-  protected readonly group: string = '/incidents'  
-  protected readonly path: string = '/'  
+  extends BaseController {
+  protected readonly group: string = '/incidents'
+  protected readonly path: string = '/'
   protected readonly method: string = 'GET'
 
   public constructor(
@@ -23,23 +23,17 @@ extends BaseController {
     routes: IRouter,
     connectionAdapter: ConnectionPlugin
   ) {
-   super(logger, routes, connectionAdapter)
-   this.subscribe({
-     group: this.group,
-     path: this.path,
-     method: this.method,
-     handler: this.handle.bind(this)
-   })
+    super(logger, routes, connectionAdapter)
+    this.subscribe({
+      group: this.group,
+      path: this.path,
+      method: this.method,
+      handler: this.handle.bind(this)
+    })
   }
-  
+
   public async handle(request: Request, response: Response): Promise<Response> {
     const { ongId, donated } = this.queryParams(request.query)
-
-    //this.endpointAccessLog(
-    //  this.method,
-    //  this.group.concat('', this.path),
-    //  ongId
-    //)
 
     const service = new ListIncidentsService(
       this.listIncidentsServiceDependencies()
@@ -62,7 +56,7 @@ extends BaseController {
     const queryParams = {} as QueryParams
 
     queryParams.donated = params.donated === 'true'
-    queryParams.ongId = params.ong_id
+    queryParams.ongId = params.ongId
 
     if (!params.donated) {
       queryParams.donated = undefined

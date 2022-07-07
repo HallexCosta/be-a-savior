@@ -5,6 +5,7 @@ import { SuperTest, Test } from 'supertest'
 import { app } from '@app'
 
 import { Ong } from '@entities/Ong'
+import { Incident } from '@entities/Incident'
 import { Donation } from '@entities/Donation'
 
 import {
@@ -37,7 +38,7 @@ describe('Incidents Routes', () => {
     ongToken = await loginWithFakeOng(agent, mocks.ong)
   })
 
-  it('Should be able to throw an error if ong_id is fake POST (/incidents)', async () => {
+  it('Should be able to throw an error if ongId is fake POST (/incidents)', async () => {
     await agent.post('/incidents').send(mocks.incident).expect(401)
   })
 
@@ -77,12 +78,12 @@ describe('Incidents Routes', () => {
     expect(incidents[0]).to.have.property('updated_at')
   })
 
-  it('Should be able list incidents by ong id GET (/incidents?ong_id=)', async () => {
+  it('Should be able list incidents by ong id GET (/incidents?ongId=)', async () => {
     const response = await agent
-      .get(`/incidents?ong_id=${ong.id}`)
+      .get(`/incidents?ongId=${ong.id}`)
       .set('Authorization', `bearer ${ongToken}`)
 
-    const incidents = response.body
+    const incidents: Incident[] = response.body
 
     expect(incidents[0]).to.have.property('id')
     expect(incidents[0]).to.have.property('name')
@@ -91,6 +92,9 @@ describe('Incidents Routes', () => {
     expect(incidents[0]).to.have.property('created_at')
     expect(incidents[0]).to.have.property('updated_at')
     expect(incidents[0]).to.have.property('donations')
+
+    // check if not have incident of other ong
+    expect(incidents.every(incident => incident.user_id === ong.id)).to.be.true()
   })
 
   it('Should be able list one Incident by Id GET (/incidents/:id)', async () => {
@@ -140,7 +144,7 @@ describe('Incidents Routes', () => {
     expect(incident).to.have.property('updated_at')
   })
 
-  it('Should be able list donor together donation in the list incidents GET (/incidents?ong_id=)', async () => {
+  it('Should be able list donor together donation in the list incidents GET (/incidents?ongId=)', async () => {
     await createFakeDonor(agent, mocks.donor)
 
     const fakeIncident = await createFakeIncident(agent, {
@@ -157,12 +161,11 @@ describe('Incidents Routes', () => {
     })
 
     const response = await agent
-      .get(`/incidents?ong_id=${ong.id}`)
+      .get(`/incidents?ongId=${ong.id}`)
       .set('Authorization', `bearer ${ongToken}`)
 
     const incidents = response.body
 
-    console.log(incidents)
     expect(incidents[0]).to.have.property('id')
     expect(incidents[0]).to.have.property('name')
     expect(incidents[0]).to.have.property('description')
