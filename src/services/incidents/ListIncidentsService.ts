@@ -1,4 +1,9 @@
+import { classToClass } from 'class-transformer'
+
+import { Donation } from '@entities/Donation'
 import { Incident } from '@entities/Incident'
+
+import { Util } from '@common/util'
 
 import { IncidentsRepository } from '@repositories/IncidentsRepository'
 import BaseService, { ServiceDependencies } from '@services/BaseService'
@@ -47,7 +52,7 @@ export class ListIncidentsService extends BaseService {
     const totalIncidentsAndDonations = this.totalIncidentsAndDonations(incidents)
 
     return {
-      incidents,
+      incidents: Util.classesToClasses<Incident>(incidents),
       totalIncidentsAndDonations
     }
   }
