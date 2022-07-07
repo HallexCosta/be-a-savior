@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToOne, ManyToOne } from 'typeorm'
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm'
 
 import { BaseEntity } from '@entities/BaseEntity'
 import { Incident } from '@entities/Incident'
@@ -12,14 +12,14 @@ export class Donation extends BaseEntity {
   @Column()
   public readonly incident_id: string
 
-  @JoinColumn({ name: 'incident_id' })
   @ManyToOne(() => Incident, incident => incident.donations)
+  @JoinColumn({ name: 'incident_id' })
   public readonly incident: Incident
 
   @Column()
   public readonly user_id: string
 
+  @ManyToOne(() => User, user => user.donations)
   @JoinColumn({ name: 'user_id' })
-  @ManyToOne(() => User)
   public readonly donor: User
 }

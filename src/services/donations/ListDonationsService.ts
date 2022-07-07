@@ -11,13 +11,15 @@ export class ListDonationsService extends BaseService {
   public constructor({ repositories, providers }: ServiceDependencies) {
     super(repositories, providers)
   }
+
   public async execute({ donorId }: ListDonationsDTO): Promise<Donation[]> {
     const repository = this.repositories.donations
 
     if (Util.isUUID(donorId)) {
-      return await repository.findByDonorId(donorId)
+      const donations = await repository.findByDonorId(donorId)
+      return Util.classesToClasses<Donation>(donations)
     }
-
-    return await repository.findAll() || []
+    const donations = await repository.findAll() || []
+    return Util.classesToClasses<Donation>(donations)
   }
 }

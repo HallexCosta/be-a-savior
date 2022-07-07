@@ -5,7 +5,9 @@ import { Donation } from '@entities/Donation'
 @EntityRepository(Donation)
 export class DonationsRepository extends Repository<Donation> {
   public async findAll(): Promise<Donation[]> {
-    return await this.find()
+    return await this.find({
+      relations: ['donor']
+    })
   }
 
   public async findById(id: string): Promise<Donation> {
@@ -20,7 +22,8 @@ export class DonationsRepository extends Repository<Donation> {
     return await this.find({
       where: {
         user_id: donorId
-      }
+      },
+      relations: ['donor']
     })
   }
 }

@@ -90,6 +90,7 @@ describe('Incidents Routes', () => {
     expect(incidents[0]).to.have.property('cost')
     expect(incidents[0]).to.have.property('created_at')
     expect(incidents[0]).to.have.property('updated_at')
+    expect(incidents[0]).to.have.property('donations')
   })
 
   it('Should be able list one Incident by Id GET (/incidents/:id)', async () => {
@@ -137,6 +138,39 @@ describe('Incidents Routes', () => {
     expect(incident).to.have.property('id')
     expect(incident).to.have.property('created_at')
     expect(incident).to.have.property('updated_at')
+  })
+
+  it('Should be able list donor together donation in the list incidents GET (/incidents?ong_id=)', async () => {
+    await createFakeDonor(agent, mocks.donor)
+
+    const fakeIncident = await createFakeIncident(agent, {
+      ongToken: await loginWithFakeOng(agent, mocks.ong),
+      incidentMock: mocks.incident
+    })
+
+    await createFakeDonation(agent, {
+      donorToken: await loginWithFakeDonor(agent, mocks.donor),
+      donationMock: {
+        ...mocks.donation,
+        incident_id: fakeIncident.id
+      }
+    })
+
+    const response = await agent
+      .get(`/incidents?ong_id=${ong.id}`)
+      .set('Authorization', `bearer ${ongToken}`)
+
+    const incidents = response.body
+
+    console.log(incidents)
+    expect(incidents[0]).to.have.property('id')
+    expect(incidents[0]).to.have.property('name')
+    expect(incidents[0]).to.have.property('description')
+    expect(incidents[0]).to.have.property('cost')
+    expect(incidents[0]).to.have.property('created_at')
+    expect(incidents[0]).to.have.property('updated_at')
+    expect(incidents[0]).to.have.property('donations')
+    expect(incidents[0].donations[0]).to.have.property('donor')
   })
 
   it('Should be able list non-donated incidents GET (/incidents?donated=false)', async () => {

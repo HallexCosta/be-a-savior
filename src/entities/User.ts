@@ -29,7 +29,6 @@ export abstract class User extends BaseEntity {
   @Column()
   public owner: string
 
-  @JoinColumn({ name: 'donation_id' })
   @OneToMany(() => Donation, donation => donation.donor)
   public donations?: Donation[]
 }
