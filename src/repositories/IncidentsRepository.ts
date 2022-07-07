@@ -2,7 +2,6 @@ import {
   DeleteResult,
   EntityRepository,
   Repository,
-  IsNull,
   SelectQueryBuilder
 } from 'typeorm'
 
@@ -16,7 +15,9 @@ type FindIncidentsFilter = {
 @EntityRepository(Incident)
 export class IncidentsRepository extends Repository<Incident> {
   async findAll(): Promise<Incident[]> {
-    return await this.find()
+    return await this.find({
+      relations: ['donations', 'donations.donor'],
+    })
   }
 
   async findByOngId(ongId: string): Promise<Incident[]> {
@@ -42,7 +43,7 @@ export class IncidentsRepository extends Repository<Incident> {
             .andWhere(onlyDonated)
         }
       },
-      relations: ['donations']
+      relations: ['donations', 'donations.donor']
     })
   }
 
@@ -51,7 +52,7 @@ export class IncidentsRepository extends Repository<Incident> {
       where: {
         id
       },
-      relations: ['donations']
+      relations: ['donations', 'donations.donor']
     })
   }
 
