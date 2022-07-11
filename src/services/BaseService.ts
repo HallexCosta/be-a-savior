@@ -18,7 +18,9 @@ export type ServiceDependencies = {
   providers?: ServiceProviders
 }
 
-export default abstract class BaseService {
+export interface BaseServiceMethods { }
+
+export default abstract class BaseService implements BaseServiceMethods {
   protected readonly repositories: ServiceRepositories = Object.create({})
   protected readonly providers: ServiceProviders = Object.create({})
 
