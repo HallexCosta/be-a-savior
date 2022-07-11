@@ -233,4 +233,40 @@ describe('Incidents Routes', () => {
     const haveDonations = donations.length >= 1
     expect(haveDonations).to.be.true()
   })
+
+  it('Should prevent of update incident cost if the new cost is lower than donations total PATCH (/incidents/:id)', async () => {
+    await createFakeDonor(agent, mocks.donor)
+
+    const ongToken = await loginWithFakeOng(agent, mocks.ong)
+    const fakeIncident = await createFakeIncident(agent, {
+      ongToken,
+      incidentMock: {
+        ...mocks.incident,
+        cost: 1000
+      }
+    })
+
+    await createFakeDonation(agent, {
+      donorToken: await loginWithFakeDonor(agent, mocks.donor),
+      donationMock: {
+        ...mocks.donation,
+        incident_id: fakeIncident.id,
+        amount: 1000
+      }
+    })
+
+    const incidentUpdated = {
+      name: 'Some a name updated',
+      cost: 10,
+      description: 'This is a description updated'
+    }
+
+    const response = await agent
+      .patch(`/incidents/${fakeIncident.id}`)
+      .send(incidentUpdated)
+      .set('Authorization', `bearer ${ongToken}`)
+
+    expect(response.body.message).to.be.equal("Opss... can't possible update incident cost that reached max limit of donations")
+    expect(response.status).to.be.equal(409)
+  })
 })
