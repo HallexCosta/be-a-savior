@@ -1,7 +1,10 @@
-import { Incident } from '@entities/Incident'
-import BaseService, { ServiceDependencies } from '@services/BaseService'
+import BaseService, { BaseServiceMethods, ServiceDependencies } from '@services/BaseService'
 
-type UpdateIncidentDTO = {
+import { Donation } from '@entities/Donation'
+import { Incident } from '@entities/Incident'
+
+
+export declare type UpdateIncidentDTO = {
   id: string
   name: string
   cost: number
@@ -9,7 +12,25 @@ type UpdateIncidentDTO = {
   ongId: string
 }
 
-export class UpdateIncidentService extends BaseService {
+declare interface UpdateIncidentServiceMethods
+  extends BaseServiceMethods {
+  /* Prevent ong to update incident cost if reached max limit of donatios
+   * @params incident Receive the incident entity
+   * @return void
+   */
+  preventUpdateIncidentCost(
+    incidentCostUpdated: number,
+    donations: Donation[]
+  ): void
+}
+
+class PreventUpdateIncidentCostError extends Error {
+  public constructor(message?: string) {
+    super(message || "Opss... can't possible update incident cost that reached max limit of donations")
+  }
+}
+
+export class UpdateIncidentService extends BaseService implements UpdateIncidentServiceMethods {
   public constructor({ repositories, providers }: ServiceDependencies) {
     super(repositories, providers)
   }
@@ -28,6 +49,8 @@ export class UpdateIncidentService extends BaseService {
     this.checkIncidentExists(incidentAlreadyExists)
 
     this.checkIncidentBelongsThisOng(ongId, incidentAlreadyExists.user_id)
+
+    this.preventUpdateIncidentCost(cost, incidentAlreadyExists.donations)
 
     const incident = incidentsRepository.create({
       ...incidentAlreadyExists,
@@ -60,6 +83,18 @@ export class UpdateIncidentService extends BaseService {
   private checkIncidentExists(incident: Incident): void {
     if (!incident) {
       throw new Error('Incident not exists')
+    }
+  }
+
+  public preventUpdateIncidentCost(
+    incidentCostUpdated: number,
+    donations: Donation[]
+  ): void {
+    const totalDonations = donations
+      .reduce((prev, curr) => prev + curr.amount, 0)
+
+    if (incidentCostUpdated <= totalDonations) {
+      throw new PreventUpdateIncidentCostError()
     }
   }
 }

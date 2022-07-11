@@ -12,8 +12,16 @@ type FindIncidentsFilter = {
   donated: boolean | 'all'
 }
 
+interface IncidentsRepositoryMethods {
+  findAll(): Promise<Incident[]>
+  findByOngId(ongId: string): Promise<Incident[]>
+  findIncidentsByFilter(filter: FindIncidentsFilter): Promise<Incident[]>
+  findById(id: string): Promise<Incident>
+  deleteById(id: string): Promise<DeleteResult>
+}
+
 @EntityRepository(Incident)
-export class IncidentsRepository extends Repository<Incident> {
+export class IncidentsRepository extends Repository<Incident> implements IncidentsRepositoryMethods {
   async findAll(): Promise<Incident[]> {
     return await this.find({
       relations: ['donations', 'donations.donor'],
