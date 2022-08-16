@@ -9,6 +9,7 @@ import { Incident } from '@entities/Incident'
 
 type FindIncidentsFilter = {
   ongId: string
+  donorId?: string
   donated: boolean | 'all'
 }
 
@@ -21,10 +22,13 @@ interface IncidentsRepositoryMethods {
 }
 
 @EntityRepository(Incident)
-export class IncidentsRepository extends Repository<Incident> implements IncidentsRepositoryMethods {
+export class IncidentsRepository
+  extends Repository<Incident>
+  implements IncidentsRepositoryMethods
+{
   async findAll(): Promise<Incident[]> {
     return await this.find({
-      relations: ['donations', 'donations.donor'],
+      relations: ['donations', 'donations.donor']
     })
   }
 
@@ -36,19 +40,28 @@ export class IncidentsRepository extends Repository<Incident> implements Inciden
     })
   }
 
-  async findIncidentsByFilter({ ongId = null, donated = 'all' }: FindIncidentsFilter): Promise<Incident[]> {
+  async findIncidentsByFilter({
+    ongId = null,
+    donorId,
+    donated = 'all'
+  }: FindIncidentsFilter): Promise<Incident[]> {
     return await this.find({
       where: (queryBuilder: SelectQueryBuilder<Incident>) => {
         if (ongId) {
-          const onlyOng = `Incident.user_id = :ongId`
-          queryBuilder
-            .where(onlyOng, { ongId })
+          const onlyOng = 'Incident.user_id = :ongId'
+          queryBuilder.where(onlyOng, { ongId })
+        }
+
+        if (donorId) {
+          const onlyDonor = 'Incident__donations.user_id = :donorId'
+          queryBuilder.where(onlyDonor, { donorId })
         }
 
         if (donated !== null) {
-          const onlyDonated = `Incident__donations.incident_id is ${donated ? 'not' : ''} null`
-          queryBuilder
-            .andWhere(onlyDonated)
+          const onlyDonated = `Incident__donations.incident_id is ${
+            donated ? 'not' : ''
+          } null`
+          queryBuilder.andWhere(onlyDonated)
         }
       },
       relations: ['donations', 'donations.donor']

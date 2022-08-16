@@ -20,6 +20,7 @@ import {
   loginWithFakeOng,
   createFakeIncident
 } from '@tests/fakes/mocks'
+import { Util } from '@tests/util'
 
 use(dirty)
 
@@ -58,14 +59,13 @@ describe('Incidents Routes', () => {
     expect(expected).to.have.property('updated_at')
   })
 
-  it('Should be able list incidents GET (/incidents)', async () => {
+  it.only('Should be able list incidents GET (/incidents)', async () => {
     await createFakeIncident(agent, {
       incidentMock: mocks.incident,
       ongToken
     })
 
-    const response = await agent
-      .get('/incidents')
+    const response = await agent.get('/incidents')
 
     const incidents = response.body
 
@@ -76,6 +76,99 @@ describe('Incidents Routes', () => {
     expect(incidents[0]).to.have.property('cost')
     expect(incidents[0]).to.have.property('created_at')
     expect(incidents[0]).to.have.property('updated_at')
+    expect(incidents[0]).to.have.property('donations')
+  })
+
+  it('Must be able to list incidents that were donated by donor GET (/incidents?donorId=)', async () => {
+    const mocks = createMocks()
+    const mocks2 = createMocks()
+
+    await createFakeDonor(agent, mocks.donor)
+    await createFakeDonor(agent, mocks2.donor)
+
+    await createFakeOng(agent, mocks.ong)
+    await createFakeOng(agent, mocks2.ong)
+
+    const incidentMock = await createFakeIncident(agent, {
+      ongToken: await loginWithFakeOng(agent, mocks.ong),
+      incidentMock: {
+        ...mocks.incident,
+        cost: 10000
+      }
+    })
+    const incidentMock2 = await createFakeIncident(agent, {
+      ongToken: await loginWithFakeOng(agent, mocks2.ong),
+      incidentMock: {
+        ...mocks2.incident,
+        cost: 10000
+      }
+    })
+
+    // create 2
+    const donorToken = await loginWithFakeDonor(agent, mocks.donor)
+    const donorToken2 = await loginWithFakeDonor(agent, mocks2.donor)
+
+    async function* loadDonations() {
+      for (const _ of Array(3).keys()) {
+        yield await createFakeDonation(agent, {
+          donorToken: donorToken,
+          donationMock: {
+            ...mocks.donation,
+            incident_id: incidentMock.id,
+            amount: 100
+          }
+        })
+        yield await createFakeDonation(agent, {
+          donorToken: donorToken2,
+          donationMock: {
+            ...mocks.donation,
+            incident_id: incidentMock.id,
+            amount: 100
+          }
+        })
+        yield await createFakeDonation(agent, {
+          donorToken: donorToken,
+          donationMock: {
+            ...mocks.donation,
+            incident_id: incidentMock2.id,
+            amount: 100
+          }
+        })
+        yield await createFakeDonation(agent, {
+          donorToken: donorToken2,
+          donationMock: {
+            ...mocks.donation,
+            incident_id: incidentMock2.id,
+            amount: 100
+          }
+        })
+      }
+    }
+    for await (const _ of loadDonations()) {}
+
+    const response = await agent
+      .get(`/incidents?donorId=${mocks.donor.id}`)
+      .set('Authorization', `bearer ${donorToken}`)
+
+    const incidents: Incident[] = response.body
+
+    function checkForIncidentsWereDonatedByDonor(
+      donorId: string,
+      incident: Incident
+    ) {
+      return incident.donations
+        .every(donation => donation.user_id === donorId)
+    }
+    // check filter is working
+    expect(incidents[0].donations).to.be.lengthOf(3)
+    expect(incidents[1].donations).to.be.lengthOf(3)
+
+    // check if all incidents was donated a one donor
+    expect(
+      incidents.every(
+        checkForIncidentsWereDonatedByDonor.bind(null, mocks.donor.id)
+      )
+    ).to.be.true()
   })
 
   it('Should be able list incidents by ong id GET (/incidents?ongId=)', async () => {
@@ -94,7 +187,9 @@ describe('Incidents Routes', () => {
     expect(incidents[0]).to.have.property('donations')
 
     // check if not have incident of other ong
-    expect(incidents.every(incident => incident.user_id === ong.id)).to.be.true()
+    expect(
+      incidents.every((incident) => incident.user_id === ong.id)
+    ).to.be.true()
   })
 
   it('Should be able list one Incident by Id GET (/incidents/:id)', async () => {
@@ -124,7 +219,8 @@ describe('Incidents Routes', () => {
       .send(body)
       .set('Authorization', `bearer ${ongToken}`)
 
-    const { body: incident } = await agent.get(`/incidents/${incidentId}`)
+    const { body: incident } = await agent
+      .get(`/incidents/${incidentId}`)
       .set('Authorization', `bearer ${ongToken}`)
 
     expect(incident.name).to.be.equal('Some a name updated')
@@ -209,7 +305,7 @@ describe('Incidents Routes', () => {
     await createFakeDonor(agent, mocks.donor)
     const donationMock = {
       ...mocks.donation,
-      incidentId: incident.id,
+      incidentId: incident.id
     }
     await createFakeDonation(agent, {
       donationMock,
@@ -266,7 +362,9 @@ describe('Incidents Routes', () => {
       .send(incidentUpdated)
       .set('Authorization', `bearer ${ongToken}`)
 
-    expect(response.body.message).to.be.equal("Opss... can't possible update incident cost that reached max limit of donations")
+    expect(response.body.message).to.be.equal(
+      "Opss... can't possible update incident cost that reached max limit of donations"
+    )
     expect(response.status).to.be.equal(409)
   })
 })

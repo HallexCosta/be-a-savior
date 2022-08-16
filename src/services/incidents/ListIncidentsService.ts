@@ -10,6 +10,7 @@ import BaseService, { ServiceDependencies } from '@services/BaseService'
 
 type ListIncidentsDTO = {
   ongId?: string
+  donorId?: string
   donated?: boolean
 }
 
@@ -40,16 +41,19 @@ export class ListIncidentsService extends BaseService {
 
   public async execute({
     ongId,
+    donorId,
     donated
   }: ListIncidentsDTO): Promise<ListIncidentsResponse> {
     const incidentsRepository = this.repositories.incidents
 
     const incidents = await incidentsRepository.findIncidentsByFilter({
       donated,
+      donorId,
       ongId
     })
 
-    const totalIncidentsAndDonations = this.totalIncidentsAndDonations(incidents)
+    const totalIncidentsAndDonations =
+      this.totalIncidentsAndDonations(incidents)
 
     return {
       incidents: Util.classesToClasses<Incident>(incidents),
@@ -57,18 +61,20 @@ export class ListIncidentsService extends BaseService {
     }
   }
 
-  public totalIncidentsAndDonations(incidents: Incident[]): TotalIncidentsAndDonations {
+  public totalIncidentsAndDonations(
+    incidents: Incident[]
+  ): TotalIncidentsAndDonations {
     const totalIncidents = incidents.length
     const totalDonations = incidents
-      .map(incident => incident.donations.length)
+      .map((incident) => incident.donations.length)
       .reduce((curr, prev) => prev + curr, 0)
 
     const totalIncidentsDonated = incidents
-      .map(incident => incident.donations.length > 0 ? 1 : 0)
+      .map((incident) => (incident.donations.length > 0 ? 1 : 0))
       .reduce((curr: number, prev: number) => prev + curr, 0)
 
     const totalIncidentsNonDonated = incidents
-      .map(incident => incident.donations.length <= 0 ? 1 : 0)
+      .map((incident) => (incident.donations.length <= 0 ? 1 : 0))
       .reduce((curr: number, prev: number) => prev + curr, 0)
 
     return {

@@ -170,6 +170,7 @@ export async function createFakeOng(agent: SuperTest<Test>, ongMock: OngMock): P
   const response = await agent.post('/ongs').send(ongMock)
 
   Util.customersEmail.push(ongMock.email)
+  ongMock.id = response.body.id
 
   return response.body
 }
@@ -178,6 +179,7 @@ export async function createFakeDonor(agent: SuperTest<Test>, donorMock: DonorMo
   const response = await agent.post('/donors')
     .send(donorMock)
 
+  donorMock.id = response.body.id
   return response.body
 }
 
@@ -189,6 +191,8 @@ export async function createFakeIncident(
     .post('/incidents')
     .send(incidentMock)
     .set('Authorization', `bearer ${ongToken}`)
+
+  incidentMock.id = response.body.id
 
   return response.body
 }
@@ -204,6 +208,8 @@ export async function createFakeDonation(
     })
     .set('Authorization', `bearer ${donorToken}`)
 
+  donationMock.id = response.body.id
+
   return response.body
 }
 
@@ -218,6 +224,8 @@ export async function loginWithFakeOng(
     password
   })
 
+  ongMock.id = response.body.id
+
   return response.body.token
 }
 
@@ -231,6 +239,8 @@ export async function loginWithFakeDonor(
     email,
     password
   })
+
+  donorMock.id = response.body.id
 
   return response.body.token
 }
