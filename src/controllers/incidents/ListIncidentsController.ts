@@ -8,12 +8,12 @@ import { ConnectionPlugin } from '@database/ConnectionAdapter'
 import { IncidentsRepository } from '@repositories/IncidentsRepository'
 
 type QueryParams = {
+  donorId?: string
   ongId?: string
   donated?: boolean
 }
 
-export class ListIncidentsController
-  extends BaseController {
+export class ListIncidentsController extends BaseController {
   protected readonly group: string = '/incidents'
   protected readonly path: string = '/'
   protected readonly method: string = 'GET'
@@ -33,7 +33,7 @@ export class ListIncidentsController
   }
 
   public async handle(request: Request, response: Response): Promise<Response> {
-    const { ongId, donated } = this.queryParams(request.query)
+    const { donorId, ongId, donated } = this.queryParams(request.query)
 
     const service = new ListIncidentsService(
       this.listIncidentsServiceDependencies()
@@ -41,9 +41,11 @@ export class ListIncidentsController
 
     const parsedDonated = donated ?? null
     const parsedOngId = ongId ?? null
+    const parsedDonorId = donorId ?? null
 
     const { incidents, totalIncidentsAndDonations } = await service.execute({
       ongId: parsedOngId,
+      donorId: parsedDonorId,
       donated: parsedDonated
     })
 
@@ -53,10 +55,11 @@ export class ListIncidentsController
   }
 
   private queryParams(params: any): QueryParams {
-    const queryParams = {} as QueryParams
-
-    queryParams.donated = params.donated === 'true'
-    queryParams.ongId = params.ongId
+    const queryParams = {
+      ongId: params.ongId,
+      donorId: params.donorId,
+      donated: params.donated === 'true'
+    } as QueryParams
 
     if (!params.donated) {
       queryParams.donated = undefined
@@ -69,7 +72,7 @@ export class ListIncidentsController
     const connection = this.connectionPlugin.connect()
     return {
       repositories: {
-        incidents: connection.getCustomRepository(IncidentsRepository),
+        incidents: connection.getCustomRepository(IncidentsRepository)
       }
     }
   }
