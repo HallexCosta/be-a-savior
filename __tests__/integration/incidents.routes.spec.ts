@@ -59,7 +59,7 @@ describe('Incidents Routes', () => {
     expect(expected).to.have.property('updated_at')
   })
 
-  it('Should be able list incidents GET (/incidents)', async () => {
+  it.only('Should be able list incidents GET (/incidents)', async () => {
     await createFakeIncident(agent, {
       incidentMock: mocks.incident,
       ongToken
@@ -76,6 +76,7 @@ describe('Incidents Routes', () => {
     expect(incidents[0]).to.have.property('cost')
     expect(incidents[0]).to.have.property('created_at')
     expect(incidents[0]).to.have.property('updated_at')
+    expect(incidents[0]).to.have.property('donations')
   })
 
   it('Must be able to list incidents that were donated by donor GET (/incidents?donorId=)', async () => {
