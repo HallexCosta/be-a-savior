@@ -5,7 +5,11 @@ import { createMocks } from '@tests/fakes/mocks'
 
 import { Incident } from '@entities/Incident'
 
-import { ListIncidentsService, ListIncidentsDependencies } from '@services/incidents/ListIncidentsService'
+import { 
+  ListIncidentsDTO,
+  ListIncidentsService,
+  ListIncidentsDependencies
+} from '@services/incidents/ListIncidentsService'
 import { Donation } from '@entities/Donation'
 
 describe('@ListIncidentsService', () => {
@@ -41,8 +45,8 @@ describe('@ListIncidentsService', () => {
       const params = {
         ongId: '',
         donorId: '',
-        donated: true
-      }
+        donated: ''
+      } as unknown as ListIncidentsDTO
       const donationsMock = (Array.from(Array(4).keys())).map(() => {
         const donation = {
           ...createMocks().donation,
@@ -55,7 +59,7 @@ describe('@ListIncidentsService', () => {
           ...createMocks().incident,
           donations: donationsMock
         } as Incident
-        return  incident 
+        return incident 
       })
 
       const findIncidentsByFilterStubbed = sandbox.stub(
