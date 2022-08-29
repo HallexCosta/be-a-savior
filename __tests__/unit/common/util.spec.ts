@@ -38,7 +38,7 @@ describe('@Util', () => {
         'The function to should\'nt called the "none" method'
       )
     })
-    it.only("Should be throw error if entry param haven't a method case", () => {
+    it("Should be throw error if entry param haven't a method case", () => {
       const entry = 'INVALID ENTRY'
       const switchParams = {
         entry,
