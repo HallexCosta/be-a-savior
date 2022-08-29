@@ -59,7 +59,7 @@ describe('Incidents Routes', () => {
     expect(expected).to.have.property('updated_at')
   })
 
-  it.only('Should be able list incidents GET (/incidents)', async () => {
+  it('Should be able list incidents GET (/incidents)', async () => {
     await createFakeIncident(agent, {
       incidentMock: mocks.incident,
       ongToken
@@ -144,7 +144,8 @@ describe('Incidents Routes', () => {
         })
       }
     }
-    for await (const _ of loadDonations()) {}
+    for await (const _ of loadDonations()) {
+    }
 
     const response = await agent
       .get(`/incidents?donorId=${mocks.donor.id}`)
@@ -156,9 +157,11 @@ describe('Incidents Routes', () => {
       donorId: string,
       incident: Incident
     ) {
-      return incident.donations
-        .every(donation => donation.user_id === donorId)
+      return incident.donations.every(
+        (donation) => donation.user_id === donorId
+      )
     }
+
     // check filter is working
     expect(incidents[0].donations).to.be.lengthOf(3)
     expect(incidents[1].donations).to.be.lengthOf(3)
@@ -272,62 +275,149 @@ describe('Incidents Routes', () => {
     expect(incidents[0].donations[0]).to.have.property('donor')
   })
 
-  it('Should be able list non-donated incidents GET (/incidents?donated=false)', async () => {
-    await createFakeIncident(agent, {
-      incidentMock: mocks.incident,
-      ongToken
-    })
+  it('Should be able list incidents with at least one donation GET (/incidents?donated=incomplete)', async () => {
+    const mocks1 = createMocks()
+    const mocks2 = createMocks()
+    const mocks3 = createMocks()
 
-    const response = await agent
-      .get('/incidents?donated=false')
-      .set('Authorization', `bearer ${ongToken}`)
-
-    const incidents = response.body
-
-    const donations: Donation[] = []
-
-    for (const incident of incidents) {
-      for (const donation of incident.donations) {
-        donations.push(donation)
+    async function createFakeIncidenWithDonations(
+      agent,
+      mocks,
+      donationValue: number,
+      donationCount: number = 1
+    ) {
+      await createFakeOng(agent, mocks.ong)
+      await createFakeIncident(agent, {
+        incidentMock: mocks.incident,
+        ongToken: await loginWithFakeOng(agent, mocks.ong)
+      })
+      await createFakeDonor(agent, mocks.donor)
+      for (let count = 1; count <= donationCount; count++) {
+        mocks.donation.incident_id = mocks.incident.id
+        mocks.donation.amount = donationValue
+        await createFakeDonation(agent, {
+          donationMock: mocks.donation,
+          donorToken: await loginWithFakeDonor(agent, mocks.donor)
+        })
       }
     }
 
-    const haveDonations = donations.length >= 1
-    expect(haveDonations).to.be.false()
+    // create fake incident with donations complete
+    mocks1.incident.cost = 100
+    await createFakeIncidenWithDonations(agent, mocks1, 100, 1)
+
+    // create fake incident with donation incomplete
+    mocks2.incident.cost = 100
+    await createFakeIncidenWithDonations(agent, mocks2, 10, 3)
+
+    // create fake incident without donations
+    mocks3.incident.cost = 100
+    await createFakeIncidenWithDonations(agent, mocks3, 0, 0)
+
+    const response = await agent.get('/incidents?donated=incomplete')
+
+    const incidents = response.body
+
+    expect(
+      incidents.every((incident) => incident.donations.length >= 1)
+    ).to.be.true()
+    // if find incident to convert true, if is undefined convert to false
+    expect(
+      !!incidents.find((incident) => incident.id === mocks1.incident.id)
+    ).to.be.true()
+    expect(
+      !!incidents.find((incident) => incident.id === mocks2.incident.id)
+    ).to.be.true()
+  })
+  it('Should be able list incidents with anything donations GET (/incidents?donated=none)', async () => {
+    const mocks = createMocks()
+
+    await createFakeOng(agent, mocks.ong)
+    await createFakeIncident(agent, {
+      incidentMock: mocks.incident,
+      ongToken: await loginWithFakeOng(agent, mocks.ong)
+    })
+
+    function getAllDonations(incidents: Donation[]) {
+      const donations = []
+
+      for (const incident of incidents)
+        for (const donation of incident.donations) donations.push(donation)
+
+      return donations
+    }
+
+    const response = await agent.get('/incidents?donated=none')
+
+    const incidents = response.body
+
+    expect(incidents).to.be.lengthOf.at.least(
+      1,
+      'Must be have at least 1 incident'
+    )
+    expect(getAllDonations(incidents)).to.be.lengthOf(
+      0,
+      'Expected anything donations'
+    )
   })
 
-  it('Should be able list donated incidents GET (/incidents?donated=true)', async () => {
-    const incident = await createFakeIncident(agent, {
+  it('Should be able list incidents with at least one donations GET (/incidents?donated=complete)', async () => {
+    const mocks = createMocks()
+
+    await createFakeOng(agent, mocks.ong)
+    // create incident with cost 100
+    mocks.incident.cost = 100
+    await createFakeIncident(agent, {
       incidentMock: mocks.incident,
-      ongToken
+      ongToken: await loginWithFakeOng(agent, mocks.ong)
     })
 
     await createFakeDonor(agent, mocks.donor)
-    const donationMock = {
-      ...mocks.donation,
-      incidentId: incident.id
-    }
+    // create donation with amount 100
+    mocks.donation.incident_id = mocks.incident.id
+    mocks.donation.amount = 100
     await createFakeDonation(agent, {
-      donationMock,
+      donationMock: mocks.donation,
       donorToken: await loginWithFakeDonor(agent, mocks.donor)
     })
 
-    const response = await agent
-      .get('/incidents?donated=true')
-      .set('Authorization', `bearer ${ongToken}`)
+    function getAllDonations(incidents: Donation[]) {
+      const donations = []
+
+      for (const incident of incidents)
+        for (const donation of incident.donations) donations.push(donation)
+
+      return donations
+    }
+
+    const response = await agent.get('/incidents?donated=complete')
 
     const incidents = response.body
 
-    const donations: Donation[] = []
+    expect(incidents).to.be.lengthOf.at.least(
+      1,
+      'Should be expected at least 1 incident'
+    )
 
-    for (const incident of incidents) {
-      for (const donation of incident.donations) {
-        donations.push(donation)
-      }
+    const findIncidentById = (incident: Incident) =>
+      incident.id === mocks.incident.id
+
+    const incident = incidents.find(findIncidentById)
+
+    function checkDonationsIsComplete(incident: Incident) {
+      const totalDonationsAmount = incident.donations.reduce(
+        (prev, curr) => prev + curr.amount,
+        0
+      )
+      return incident.cost === totalDonationsAmount
     }
-
-    const haveDonations = donations.length >= 1
-    expect(haveDonations).to.be.true()
+    expect(checkDonationsIsComplete(incident)).to.be.true(
+      'Incident cost should be equal a the value of total donations amount'
+    )
+    expect(getAllDonations(incidents)).to.be.lengthOf.at.least(
+      1,
+      'Should be expected at least 1 donation'
+    )
   })
 
   it('Should prevent of update incident cost if the new cost is lower than donations total PATCH (/incidents/:id)', async () => {

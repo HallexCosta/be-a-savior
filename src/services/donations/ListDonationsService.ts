@@ -1,6 +1,6 @@
 import { Donation } from '@entities/Donation'
 
-import { Util } from '@common/util'
+import Util from '@common/util'
 import BaseService, { ServiceDependencies } from '@services/BaseService'
 
 type ListDonationsDTO = {
@@ -19,7 +19,7 @@ export class ListDonationsService extends BaseService {
       const donations = await repository.findByDonorId(donorId)
       return Util.classesToClasses<Donation>(donations)
     }
-    const donations = await repository.findAll() || []
+    const donations = (await repository.findAll()) || []
     return Util.classesToClasses<Donation>(donations)
   }
 }

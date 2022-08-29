@@ -1,9 +1,9 @@
 import cluster from 'node:cluster'
 
-import { Util } from '@common/util'
+import Util from '@common/util'
 
 let isFirstWorker = true
-const TIMEOUT_UP_WORKERS_AFTER_FIRST = 10 * 1000 
+const TIMEOUT_UP_WORKERS_AFTER_FIRST = 10 * 1000
 
 const runPrimaryProcess = async () => {
   const processId = process.pid
@@ -29,7 +29,9 @@ const runPrimaryProcess = async () => {
 
   cluster.on('exit', (worker, code, signal) => {
     if (code !== 0 && !worker.exitedAfterDisconnect) {
-      console.log(`Worker ${worker.process.pid} died... scheduling another one!`)
+      console.log(
+        `Worker ${worker.process.pid} died... scheduling another one!`
+      )
       cluster.fork()
     }
   })

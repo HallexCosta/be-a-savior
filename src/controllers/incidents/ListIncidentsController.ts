@@ -10,7 +10,7 @@ import { IncidentsRepository } from '@repositories/IncidentsRepository'
 type QueryParams = {
   donorId?: string
   ongId?: string
-  donated?: boolean
+  donated?: 'complete' | 'incomplete' | 'none'
 }
 
 export class ListIncidentsController extends BaseController {
@@ -33,7 +33,7 @@ export class ListIncidentsController extends BaseController {
   }
 
   public async handle(request: Request, response: Response): Promise<Response> {
-    const { donorId, ongId, donated } = this.queryParams(request.query)
+    const { donorId, ongId, donated } = request.query as QueryParams
 
     const service = new ListIncidentsService(
       this.listIncidentsServiceDependencies()
@@ -52,20 +52,6 @@ export class ListIncidentsController extends BaseController {
     response.setHeader('X-TOTAL', JSON.stringify(totalIncidentsAndDonations))
 
     return response.json(incidents)
-  }
-
-  private queryParams(params: any): QueryParams {
-    const queryParams = {
-      ongId: params.ongId,
-      donorId: params.donorId,
-      donated: params.donated === 'true'
-    } as QueryParams
-
-    if (!params.donated) {
-      queryParams.donated = undefined
-    }
-
-    return queryParams
   }
 
   public listIncidentsServiceDependencies() {

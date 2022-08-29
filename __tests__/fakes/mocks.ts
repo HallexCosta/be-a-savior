@@ -82,7 +82,7 @@ export function createMocks({
     id: randomUUID(),
     name: faker.name.findName(),
     email: faker.internet.email().toLowerCase(),
-    password: randomUUID(),
+    password: randomUUID().replace(/\-/g, ''),
     phone: faker.phone.phoneFormats(),
     owner: 'mock',
     created_at: new Date(),
@@ -92,7 +92,7 @@ export function createMocks({
     id: randomUUID(),
     name: faker.name.findName(),
     email: faker.internet.email().toLowerCase(),
-    password: randomUUID(),
+    password: randomUUID().replace(/\-/g, ''),
     phone: faker.phone.phoneFormats(),
     owner: 'ong',
     created_at: new Date(),
@@ -102,7 +102,7 @@ export function createMocks({
     id: randomUUID(),
     name: faker.name.findName(),
     email: faker.internet.email().toLowerCase(),
-    password: randomUUID(),
+    password: randomUUID().replace(/\-/g, ''),
     phone: faker.phone.phoneFormats(),
     owner: 'donor',
     created_at: new Date(),
@@ -209,6 +209,7 @@ export async function createFakeDonation(
     .set('Authorization', `bearer ${donorToken}`)
 
   donationMock.id = response.body.id
+  donationMock.incident_id = response.body.incident_id
 
   return response.body
 }
@@ -224,8 +225,6 @@ export async function loginWithFakeOng(
     password
   })
 
-  ongMock.id = response.body.id
-
   return response.body.token
 }
 
@@ -239,8 +238,6 @@ export async function loginWithFakeDonor(
     email,
     password
   })
-
-  donorMock.id = response.body.id
 
   return response.body.token
 }

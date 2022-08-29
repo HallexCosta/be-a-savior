@@ -1,17 +1,14 @@
-import { classToClass } from 'class-transformer'
-
-import { Donation } from '@entities/Donation'
 import { Incident } from '@entities/Incident'
 
-import { Util } from '@common/util'
+import Util from '@common/util'
 
 import { IncidentsRepository } from '@repositories/IncidentsRepository'
 import BaseService, { ServiceDependencies } from '@services/BaseService'
 
-type ListIncidentsDTO = {
+export type ListIncidentsDTO = {
   ongId?: string
   donorId?: string
-  donated?: boolean
+  donated?: 'complete' | 'incomplete' | 'none'
 }
 
 type Repositories = {

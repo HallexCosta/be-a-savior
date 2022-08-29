@@ -5,12 +5,14 @@ import {
   SelectQueryBuilder
 } from 'typeorm'
 
+import Util from '@common/util'
+
 import { Incident } from '@entities/Incident'
 
 type FindIncidentsFilter = {
-  ongId: string
-  donorId?: string
-  donated: boolean | 'all'
+  ongId: string | null
+  donorId: string | null
+  donated: 'complete' | 'incomplete' | 'none' | null
 }
 
 interface IncidentsRepositoryMethods {
@@ -41,9 +43,9 @@ export class IncidentsRepository
   }
 
   async findIncidentsByFilter({
-    ongId = null,
+    ongId,
     donorId,
-    donated = 'all'
+    donated
   }: FindIncidentsFilter): Promise<Incident[]> {
     return await this.find({
       where: (queryBuilder: SelectQueryBuilder<Incident>) => {
@@ -57,12 +59,26 @@ export class IncidentsRepository
           queryBuilder.where(onlyDonor, { donorId })
         }
 
-        if (donated !== null) {
-          const onlyDonated = `Incident__donations.incident_id is ${
-            donated ? 'not' : ''
-          } null`
-          queryBuilder.andWhere(onlyDonated)
-        }
+        Util.switch({
+          entry: donated,
+          cases: {
+            complete() {
+              queryBuilder
+                .groupBy(
+                  'Incident.id, Incident__donations.id,  Incident__donations__donor.id'
+                )
+                .having('sum(Incident__donations.amount) = Incident.cost')
+            },
+            incomplete() {
+              queryBuilder.andWhere(
+                'Incident__donations.incident_id is not null'
+              )
+            },
+            none() {
+              queryBuilder.andWhere('Incident__donations.incident_id is null')
+            }
+          }
+        })
       },
       relations: ['donations', 'donations.donor']
     })
