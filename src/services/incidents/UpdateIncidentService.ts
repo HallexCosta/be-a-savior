@@ -1,8 +1,10 @@
-import BaseService, { BaseServiceMethods, ServiceDependencies } from '@services/BaseService'
+import BaseService, {
+  BaseServiceMethods,
+  ServiceDependencies
+} from '@services/BaseService'
 
 import { Donation } from '@entities/Donation'
 import { Incident } from '@entities/Incident'
-
 
 export declare type UpdateIncidentDTO = {
   id: string
@@ -12,8 +14,7 @@ export declare type UpdateIncidentDTO = {
   ongId: string
 }
 
-declare interface UpdateIncidentServiceMethods
-  extends BaseServiceMethods {
+declare interface UpdateIncidentServiceMethods extends BaseServiceMethods {
   /* Prevent ong to update incident cost if reached max limit of donatios
    * @params incident Receive the incident entity
    * @return void
@@ -25,12 +26,17 @@ declare interface UpdateIncidentServiceMethods
 }
 
 class PreventUpdateIncidentCostError extends Error {
-  public constructor(message?: string) {
-    super(message || "Opss... can't possible update incident cost that reached max limit of donations")
+  public constructor(incidentCost: number, totalDonations: number) {
+    super(
+      `Opss... can't possible update incident cost because the incident cost "${incidentCost}" is less than total donations "${totalDonations}"`
+    )
   }
 }
 
-export class UpdateIncidentService extends BaseService implements UpdateIncidentServiceMethods {
+export class UpdateIncidentService
+  extends BaseService
+  implements UpdateIncidentServiceMethods
+{
   public constructor({ repositories, providers }: ServiceDependencies) {
     super(repositories, providers)
   }
@@ -90,11 +96,16 @@ export class UpdateIncidentService extends BaseService implements UpdateIncident
     incidentCostUpdated: number,
     donations: Donation[]
   ): void {
-    const totalDonations = donations
-      .reduce((prev, curr) => prev + curr.amount, 0)
+    const totalDonations = donations.reduce(
+      (prev, curr) => prev + curr.amount,
+      0
+    )
 
-    if (incidentCostUpdated <= totalDonations) {
-      throw new PreventUpdateIncidentCostError()
+    if (incidentCostUpdated < totalDonations) {
+      throw new PreventUpdateIncidentCostError(
+        incidentCostUpdated,
+        totalDonations
+      )
     }
   }
 }
