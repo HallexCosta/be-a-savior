@@ -14,7 +14,7 @@ describe('@UpdateIncidentService', () => {
   describe('#preventUpdateIncidentCost', () => {
     it('should prevent ONG of edit the incident cost if the cost of incident is lower than the donations total', () => {
       const incidentsRepository = {
-        findById: () => { }
+        findById: () => {}
       } as unknown as IncidentsRepository
 
       const updateIncidentServiceDependenciesMock = {
@@ -23,7 +23,9 @@ describe('@UpdateIncidentService', () => {
         }
       } as ServiceDependencies
 
-      const updateIncidentService = new UpdateIncidentService(updateIncidentServiceDependenciesMock)
+      const updateIncidentService = new UpdateIncidentService(
+        updateIncidentServiceDependenciesMock
+      )
 
       const toThrow = () => {
         const incident = {
@@ -39,10 +41,15 @@ describe('@UpdateIncidentService', () => {
         } as Incident
 
         const incidentCostUpdated = 5000
-        updateIncidentService.preventUpdateIncidentCost(incidentCostUpdated, incident.donations)
+        updateIncidentService.preventUpdateIncidentCost(
+          incidentCostUpdated,
+          incident.donations
+        )
       }
 
-      expect(toThrow).to.be.throw("Opss... can't possible update incident cost that reached max limit of donations")
+      expect(toThrow).to.be.throw(
+        'Opss... can\'t possible update incident cost because the incident cost "5000" is less than total donations "10000"'
+      )
     })
   })
 })
