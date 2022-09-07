@@ -20,7 +20,6 @@ import {
   loginWithFakeOng,
   createFakeIncident
 } from '@tests/fakes/mocks'
-import { Util } from '@tests/util'
 
 use(dirty)
 
@@ -208,6 +207,39 @@ describe('Incidents Routes', () => {
     expect(incident).to.have.property('cost')
     expect(incident).to.have.property('created_at')
     expect(incident).to.have.property('updated_at')
+  })
+
+  it('Should prevent of update incident cost if the new cost is less than total donations PATCH (/incidents/:id)', async () => {
+    const mocks = createMocks()
+
+    await createFakeOng(agent, mocks.ong)
+
+    const ongToken = await loginWithFakeOng(agent, mocks.ong)
+    mocks.incident.cost = 100
+    mocks.incident.user_id = mocks.ong.id
+    await createFakeIncident(agent, {
+      ongToken,
+      incidentMock: mocks.incident
+    })
+
+    await createFakeDonor(agent, mocks.donor)
+    mocks.donation.amount = 100
+    mocks.donation.incident_id = mocks.incident.id
+    await createFakeDonation(agent, {
+      donorToken: await loginWithFakeDonor(agent, mocks.donor),
+      donationMock: mocks.donation
+    })
+
+    mocks.incident.cost = 99
+    const { status, body: incident } = await agent
+      .patch(`/incidents/${mocks.incident.id}`)
+      .send(mocks.incident)
+      .set('Authorization', `bearer ${ongToken}`)
+
+    expect(status).to.be.equal(409)
+    expect(incident.message).to.be.equal(
+      'Opss... can\'t possible update incident cost because the incident cost "99" is less than total donations "100"'
+    )
   })
 
   it('Should be able update one Incident by Id PATCH (/incidents/:id)', async () => {
@@ -418,43 +450,5 @@ describe('Incidents Routes', () => {
       1,
       'Should be expected at least 1 donation'
     )
-  })
-
-  it('Should prevent of update incident cost if the new cost is lower than donations total PATCH (/incidents/:id)', async () => {
-    await createFakeDonor(agent, mocks.donor)
-
-    const ongToken = await loginWithFakeOng(agent, mocks.ong)
-    const fakeIncident = await createFakeIncident(agent, {
-      ongToken,
-      incidentMock: {
-        ...mocks.incident,
-        cost: 1000
-      }
-    })
-
-    await createFakeDonation(agent, {
-      donorToken: await loginWithFakeDonor(agent, mocks.donor),
-      donationMock: {
-        ...mocks.donation,
-        incident_id: fakeIncident.id,
-        amount: 1000
-      }
-    })
-
-    const incidentUpdated = {
-      name: 'Some a name updated',
-      cost: 10,
-      description: 'This is a description updated'
-    }
-
-    const response = await agent
-      .patch(`/incidents/${fakeIncident.id}`)
-      .send(incidentUpdated)
-      .set('Authorization', `bearer ${ongToken}`)
-
-    expect(response.body.message).to.be.equal(
-      "Opss... can't possible update incident cost that reached max limit of donations"
-    )
-    expect(response.status).to.be.equal(409)
   })
 })
