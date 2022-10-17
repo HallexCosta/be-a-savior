@@ -4,7 +4,6 @@ import { Donation } from '@entities/Donation'
 import { StripeProvider } from '@providers/StripeProvider'
 
 import BaseService, { ServiceDependencies } from '@services/BaseService'
-import { incident } from '@root/__tests__/unit/fakes/stubs'
 
 type CreateDonationDTO = {
   incidentId: string
