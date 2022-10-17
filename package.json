@@ -21,6 +21,7 @@
     "prepare:test:integration": "cross-env NODE_ENV=test ts-node -r make-promises-safe -r dotenv/config -r tsconfig-paths/register ./src/dirty/prepare-integration-test.ts",
     "test:charge:development": "autocannon -c 500 -d 30 --workers 10 renderStatusCode --latency --warup [ -c 1 -d 2 ] localhost:3333",
     "test:charge:production": "autocannon -c 500 -d 30 --workers 10 renderStatusCode --latency --warup [ -c 1 -d 2 ] localhost:3333",
+    "test:integration:ci": "yarn test:integration --bail=true",
     "test:integration": "cross-env NODE_ENV=test mocha --config .mocharc.integration.js",
     "test:unit:watch": "cross-env NODE_ENV=test yarn test:unit --watch",
     "test:coverage": "nyc yarn test:unit",
