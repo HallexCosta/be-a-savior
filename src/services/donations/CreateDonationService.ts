@@ -4,6 +4,7 @@ import { Donation } from '@entities/Donation'
 import { StripeProvider } from '@providers/StripeProvider'
 
 import BaseService, { ServiceDependencies } from '@services/BaseService'
+import { incident } from '@root/__tests__/unit/fakes/stubs'
 
 type CreateDonationDTO = {
   incidentId: string
@@ -43,8 +44,19 @@ export class CreateDonationService extends BaseService {
       throw new Error('Incident not exists')
     }
 
-    const amountDonations = incident.donations.map(donation => donation.amount)
-    this.checkIncidentReachedLimitDonation(incident.cost, amountDonations)
+    this.checkDonationAmountIsGreaterThanIncidentCost(
+      amount,
+      incident.cost
+    )
+
+    const donationsAmount = incident.donations.map(
+      (donation) => donation.amount
+    )
+
+    const totalDonationsAmount =
+      this.calculateTotalDonationsAmount(donationsAmount)
+
+    this.checkIncidentReachedLimitDonation(incident.cost, totalDonationsAmount)
 
     const usersRepository = this.repositories.users
     const donor = await usersRepository.findById(donorId)
@@ -97,14 +109,28 @@ export class CreateDonationService extends BaseService {
     return donation
   }
 
-  private checkIncidentReachedLimitDonation(costIncident: number, amountDonations: number[]): void {
-    const amounts = amountDonations.reduce((prev, curr) => prev + curr, 0)
+  private checkDonationAmountIsGreaterThanIncidentCost(
+    donationAmount: number,
+    incidentCost: number
+  ) {
+    if (donationAmount > incidentCost)
+      throw new Error(
+        'Ops... the donation has an amount greater than the incident cost'
+      )
+  }
 
-    const isReachedLimit = amounts >= costIncident
+  private checkIncidentReachedLimitDonation(
+    incidentCost: number,
+    totalDonationsAmount: number
+  ): void {
+    const isReachedLimit = totalDonationsAmount >= incidentCost
 
-    if (isReachedLimit) {
-      throw new Error('Ops.. this incident already reached limit of donations')
-    }
+    if (isReachedLimit)
+      throw new Error('Ops... this incident already reached limit of donations')
+  }
+
+  private calculateTotalDonationsAmount(donationsAmount: number[]) {
+    return donationsAmount.reduce((prev, curr) => prev + curr, 0)
   }
 
   private paymentIncident(ongId: string, donor: Donor) {
