@@ -281,14 +281,15 @@ describe('Incidents Routes', () => {
     await createFakeDonor(agent, mocks.donor)
     await createFakeOng(agent, mocks.ong)
 
+    const ongToken = await loginWithFakeOng(agent, mocks.ong)
     await createFakeIncident(agent, {
       incidentMock: mocks.incident,
-      ongToken: await loginWithFakeOng(agent, mocks.ong)
+      ongToken
     })
     mocks.donation.incident_id = mocks.incident.id
     await createFakeDonation(agent, {
-      donorToken: await loginWithFakeDonor(agent, mocks.donor),
-      donationMock: mocks.donation
+      donationMock: mocks.donation,
+      donorToken: await loginWithFakeDonor(agent, mocks.donor)
     })
 
     const response = await agent
@@ -297,7 +298,6 @@ describe('Incidents Routes', () => {
 
     const incidents = response.body
 
-    console.log('all incidents',incidents)
     expect(incidents[0]).to.have.property('id')
     expect(incidents[0]).to.have.property('name')
     expect(incidents[0]).to.have.property('description')
@@ -354,12 +354,8 @@ describe('Incidents Routes', () => {
     expect(
       incidents.every((incident) => incident.donations.length >= 1)
     ).to.be.true()
-    // if find incident to convert true, if is undefined convert to false
     expect(
-      !!incidents.find((incident) => incident.id === mocks1.incident.id)
-    ).to.be.true()
-    expect(
-      !!incidents.find((incident) => incident.id === mocks2.incident.id)
+      incidents.every((incident) => incident.donations.reduce((prev, curr) => prev + curr.amount, 0) < incident.cost)
     ).to.be.true()
   })
   it('Should be able list incidents with anything donations GET (/incidents?donated=none)', async () => {
