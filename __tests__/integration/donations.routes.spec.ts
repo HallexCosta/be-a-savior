@@ -53,7 +53,7 @@ describe('Donation Routes', () => {
     const body = {
       ...mocks.donation,
       amount: 1010,
-      incident_id: incident.id,
+      incident_id: incident.id
     }
 
     const response = await agent
@@ -67,6 +67,30 @@ describe('Donation Routes', () => {
     expect(donation).to.have.property('id')
   })
 
+  it('Should be throw error if donate is greater than incident cost', async () => {
+    const mocks = createMocks()
+
+    mocks.incident.cost = 100
+    mocks.donation.amount = 101
+    await createFakeDonor(agent, mocks.donor)
+    await createFakeOng(agent, mocks.ong)
+    await createFakeIncident(agent, {
+      incidentMock: mocks.incident,
+      ongToken: await loginWithFakeOng(agent, mocks.ong)
+    })
+    mocks.donation.incident_id = mocks.incident.id
+    await createFakeDonation(agent, {
+      donationMock: mocks.donation,
+      donorToken: await loginWithFakeDonor(agent, mocks.donor)
+    })
+
+    const response = await agent
+      .post('/donations')
+      .send(mocks.donation)
+      .set('Authorization', `bearer ${donorToken}`)
+
+    expect(response.status).to.be.equal(409)
+  })
   it('Should be throw error if donated incident recached limit of donations POST (/donations)', async () => {
     const body = {
       amount: 999999999,
@@ -83,7 +107,6 @@ describe('Donation Routes', () => {
     expect(donation).to.not.be.undefined()
     expect(donation).to.have.property('message')
   })
-
 
   it('Should be able make more than one donate in incident POST (/donations)', async () => {
     const ongToken = await loginWithFakeOng(agent, mocks.ong)
@@ -136,7 +159,9 @@ describe('Donation Routes', () => {
 
     const donations = response.body
 
-    const haveDifferentDonorId = donations.map((donation: Donation) => donation.user_id === donor.id)
+    const haveDifferentDonorId = donations.map(
+      (donation: Donation) => donation.user_id === donor.id
+    )
     expect(haveDifferentDonorId.length).to.be.greaterThanOrEqual(0)
 
     expect(donations[0]).to.have.property('id')

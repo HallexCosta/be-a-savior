@@ -159,14 +159,19 @@ export function createAgent(app: Application): SuperTest<Test> {
   return request(app)
 }
 
-export async function createTestingConnection(name: string = uuid()): Promise<Connection> {
+export async function createTestingConnection(
+  name: string = uuid()
+): Promise<Connection> {
   return await createConnection({
     ...ormconfig,
-    name,
+    name
   } as ConnectionOptions)
 }
 
-export async function createFakeOng(agent: SuperTest<Test>, ongMock: OngMock): Promise<Ong> {
+export async function createFakeOng(
+  agent: SuperTest<Test>,
+  ongMock: OngMock
+): Promise<Ong> {
   const response = await agent.post('/ongs').send(ongMock)
 
   Util.customersEmail.push(ongMock.email)
@@ -175,9 +180,11 @@ export async function createFakeOng(agent: SuperTest<Test>, ongMock: OngMock): P
   return response.body
 }
 
-export async function createFakeDonor(agent: SuperTest<Test>, donorMock: DonorMock): Promise<Donor> {
-  const response = await agent.post('/donors')
-    .send(donorMock)
+export async function createFakeDonor(
+  agent: SuperTest<Test>,
+  donorMock: DonorMock
+): Promise<Donor> {
+  const response = await agent.post('/donors').send(donorMock)
 
   donorMock.id = response.body.id
   return response.body
@@ -203,9 +210,7 @@ export async function createFakeDonation(
 ): Promise<Incident> {
   const response = await agent
     .post('/donations')
-    .send({
-      ...donationMock,
-    })
+    .send(donationMock)
     .set('Authorization', `bearer ${donorToken}`)
 
   donationMock.id = response.body.id
@@ -241,4 +246,3 @@ export async function loginWithFakeDonor(
 
   return response.body.token
 }
-
