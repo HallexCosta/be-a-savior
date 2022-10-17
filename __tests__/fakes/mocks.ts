@@ -213,9 +213,6 @@ export async function createFakeDonation(
     .send(donationMock)
     .set('Authorization', `bearer ${donorToken}`)
 
-  donationMock.id = response.body.id
-  donationMock.incident_id = response.body.incident_id
-
   return response.body
 }
 
