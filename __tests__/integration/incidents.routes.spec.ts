@@ -195,9 +195,7 @@ describe('Incidents Routes', () => {
   })
 
   it('Should be able list one Incident by Id GET (/incidents/:id)', async () => {
-    const response = await agent
-      .get(`/incidents/${incidentId}`)
-      .set('Authorization', `bearer ${ongToken}`)
+    const response = await agent.get(`/incidents/${incidentId}`)
 
     const incident = response.body
 
@@ -278,23 +276,24 @@ describe('Incidents Routes', () => {
   it('Should be able list donor together donation in the list incidents GET (/incidents?ongId=)', async () => {
     const mocks = createMocks()
 
-    await createFakeDonor(agent, mocks.donor)
-    await createFakeOng(agent, mocks.ong)
+    mocks.incident.cost = 100
+    mocks.donation.amount = 10
 
-    const ongToken = await loginWithFakeOng(agent, mocks.ong)
-    await createFakeIncident(agent, {
+    await createFakeOng(agent, mocks.ong)
+    await createFakeDonor(agent, mocks.donor)
+
+    mocks.incident.user_id = ong.id
+    const incident = await createFakeIncident(agent, {
       incidentMock: mocks.incident,
-      ongToken
+      ongToken: await loginWithFakeOng(agent, mocks.ong)
     })
-    mocks.donation.incident_id = mocks.incident.id
+    mocks.donation.incident_id = incident.id
     await createFakeDonation(agent, {
       donationMock: mocks.donation,
       donorToken: await loginWithFakeDonor(agent, mocks.donor)
     })
 
-    const response = await agent
-      .get(`/incidents?ongId=${mocks.ong.id}`)
-      .set('Authorization', `bearer ${ongToken}`)
+    const response = await agent.get(`/incidents?ongId=${mocks.ong.id}`)
 
     const incidents = response.body
 
@@ -355,7 +354,11 @@ describe('Incidents Routes', () => {
       incidents.every((incident) => incident.donations.length >= 1)
     ).to.be.true()
     expect(
-      incidents.every((incident) => incident.donations.reduce((prev, curr) => prev + curr.amount, 0) < incident.cost)
+      incidents.every(
+        (incident) =>
+          incident.donations.reduce((prev, curr) => prev + curr.amount, 0) <
+          incident.cost
+      )
     ).to.be.true()
   })
   it('Should be able list incidents with anything donations GET (/incidents?donated=none)', async () => {
