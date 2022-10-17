@@ -70,9 +70,12 @@ export class IncidentsRepository
                 .having('sum(Incident__donations.amount) = Incident.cost')
             },
             incomplete() {
-              queryBuilder.andWhere(
-                'Incident__donations.incident_id is not null'
-              )
+              queryBuilder
+                .groupBy(
+                  'Incident.id, Incident__donations.id,  Incident__donations__donor.id'
+                )
+                .having('count(Incident__donations.id) >= 1')
+                .andHaving('sum(Incident__donations.amount) < Incident.cost')
             },
             none() {
               queryBuilder.andWhere('Incident__donations.incident_id is null')
