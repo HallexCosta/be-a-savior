@@ -276,27 +276,28 @@ describe('Incidents Routes', () => {
   })
 
   it('Should be able list donor together donation in the list incidents GET (/incidents?ongId=)', async () => {
+    const mocks = createMocks()
+
     await createFakeDonor(agent, mocks.donor)
+    await createFakeOng(agent, mocks.ong)
 
-    const fakeIncident = await createFakeIncident(agent, {
-      ongToken: await loginWithFakeOng(agent, mocks.ong),
-      incidentMock: mocks.incident
+    await createFakeIncident(agent, {
+      incidentMock: mocks.incident,
+      ongToken: await loginWithFakeOng(agent, mocks.ong)
     })
-
+    mocks.donation.incident_id = mocks.incident.id
     await createFakeDonation(agent, {
       donorToken: await loginWithFakeDonor(agent, mocks.donor),
-      donationMock: {
-        ...mocks.donation,
-        incident_id: fakeIncident.id
-      }
+      donationMock: mocks.donation
     })
 
     const response = await agent
-      .get(`/incidents?ongId=${ong.id}`)
+      .get(`/incidents?ongId=${mocks.ong.id}`)
       .set('Authorization', `bearer ${ongToken}`)
 
     const incidents = response.body
 
+    console.log('all incidents',incidents)
     expect(incidents[0]).to.have.property('id')
     expect(incidents[0]).to.have.property('name')
     expect(incidents[0]).to.have.property('description')

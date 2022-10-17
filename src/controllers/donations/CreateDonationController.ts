@@ -11,16 +11,13 @@ import { DonationsRepository } from '@repositories/DonationsRepository'
 import { UsersRepository } from '@repositories/UsersRepository'
 import { IncidentsRepository } from '@repositories/IncidentsRepository'
 
-import {
-  CreateDonationService
-} from '@services/donations/CreateDonationService'
+import { CreateDonationService } from '@services/donations/CreateDonationService'
 
 import { ensureDonor } from '@middlewares/ensureDonor'
 import { ensureAuthenticateDonor } from '@middlewares/ensureAuthenticateDonor'
 import { ServiceDependencies } from '@services/BaseService'
 
-export class CreateDonationController
-extends BaseController {
+export class CreateDonationController extends BaseController {
   protected readonly group: string = '/donations'
   protected readonly path: string = '/'
   protected readonly method: string = 'POST'
@@ -31,10 +28,7 @@ extends BaseController {
     connectionAdapter: ConnectionPlugin
   ) {
     super(logger, routes, connectionAdapter)
-    this.setMiddlewares([
-      ensureAuthenticateDonor,
-      ensureDonor
-    ])
+    this.setMiddlewares([ensureAuthenticateDonor, ensureDonor])
     this.subscribe({
       group: this.group,
       path: this.path,
