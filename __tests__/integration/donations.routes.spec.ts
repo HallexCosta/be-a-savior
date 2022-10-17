@@ -89,11 +89,30 @@ describe('Donation Routes', () => {
       .send(mocks.donation)
       .set('Authorization', `bearer ${donorToken}`)
 
+    expect(response.body.message).to.be.equal(
+      'Ops... the donation has an amount greater than the incident cost'
+    )
     expect(response.status).to.be.equal(409)
   })
   it('Should be throw error if donated incident recached limit of donations POST (/donations)', async () => {
+    const mocks = createMocks()
+
+    mocks.incident.cost = 100
+    mocks.donation.amount = 100
+    await createFakeDonor(agent, mocks.donor)
+    await createFakeOng(agent, mocks.ong)
+    await createFakeIncident(agent, {
+      incidentMock: mocks.incident,
+      ongToken: await loginWithFakeOng(agent, mocks.ong)
+    })
+    mocks.donation.incident_id = mocks.incident.id
+    await createFakeDonation(agent, {
+      donationMock: mocks.donation,
+      donorToken: await loginWithFakeDonor(agent, mocks.donor)
+    })
+
     const body = {
-      amount: 999999999,
+      amount: 1,
       incident_id: incident.id
     }
 
@@ -106,6 +125,9 @@ describe('Donation Routes', () => {
 
     expect(donation).to.not.be.undefined()
     expect(donation).to.have.property('message')
+    expect(response.body.message).to.be.equal(
+      'Ops... this incident already reached limit of donations'
+    )
   })
 
   it('Should be able make more than one donate in incident POST (/donations)', async () => {
