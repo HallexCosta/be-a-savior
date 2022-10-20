@@ -335,15 +335,15 @@ describe('Incidents Routes', () => {
     }
 
     // create fake incident with donations complete
-    mocks1.incident.cost = 100
-    await createFakeIncidenWithDonations(agent, mocks1, 100, 1)
+    mocks1.incident.cost = 50
+    await createFakeIncidenWithDonations(agent, mocks1, 50, 1)
 
     // create fake incident with donation incomplete
-    mocks2.incident.cost = 100
-    await createFakeIncidenWithDonations(agent, mocks2, 10, 3)
+    mocks2.incident.cost = 91
+    await createFakeIncidenWithDonations(agent, mocks2, 10, 9)
 
     // create fake incident without donations
-    mocks3.incident.cost = 100
+    mocks3.incident.cost = 10
     await createFakeIncidenWithDonations(agent, mocks3, 0, 0)
 
     const response = await agent.get('/incidents?donated=incomplete')
