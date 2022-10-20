@@ -70,12 +70,16 @@ export class IncidentsRepository
                 .having('sum(Incident__donations.amount) = Incident.cost')
             },
             incomplete() {
+              const getTotalDonationsAmountWithoutGroupByUserId =
+                'select sum(amount) from donations where donations.incident_id = Incident.id'
               queryBuilder
                 .groupBy(
-                  'Incident.id, Incident__donations.id,  Incident__donations__donor.id'
+                  'Incident.id, Incident__donations.id, Incident__donations__donor.id'
                 )
                 .having('count(Incident__donations.id) >= 1')
-                .andHaving('sum(Incident__donations.amount) < Incident.cost')
+                .andHaving(
+                  `(${getTotalDonationsAmountWithoutGroupByUserId}) < Incident.cost`
+                )
             },
             none() {
               queryBuilder.andWhere('Incident__donations.incident_id is null')
