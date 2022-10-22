@@ -394,61 +394,50 @@ describe('Incidents Routes', () => {
   })
 
   it('Should be able list incidents with at least one donations GET (/incidents?donated=complete)', async () => {
-    const mocks = createMocks()
+    const mocks1 = createMocks()
+    const mocks2 = createMocks()
+    const mocks3 = createMocks()
 
-    await createFakeOng(agent, mocks.ong)
-    // create incident with cost 100
-    mocks.incident.cost = 100
-    await createFakeIncident(agent, {
-      incidentMock: mocks.incident,
-      ongToken: await loginWithFakeOng(agent, mocks.ong)
-    })
-
-    await createFakeDonor(agent, mocks.donor)
-    // create donation with amount 100
-    mocks.donation.incident_id = mocks.incident.id
-    mocks.donation.amount = 100
-    await createFakeDonation(agent, {
-      donationMock: mocks.donation,
-      donorToken: await loginWithFakeDonor(agent, mocks.donor)
-    })
-
-    function getAllDonations(incidents: Donation[]) {
-      const donations = []
-
-      for (const incident of incidents)
-        for (const donation of incident.donations) donations.push(donation)
-
-      return donations
+    async function createFakeIncidenWithDonations(
+      agent,
+      mocks,
+      donationValue: number,
+      donationCount: number = 1
+    ) {
+      await createFakeOng(agent, mocks.ong)
+      await createFakeIncident(agent, {
+        incidentMock: mocks.incident,
+        ongToken: await loginWithFakeOng(agent, mocks.ong)
+      })
+      await createFakeDonor(agent, mocks.donor)
+      for (let count = 1; count <= donationCount; count++) {
+        mocks.donation.incident_id = mocks.incident.id
+        mocks.donation.amount = donationValue
+        await createFakeDonation(agent, {
+          donationMock: mocks.donation,
+          donorToken: await loginWithFakeDonor(agent, mocks.donor)
+        })
+      }
     }
+
+    // create fake incident with donations complete
+    mocks1.incident.cost = 50
+    await createFakeIncidenWithDonations(agent, mocks1, 25, 2)
+
+    // create fake incident with donation incomplete
+    mocks2.incident.cost = 91
+    await createFakeIncidenWithDonations(agent, mocks2, 10, 9)
+
+    // create fake incident without donations
+    mocks3.incident.cost = 10
+    await createFakeIncidenWithDonations(agent, mocks3, 0, 0)
 
     const response = await agent.get('/incidents?donated=complete')
 
     const incidents = response.body
 
-    expect(incidents).to.be.lengthOf.at.least(
-      1,
-      'Should be expected at least 1 incident'
-    )
-
-    const findIncidentById = (incident: Incident) =>
-      incident.id === mocks.incident.id
-
-    const incident = incidents.find(findIncidentById)
-
-    function checkDonationsIsComplete(incident: Incident) {
-      const totalDonationsAmount = incident.donations.reduce(
-        (prev, curr) => prev + curr.amount,
-        0
-      )
-      return incident.cost === totalDonationsAmount
-    }
-    expect(checkDonationsIsComplete(incident)).to.be.true(
-      'Incident cost should be equal a the value of total donations amount'
-    )
-    expect(getAllDonations(incidents)).to.be.lengthOf.at.least(
-      1,
-      'Should be expected at least 1 donation'
-    )
+    expect(
+      incidents.find((incident) => incident.id === mocks1.incident.id)
+    ).to.be.not.undefined()
   })
 })
