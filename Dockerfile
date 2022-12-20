@@ -17,15 +17,15 @@ WORKDIR /usr/be-a-savior/server
 ADD *.json ./
 ADD *.lock ./
 
-RUN yarn install:ci
+# RUN yarn install:ci
 
 ADD . .
-
-RUN yarn build
 
 RUN rm -rf /usr/be-a-savior/server/node_modules
 
 RUN yarn install:ci --production
+
+RUN yarn build
 
 # for heroku exec
 RUN apk add --no-cache bash
