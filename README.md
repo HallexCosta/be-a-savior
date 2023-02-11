@@ -21,6 +21,7 @@ $ yarn start
 ## API Domains
 
 | Domains   | GET | POST | PATCH | DELETE |
+|-----------|-----|------|-------|--------|
 | incidents | ✅  | ✅   | ✅    | ✅     |
 | donations | ✅  | ✅   | ❌    | ❌     |
 | ongs      | ✅  | ✅   | ❌    | ❌     |
